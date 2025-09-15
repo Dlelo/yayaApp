@@ -1,0 +1,6 @@
+<h2>Available Househelps</h2>
+@for (houseHelp of househelps; track houseHelp.name){
+  <mat-card>{{ houseHelp.name }}</mat-card>
+}
+<mat-paginator [length]="100" [pageSize]="10" (page)="onPageChange($event)">
+</mat-paginator>

@@ -1,0 +1,22 @@
+<h2>Register as a Househelp</h2>
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <mat-form-field>
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name" />
+    @if(form.controls.name.hasError('required')){
+      <mat-error>Name is required</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Phone</mat-label>
+    <input matInput formControlName="phone" />
+    @if(form.controls.phone.hasError('pattern')){
+      <mat-error>Invalid phone number</mat-error>
+    }
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+    Submit
+  </button>
+</form>
