@@ -1,4 +1,34 @@
-<mat-card>
-  <h1>Welcome to the Househelp Marketplace</h1>
-  <p>Find trusted househelps in Kenya with verified profiles.</p>
-</mat-card>
+<div class="hero-section">
+  <div class="hero-text">
+    <h1 class="title">Kenyan Househelp Marketplace</h1>
+    <p class="subtitle">
+      Find affordable and trusted house helps for your household
+    </p>
+    <button mat-raised-button color="primary" routerLink="/listings">
+      Find Help
+    </button>
+  </div>
+
+  <div class="hero-image">
+    <img src="househelp-banner.png" alt="Househelp illustration" />
+  </div>
+</div>
+
+<div class="recent-listings">
+  <h2>Recent Listings</h2>
+  <div class="listing-cards">
+    @for(help of recentHousehelps; track help.name){
+      <mat-card class="listing-card">
+        <mat-card-header>
+          <div mat-card-avatar class="avatar"></div>
+          <mat-card-title>{{ help.name }}</mat-card-title>
+          <mat-card-subtitle>{{ help.role }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="stars">⭐️⭐️⭐️⭐️⭐️</div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+  </div>
+</div>

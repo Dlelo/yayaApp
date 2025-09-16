@@ -1,10 +1,18 @@
 import { Component } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  standalone: true,
   selector: 'app-home',
-  imports: [MatCardModule],
+  standalone: true,
+  imports: [MatCardModule, MatButtonModule],
   templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent {}
+export class HomeComponent {
+  recentHousehelps = [
+    { name: 'Mary', role: 'Housekeeper' },
+    { name: 'Grace', role: 'Cook' },
+    { name: 'Esther', role: 'Nanny' },
+  ];
+}
