@@ -2,16 +2,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 64px 40px;
+  padding: 0.5rem 1.5rem;
   background: #fffaf5;
   border-radius: 12px;
-  margin: 24px auto;
-  max-width: 1200px;
+  margin: 2rem auto;
 }
 
 
 .hero-text {
-  max-width: 500px;
+  max-width: 100%;
+  padding-right: 2rem;
 
   .title {
     font-size: 2.5rem;

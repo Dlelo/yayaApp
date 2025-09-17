@@ -1,6 +1,32 @@
-<h2>Available Househelps</h2>
-@for (houseHelp of househelps; track houseHelp.name){
-  <mat-card>{{ houseHelp.name }}</mat-card>
-}
-<mat-paginator [length]="100" [pageSize]="10" (page)="onPageChange($event)">
-</mat-paginator>
+<h2 class="page-title">Available Househelps</h2>
+
+<div class="listings-page">
+
+  <div class="listings-grid">
+    @for (houseHelp of househelps; track houseHelp.name) {
+      <mat-card class="listing-card">
+        <mat-card-content>
+          <h3 class="name">{{ houseHelp.name }}</h3>
+          <p class="role">{{ houseHelp.role }}</p>
+
+          <div class="rating">
+            ⭐⭐⭐⭐☆
+          </div>
+
+          <p class="description">{{ houseHelp.description }}</p>
+        </mat-card-content>
+
+        <mat-card-actions>
+          <button mat-raised-button color="primary" (click)="seeDetails(houseHelp.id)">
+            View Profile
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    }
+  </div>
+</div>
+
+<div class="paginator-wrapper">
+  <mat-paginator [length]="100" [pageSize]="10" (page)="onPageChange($event)">
+  </mat-paginator>
+</div>
