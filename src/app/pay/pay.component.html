@@ -1,0 +1,23 @@
+<mat-card>
+  <h2>Complete Subscription to Hire</h2>
+  <p>To hire <strong>{{ houseHelpName }}</strong>, please subscribe first.</p>
+
+  <form [formGroup]="payForm" (ngSubmit)="pay()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Select Plan</mat-label>
+      <mat-select formControlName="plan">
+        <mat-option value="basic">Basic - KES 500/month</mat-option>
+        <mat-option value="premium">Premium - KES 1000/month</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Mpesa Number</mat-label>
+      <input matInput formControlName="phone" placeholder="+2547xxxxxxx" />
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" [disabled]="payForm.invalid">
+      Pay & Proceed
+    </button>
+  </form>
+</mat-card>

@@ -1,0 +1,15 @@
+<mat-card class="hire-request-card">
+  <h2>Hire Request</h2>
+  <p>You are about to hire <strong>{{ houseHelpName }}</strong>.</p>
+
+    @if(isSubscribed){
+      <button mat-raised-button color="primary" (click)="confirmHire()">
+        Confirm Hire
+      </button>
+    } @else {
+      <p>You must subscribe before hiring a househelp.</p>
+      <button mat-raised-button color="accent" (click)="redirectToPay()">
+        Subscribe & Pay
+      </button>
+    }
+</mat-card>
