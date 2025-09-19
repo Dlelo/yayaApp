@@ -5,6 +5,8 @@ import {RegisterHousehelpComponent} from './register/register.component';
 import {ProfileComponent} from './profile/profile.component';
 import {PayComponent} from './pay/pay.component';
 import {HireRequestComponent} from './hire-request/hire-request.component';
+import {AccountDetailsComponent} from './account-details/account-details.component';
+import {EditAccountDetailsComponent} from './edit-account/edit-account.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -13,4 +15,6 @@ export const routes: Routes = [
   { path: 'profile/:id', component: ProfileComponent },
   { path: 'hire', component: HireRequestComponent },
   { path: 'pay', component: PayComponent },
+  { path: 'account/:id', component:AccountDetailsComponent},
+  { path: 'edit-account/:id', component: EditAccountDetailsComponent}
 ];

@@ -1,0 +1,46 @@
+<div class="container my-4">
+  <mat-card class="shadow-sm rounded-3">
+    <div class="d-flex align-items-center mb-3">
+      <mat-icon class="me-2 text-primary">account_circle</mat-icon>
+      <h2 class="mb-0">My Account</h2>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="row mt-3">
+      <!-- Left Column -->
+      <div class="col-md-6">
+        <h4 class="mb-3">Personal Info</h4>
+        <p><strong>Name:</strong> {{ user.name }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Phone:</strong> {{ user.phone }}</p>
+      </div>
+
+      <!-- Right Column -->
+      <div class="col-md-6">
+        <h4 class="mb-3">Subscription</h4>
+        <p><strong>Plan:</strong> {{ user.subscription.plan || 'Not Subscribed' }}</p>
+        <p><strong>Status:</strong>
+          <span
+            class="badge"
+            [ngClass]="user.subscription.active ? 'bg-success' : 'bg-danger'">
+                                                                 {{ user.subscription.active ? 'Active' : 'Inactive' }}
+</span>
+        </p>
+        <p><strong>Valid Until:</strong> {{ user.subscription.expiry | date }}</p>
+      </div>
+    </div>
+
+    <mat-divider class="my-3"></mat-divider>
+
+    <!-- Actions -->
+    <div class="d-flex justify-content-end gap-2">
+      <button mat-stroked-button color="primary" (click)="editAccount()">
+        Edit Profile
+      </button>
+      <button mat-raised-button color="warn" (click)="logout()">
+        Logout
+      </button>
+    </div>
+  </mat-card>
+</div>
