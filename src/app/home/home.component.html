@@ -1,34 +1,55 @@
-<div class="hero-section py-1 px-3 mx-3">
-  <div class="hero-text">
-    <h1 class="title">Kenyan Househelp Marketplace</h1>
-    <p class="subtitle">
-      Find affordable and trusted house helps for your household
-    </p>
-    <button mat-raised-button color="primary" (click)="navigate('/listings')">
-      Find Help
-    </button>
+<div class="container my-4">
+  <!-- Hero Section -->
+  <div class="row align-items-center bg-light rounded shadow-sm p-4 mb-5">
+    <!-- Text -->
+    <div class="col-md-6 text-center text-md-start mb-4 mb-md-0">
+      <h1 class="fw-bold mb-3">Kenyan Househelp Marketplace</h1>
+      <p class="lead mb-4">
+        Find affordable and trusted house helps for your household
+      </p>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="navigate('/listings')"
+      >
+        Find Help
+      </button>
+    </div>
+
+    <!-- Image -->
+    <div class="col-md-6 text-center">
+      <img
+        src="/househelp-banner.png"
+        alt="Househelp illustration"
+        class="img-fluid rounded"
+        style="max-height: 280px; object-fit: cover"
+      />
+    </div>
   </div>
 
-  <div class="hero-image">
-    <img src="househelp-banner.png" alt="Househelp illustration" />
-  </div>
-</div>
+  <!-- Recent Listings -->
+  <div class="recent-listings">
+    <h2 class="text-center mb-4">Recent Listings</h2>
 
-<div class="recent-listings">
-  <h2>Recent Listings</h2>
-  <div class="listing-cards">
-    @for(help of recentHousehelps; track help.name){
-      <mat-card class="listing-card">
-        <mat-card-header>
-          <div mat-card-avatar class="avatar"></div>
-          <mat-card-title>{{ help.name }}</mat-card-title>
-          <mat-card-subtitle>{{ help.role }}</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="stars">⭐️⭐️⭐️⭐️⭐️</div>
-        </mat-card-content>
-      </mat-card>
-    }
-
+    <div class="row g-4">
+      @for (help of recentHousehelps; track help.name) {
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+          <mat-card class="h-100 text-center">
+            <mat-card-header class="d-flex flex-column align-items-center">
+              <div
+                mat-card-avatar
+                class="rounded-circle bg-secondary mb-2"
+                style="width: 60px; height: 60px"
+              ></div>
+              <mat-card-title>{{ help.name }}</mat-card-title>
+              <mat-card-subtitle>{{ help.role }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="text-warning">⭐️⭐️⭐️⭐️⭐️</div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      }
+    </div>
   </div>
 </div>

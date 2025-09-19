@@ -1,32 +1,40 @@
-<h2 class="page-title">Available Househelps</h2>
+<div class="container mt-4">
+  <h2 class="mb-4 text-center">Available Househelps</h2>
 
-<div class="listings-page">
-
-  <div class="listings-grid">
+  <div class="row g-4">
     @for (houseHelp of househelps; track houseHelp.name) {
-      <mat-card class="listing-card">
-        <mat-card-content>
-          <h3 class="name">{{ houseHelp.name }}</h3>
-          <p class="role">{{ houseHelp.role }}</p>
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <mat-card class="h-100 text-center p-3">
+          <mat-card-content>
+            <h5 class="fw-bold">{{ houseHelp.name }}</h5>
+            <p class="text-muted mb-1">{{ houseHelp.role }}</p>
 
-          <div class="rating">
-            ⭐⭐⭐⭐☆
-          </div>
+            <div class="rating mb-2">⭐⭐⭐⭐☆</div>
 
-          <p class="description">{{ houseHelp.description }}</p>
-        </mat-card-content>
+            <p class="small">{{ houseHelp.description }}</p>
+          </mat-card-content>
 
-        <mat-card-actions>
-          <button mat-raised-button color="primary" (click)="seeDetails(houseHelp.id)">
-            View Profile
-          </button>
-        </mat-card-actions>
-      </mat-card>
+          <mat-card-actions class="d-flex justify-content-center">
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="seeDetails(houseHelp.id)"
+            >
+              View Profile
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
     }
   </div>
-</div>
 
-<div class="paginator-wrapper">
-  <mat-paginator [length]="100" [pageSize]="10" (page)="onPageChange($event)">
-  </mat-paginator>
+  <!-- Paginator -->
+  <div class="d-flex justify-content-center mt-4">
+    <mat-paginator
+      [length]="100"
+      [pageSize]="10"
+      (page)="onPageChange($event)"
+    >
+    </mat-paginator>
+  </div>
 </div>

@@ -1,15 +1,33 @@
-<mat-card class="hire-request-card">
-  <h2>Hire Request</h2>
-  <p>You are about to hire <strong>{{ houseHelpName }}</strong>.</p>
+<div class="container my-4">
+  <mat-card class="p-4 shadow-sm">
+    <h2 class="mb-3 text-center">Hire Request</h2>
+    <p class="lead text-center">
+      You are about to hire <strong>{{ houseHelpName }}</strong>.
+    </p>
 
-    @if(isSubscribed){
-      <button mat-raised-button color="primary" (click)="confirmHire()">
-        Confirm Hire
-      </button>
-    } @else {
-      <p>You pay before hiring a househelp.</p>
-      <button mat-raised-button color="accent" (click)="redirectToPay()">
-        Subscribe & Pay
-      </button>
-    }
-</mat-card>
+    <div class="d-flex flex-column align-items-center gap-3 mt-4">
+      @if (isSubscribed) {
+        <button
+          mat-raised-button
+          color="primary"
+          class="px-4"
+          (click)="confirmHire()"
+        >
+          Confirm Hire
+        </button>
+      } @else {
+        <p class="text-muted text-center">
+          You need to subscribe before hiring a househelp.
+        </p>
+        <button
+          mat-raised-button
+          color="accent"
+          class="px-4"
+          (click)="redirectToPay()"
+        >
+          Subscribe & Pay
+        </button>
+      }
+    </div>
+  </mat-card>
+</div>

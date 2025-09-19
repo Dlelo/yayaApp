@@ -1,22 +1,42 @@
-<h2>Register as a Househelp</h2>
-<form [formGroup]="form" (ngSubmit)="submit()">
-  <mat-form-field>
-    <mat-label>Name</mat-label>
-    <input matInput formControlName="name" />
-    @if(form.controls.name.hasError('required')){
-      <mat-error>Name is required</mat-error>
-    }
-  </mat-form-field>
+<div class="container mt-4">
+  <h2 class="mb-4 text-center">Register as a Househelp</h2>
 
-  <mat-form-field>
-    <mat-label>Phone</mat-label>
-    <input matInput formControlName="phone" />
-    @if(form.controls.phone.hasError('pattern')){
-      <mat-error>Invalid phone number</mat-error>
-    }
-  </mat-form-field>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="row g-3">
+      <!-- Name -->
+      <div class="col-md-6">
+        <mat-form-field class="w-100">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" />
+          @if(form.controls.name.hasError('required')){
+            <mat-error>Name is required</mat-error>
+          }
+        </mat-form-field>
+      </div>
 
-  <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
-    Submit
-  </button>
-</form>
+      <div class="col-md-6">
+        <mat-form-field class="w-100">
+          <mat-label>Phone</mat-label>
+          <input matInput formControlName="phone" />
+          @if(form.controls.phone.hasError('pattern')){
+            <mat-error>Invalid phone number</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col text-center">
+        <button
+          mat-raised-button
+          color="primary"
+          class="px-5 py-2"
+          type="submit"
+          [disabled]="form.invalid"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

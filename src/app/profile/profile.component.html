@@ -1,39 +1,58 @@
-<div class="profile-page">
-  <mat-card class="profile-card">
-    <div class="profile-header">
-      <img [src]="houseHelp.photo" alt="{{houseHelp.name}}" class="profile-photo" />
-      <div class="profile-info">
-        <h2>{{ houseHelp.name }}</h2>
-        <h4>{{ houseHelp.role }}</h4>
-        <div class="rating">⭐⭐⭐⭐☆</div>
-        <p class="location"><mat-icon>location_on</mat-icon> Nairobi, Kenya</p>
+<div class="container my-4 profile-page">
+  <mat-card class="p-4 shadow-sm profile-card">
+    <!-- Header Section -->
+    <div class="row align-items-center mb-3 profile-header">
+      <div class="col-md-3 text-center">
+        <img
+          [src]="houseHelp.photo"
+          alt="{{ houseHelp.name }}"
+          class="rounded-circle img-fluid profile-photo mb-3 mb-md-0"
+        />
+      </div>
+      <div class="col-md-9 profile-info">
+        <h2 class="mb-1">{{ houseHelp.name }}</h2>
+        <h5 class="text-muted">{{ houseHelp.role }}</h5>
+        <div class="rating text-warning fs-5">⭐⭐⭐⭐☆</div>
+        <p class="location mt-2 text-secondary">
+          <mat-icon inline>location_on</mat-icon> Nairobi, Kenya
+        </p>
       </div>
     </div>
 
     <mat-divider></mat-divider>
 
-    <div class="profile-details">
-      <h3>About</h3>
+    <!-- Details Section -->
+    <div class="profile-details mt-4">
+      <h3 class="mb-2">About</h3>
       <p>{{ houseHelp.description }}</p>
 
-      <h3>Skills</h3>
-      <ul>
-        @for(skill of houseHelp.skills; track $index){
-          <li>✔ {{ skill }}</li>
+      <h3 class="mt-4 mb-2">Skills</h3>
+      <ul class="list-unstyled row">
+        @for (skill of houseHelp.skills; track $index) {
+          <li class="col-md-6 mb-2">
+            <span class="text-success">✔</span> {{ skill }}
+          </li>
         }
-
       </ul>
 
-      <h3>Experience</h3>
+      <h3 class="mt-4 mb-2">Experience</h3>
       <p>{{ houseHelp.experience }} years of experience</p>
 
-      <h3>Contact</h3>
-      <p><mat-icon>phone</mat-icon> {{ houseHelp.phone }}</p>
-      <p><mat-icon>email</mat-icon> {{ houseHelp.email }}</p>
+      <h3 class="mt-4 mb-2">Contact</h3>
+      <p><mat-icon inline>phone</mat-icon> {{ houseHelp.phone }}</p>
+      <p><mat-icon inline>email</mat-icon> {{ houseHelp.email }}</p>
     </div>
 
-    <div class="profile-actions">
-      <button mat-raised-button color="primary" (click)="navigate('/hire')">Hire {{ houseHelp.name }}</button>
+    <!-- Actions -->
+    <div class="profile-actions text-center mt-4">
+      <button
+        mat-raised-button
+        color="primary"
+        class="px-4"
+        (click)="navigate('/hire')"
+      >
+        Hire {{ houseHelp.name }}
+      </button>
     </div>
   </mat-card>
 </div>
