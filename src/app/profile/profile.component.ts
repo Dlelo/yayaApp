@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {MatCard} from '@angular/material/card';
 import {MatDivider} from '@angular/material/divider';
 import {MatIconModule} from '@angular/material/icon';
+import {Router} from '@angular/router';
+import {MatButton} from '@angular/material/button';
 
 @Component({
   selector: 'app-profile',
@@ -9,11 +11,14 @@ import {MatIconModule} from '@angular/material/icon';
   imports: [
     MatIconModule,
     MatCard,
-    MatDivider
+    MatDivider,
+    MatButton
   ],
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent {
+
+  private readonly router:Router = inject(Router);
   houseHelp = {
     name: 'Mary Akinyi',
     role: 'Housekeeper',
@@ -24,4 +29,8 @@ export class ProfileComponent {
     phone: '+254 712 345678',
     email: 'mary@example.com'
   };
+
+  navigate(path: string) {
+    this.router.navigate([path]);
+  }
 }

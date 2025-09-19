@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import {Component, inject, Input} from '@angular/core';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,10 +11,10 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrls: ['./hire-request.component.scss'],
 })
 export class HireRequestComponent {
+  private readonly router: Router = inject(Router);
   @Input() houseHelpName = 'Mary Akinyi';
   isSubscribed = false; // TODO: fetch this from backend or service
 
-  constructor(private router: Router) {}
 
   confirmHire() {
     alert(`Hire confirmed for ${this.houseHelpName}!`);
@@ -22,6 +22,6 @@ export class HireRequestComponent {
   }
 
   redirectToPay() {
-    this.router.navigate(['/pay-hire'], { queryParams: { hire: this.houseHelpName } });
+    this.router.navigate(['/pay'], { queryParams: { hire: this.houseHelpName } });
   }
 }

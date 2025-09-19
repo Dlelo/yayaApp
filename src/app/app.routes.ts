@@ -4,6 +4,7 @@ import {ListingsComponent} from './listing/listing.component';
 import {RegisterHousehelpComponent} from './register/register.component';
 import {ProfileComponent} from './profile/profile.component';
 import {PayComponent} from './pay/pay.component';
+import {HireRequestComponent} from './hire-request/hire-request.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },

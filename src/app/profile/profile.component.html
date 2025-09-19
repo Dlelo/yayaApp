@@ -33,8 +33,7 @@
     </div>
 
     <div class="profile-actions">
-      <button mat-raised-button color="primary">Hire {{ houseHelp.name }}</button>
-      <button mat-stroked-button color="accent">Message</button>
+      <button mat-raised-button color="primary" (click)="navigate('/hire')">Hire {{ houseHelp.name }}</button>
     </div>
   </mat-card>
 </div>
