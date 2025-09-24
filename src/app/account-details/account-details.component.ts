@@ -14,7 +14,8 @@ import {MatIconModule} from '@angular/material/icon';
     MatCard,
     NgClass,
     DatePipe
-  ]
+  ],
+  standalone: true,
 })
 export class AccountDetailsComponent {
   user = {

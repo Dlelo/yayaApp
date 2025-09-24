@@ -8,7 +8,8 @@ import {Router} from '@angular/router';
   selector: 'app-root',
   imports: [RouterOutlet, MatToolbarModule, MatButtonModule, RouterModule],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
+  standalone: true,
 })
 export class App {
   private readonly router: Router = inject(Router);
