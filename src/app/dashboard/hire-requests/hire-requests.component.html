@@ -1,0 +1,17 @@
+<mat-card class="p-3 shadow-sm">
+  <h2 class="mb-3">Hire Requests</h2>
+
+  <mat-list>
+    @for(req of requests; track $index){
+      <mat-list-item>
+        <mat-icon matListIcon color="primary">person</mat-icon>
+        <div matLine>
+          <strong>{{ req.owner }}</strong> wants to hire
+          <strong>{{ req.househelp }}</strong>
+        </div>
+        <div matLine class="text-muted">Requested on: {{ req.date | date }}</div>
+        <button mat-stroked-button color="accent" class="ms-auto">View</button>
+      </mat-list-item>
+    }
+  </mat-list>
+</mat-card>

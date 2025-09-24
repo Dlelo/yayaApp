@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
+import {Router, RouterLink, RouterOutlet} from '@angular/router';
 import {MatCard} from '@angular/material/card';
+import {DecimalPipe} from '@angular/common';
 import {MatSidenav, MatSidenavContainer, MatSidenavContent} from '@angular/material/sidenav';
-
-import {RouterLink} from '@angular/router';
+import {MatNavList} from '@angular/material/list';
 import {MatIconModule} from '@angular/material/icon';
 
 @Component({
@@ -10,32 +11,41 @@ import {MatIconModule} from '@angular/material/icon';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
   imports: [
+    RouterOutlet,
     MatCard,
+    DecimalPipe,
     MatSidenavContent,
-    MatIconModule,
     RouterLink,
+    MatIconModule,
+    MatNavList,
     MatSidenav,
     MatSidenavContainer
-  ],
-  standalone: true
+  ]
 })
 export class DashboardComponent {
-  totalUsers = 145;
-  activeSubscriptions = 78;
+  navLinks = [
+    { path: 'agents', label: 'Agents', icon: 'group' },
+    { path: 'houseHelps', label: 'House Helps', icon: 'home' },
+    { path: 'homeOwners', label: 'Home Owners', icon: 'person' },
+    { path: 'subscriptions', label: 'Subscriptions', icon: 'card_membership' },
+    { path: 'requests', label: 'Requests', icon: 'assignment' },
+    { path: 'reports', label: 'Reports', icon: 'bar_chart' },
+  ];
+
+  totalUsers = 120;
+  activeSubscriptions = 85;
   pendingRequests = 12;
-  revenue = 54000;
+  revenue = 250000;
 
   recentUsers = [
-    { name: 'John Doe', email: 'john@example.com', joined: '2025-09-01' },
-    { name: 'Jane Smith', email: 'jane@example.com', joined: '2025-09-10' },
-    { name: 'Mark Joe', email: 'mark@example.com', joined: '2025-09-20' }
+    { name: 'Jane Doe', email: 'jane@example.com', joined: '2025-09-20' },
+    { name: 'Mary Akinyi', email: 'mary@example.com', joined: '2025-09-19' },
+    { name: 'John Mwangi', email: 'john@example.com', joined: '2025-09-18' },
   ];
 
-  // Navigation links
-  navLinks = [
-    { path: '/admin/users', label: 'Users', icon: 'group' },
-    { path: '/admin/subscriptions', label: 'Subscriptions', icon: 'card_membership' },
-    { path: '/admin/requests', label: 'Requests', icon: 'assignment' },
-    { path: '/admin/reports', label: 'Reports', icon: 'bar_chart' }
-  ];
+  constructor(private router: Router) {}
+
+  get isDashboardHome(): boolean {
+    return this.router.url === '/dashboard';
+  }
 }

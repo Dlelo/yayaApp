@@ -1,0 +1,37 @@
+<mat-card class="p-3 shadow-sm">
+  <h2 class="mb-3">Subscriptions</h2>
+
+  <table class="table table-bordered table-hover">
+    <thead class="table-light">
+    <tr>
+      <th>#</th>
+      <th>User</th>
+      <th>Plan</th>
+      <th>Start Date</th>
+      <th>Expiry</th>
+      <th>Status</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    @for(sub of subscriptions; let i = $index; track $index){
+      <tr>
+      <td>{{ i + 1 }}</td>
+      <td>{{ sub.user }}</td>
+      <td>{{ sub.plan }}</td>
+      <td>{{ sub.start | date }}</td>
+      <td>{{ sub.end | date }}</td>
+      <td>
+        @if(sub.active){
+          <span class="badge bg-success" >Active</span>
+        }
+        @if(!sub.active){
+          <span class="badge bg-danger">Expired</span>
+        }
+
+      </td>
+      </tr>
+    }
+    </tbody>
+  </table>
+</mat-card>
