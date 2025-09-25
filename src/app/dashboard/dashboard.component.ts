@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
-import {Router, RouterLink, RouterOutlet} from '@angular/router';
-import {MatCard} from '@angular/material/card';
-import {DecimalPipe} from '@angular/common';
+import {Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {MatSidenav, MatSidenavContainer, MatSidenavContent} from '@angular/material/sidenav';
-import {MatNavList} from '@angular/material/list';
+import {MatListItem, MatNavList} from '@angular/material/list';
 import {MatIconModule} from '@angular/material/icon';
 
 @Component({
@@ -12,14 +10,14 @@ import {MatIconModule} from '@angular/material/icon';
   styleUrls: ['./dashboard.component.scss'],
   imports: [
     RouterOutlet,
-    MatCard,
-    DecimalPipe,
-    MatSidenavContent,
-    RouterLink,
     MatIconModule,
+    MatSidenavContent,
     MatNavList,
     MatSidenav,
-    MatSidenavContainer
+    MatSidenavContainer,
+    RouterLink,
+    MatListItem,
+    RouterLinkActive,
   ]
 })
 export class DashboardComponent {

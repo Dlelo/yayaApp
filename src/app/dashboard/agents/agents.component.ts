@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {MatCard} from '@angular/material/card';
 import {MatIconModule} from '@angular/material/icon';
+import {MatButton} from '@angular/material/button';
 
 
 @Component({
@@ -9,6 +10,7 @@ import {MatIconModule} from '@angular/material/icon';
   imports: [
     MatCard,
     MatIconModule,
+    MatButton,
   ],
   standalone: true
 })

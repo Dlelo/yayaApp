@@ -3,6 +3,7 @@ import {MatDivider} from '@angular/material/divider';
 import {MatCard} from '@angular/material/card';
 import {DatePipe, NgClass} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
+import {MatButton} from '@angular/material/button';
 
 @Component({
   selector: 'app-account-details',
@@ -13,7 +14,8 @@ import {MatIconModule} from '@angular/material/icon';
     MatIconModule,
     MatCard,
     NgClass,
-    DatePipe
+    DatePipe,
+    MatButton
   ],
   standalone: true,
 })

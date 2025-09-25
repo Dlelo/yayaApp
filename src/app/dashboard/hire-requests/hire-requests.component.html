@@ -1,17 +1,28 @@
 <mat-card class="p-3 shadow-sm">
   <h2 class="mb-3">Hire Requests</h2>
-
-  <mat-list>
-    @for(req of requests; track $index){
-      <mat-list-item>
-        <mat-icon matListIcon color="primary">person</mat-icon>
-        <div matLine>
-          <strong>{{ req.owner }}</strong> wants to hire
-          <strong>{{ req.househelp }}</strong>
-        </div>
-        <div matLine class="text-muted">Requested on: {{ req.date | date }}</div>
-        <button mat-stroked-button color="accent" class="ms-auto">View</button>
-      </mat-list-item>
-    }
-  </mat-list>
+  <table class="table table-striped table-hover">
+    <thead class="table-light">
+    <tr>
+      <th>#</th>
+      <th>Home Owner</th>
+      <th>Househelp</th>
+      <th>Date Requested</th>
+      <th class="text-end">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+      @for(req of requests; let i = $index; track $index){
+        <tr>
+          <td>{{ i + 1 }}</td>
+          <td>{{ req.owner }}</td>
+          <td>{{ req.househelp }}</td>
+          <td>{{ req.date | date }}</td>
+          <td class="text-end">
+            <button mat-stroked-button color="accent" class="me-2">View</button>
+            <button mat-stroked-button color="warn">Cancel</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
 </mat-card>

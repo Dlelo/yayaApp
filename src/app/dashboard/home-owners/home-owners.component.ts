@@ -1,14 +1,16 @@
 import { Component } from '@angular/core';
 import {MatCard} from '@angular/material/card';
 import {MatIconModule} from '@angular/material/icon';
+import {MatButton} from '@angular/material/button';
 
 
 @Component({
-  selector: 'app-agents',
+  selector: 'app-home-owners',
   templateUrl: './home-owners.component.html',
   imports: [
     MatCard,
     MatIconModule,
+    MatButton,
   ],
   standalone: true
 })

@@ -8,6 +8,7 @@ import { HireRequestComponent } from './hire-request/hire-request.component';
 import { AccountDetailsComponent } from './account-details/account-details.component';
 import { EditAccountDetailsComponent } from './edit-account/edit-account.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
+import {OverviewComponent} from './dashboard/overview/overview.component';
 
 export const routes: Routes = [
   // Public pages
@@ -33,7 +34,7 @@ export const routes: Routes = [
       { path: 'subscriptions', loadComponent: () => import('./dashboard/subscriptions/subscriptions.component').then(m => m.SubscriptionsComponent) },
       { path: 'requests', loadComponent: () => import('./dashboard/hire-requests/hire-requests.component').then(m => m.HireRequestsComponent) },
       { path: 'reports', loadComponent: () => import('./dashboard/reports/reports.component').then(m => m.ReportsComponent) },
-      { path: '', redirectTo: 'reports', pathMatch: 'full' }
+      { path: '', component: OverviewComponent, pathMatch: 'full' },
     ]
   },
 

@@ -2,13 +2,14 @@ import {Component, inject} from '@angular/core';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
 import {Router} from '@angular/router';
+import {MatButton} from '@angular/material/button';
 
 
 
 @Component({
   standalone: true,
   selector: 'app-listings',
-  imports: [MatPaginatorModule, MatCardModule],
+  imports: [MatPaginatorModule, MatCardModule, MatButton],
   templateUrl: './listing.component.html',
   styleUrls: ['./listing.component.scss'],
 })

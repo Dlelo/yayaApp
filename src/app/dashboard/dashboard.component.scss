@@ -1,12 +1,47 @@
 .dashboard-container {
   height: 100vh;
+  display: flex;
 }
 
 .sidenav {
   width: 240px;
+  background-color: #212529; // dark background
+  color: #fff;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+
+  .mat-nav-list {
+    padding: 0;
+
+    a {
+      color: #fff;
+      border-radius: 6px;
+      margin: 4px 0;
+      padding: 10px 16px;
+      transition: background 0.2s;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      &.active-link {
+        background: rgba(255, 255, 255, 0.2);
+        font-weight: 600;
+      }
+
+      mat-icon {
+        margin-right: 8px;
+        vertical-align: middle;
+      }
+    }
+  }
 }
 
-.active-link {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
+mat-sidenav-content {
+  background-color: #f8f9fa;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+mat-card {
+  border-radius: 12px;
 }

@@ -1,0 +1,55 @@
+<div>
+  <h1 class="mb-4">Dashboard Overview</h1>
+
+  <!-- Stats Cards -->
+  <div class="row mb-4">
+    <div class="col-md-3 col-sm-6 mb-3">
+      <mat-card class="shadow-sm text-center p-3">
+        <h4>{{ totalUsers }}</h4>
+        <p>Total Users</p>
+      </mat-card>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+      <mat-card class="shadow-sm text-center p-3">
+        <h4>{{ activeSubscriptions }}</h4>
+        <p>Active Subscriptions</p>
+      </mat-card>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+      <mat-card class="shadow-sm text-center p-3">
+        <h4>{{ pendingRequests }}</h4>
+        <p>Pending Requests</p>
+      </mat-card>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+      <mat-card class="shadow-sm text-center p-3">
+        <h4>Ksh {{ revenue | number }}</h4>
+        <p>Total Revenue</p>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Recent Users -->
+  <mat-card class="shadow-sm p-3">
+    <h3 class="mb-3">Recent Users</h3>
+    <table class="table table-striped">
+      <thead class="table-dark">
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Joined</th>
+      </tr>
+      </thead>
+      <tbody>
+        @for(user of recentUsers; track $index){
+          <tr>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.joined }}</td>
+          </tr>
+        }
+
+      </tbody>
+    </table>
+  </mat-card>
+</div>
