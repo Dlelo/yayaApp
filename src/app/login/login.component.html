@@ -1,5 +1,5 @@
 <div class="container mt-4">
-  <h2 class="mb-4 text-center">Register as a Househelp</h2>
+  <h2 class="mb-4 text-center">Login</h2>
 
   <form [formGroup]="form" (ngSubmit)="submit()">
     <div class="row g-3">
@@ -7,9 +7,9 @@
       <div class="col-md-12">
         <mat-form-field class="w-100">
           <mat-label>Name</mat-label>
-          <input matInput formControlName="name" />
-          @if(form.controls.name.hasError('required')){
-            <mat-error>Name is required</mat-error>
+          <input matInput formControlName="email" />
+          @if(form.controls.email.hasError('required')){
+            <mat-error>Email is required</mat-error>
           }
         </mat-form-field>
       </div>
@@ -17,9 +17,9 @@
       <div class="col-md-12">
         <mat-form-field class="w-100">
           <mat-label>Phone</mat-label>
-          <input matInput formControlName="phone" />
-          @if(form.controls.phone.hasError('pattern')){
-            <mat-error>Invalid phone number</mat-error>
+          <input matInput formControlName="password" type="password" />
+          @if(form.controls.password.hasError('required')){
+            <mat-error>Password is required</mat-error>
           }
         </mat-form-field>
       </div>

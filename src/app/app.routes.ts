@@ -9,12 +9,14 @@ import { AccountDetailsComponent } from './account-details/account-details.compo
 import { EditAccountDetailsComponent } from './edit-account/edit-account.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {OverviewComponent} from './dashboard/overview/overview.component';
+import {LoginComponent} from './login/login.component';
 
 export const routes: Routes = [
   // Public pages
   { path: '', component: HomeComponent },
   { path: 'listings', component: ListingsComponent },
   { path: 'register', component: RegisterHousehelpComponent },
+  { path: 'login', component:LoginComponent },
   { path: 'profile/:id', component: ProfileComponent },
 
   // User account flow

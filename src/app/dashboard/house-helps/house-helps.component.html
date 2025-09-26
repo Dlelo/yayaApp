@@ -12,7 +12,7 @@
     </tr>
     </thead>
     <tbody>
-    @for(user of users; let i = $index; track $index){
+    @for(user of houseHelps | async; let i = $index; track $index){
       <tr>
         <td>{{ i + 1 }}</td>
         <td>{{ user.name }}</td>
