@@ -27,12 +27,10 @@ export class LoginComponent {
     const { email, password } = this.form.value;
 
     this.loginService.login(email!, password!).subscribe({
-      next: () => {
-        console.log('✅ Login successful');
-        this.router.navigate(['/dashboard']); // redirect
+      next: (res) => {
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-        console.error('❌ Login failed', err);
       }
     });
   }
