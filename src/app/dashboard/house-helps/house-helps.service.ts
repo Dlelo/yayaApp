@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {map, Observable} from 'rxjs';
 import {environment} from '../../../environments/environments';
 
 @Injectable({
@@ -11,8 +11,13 @@ export class HousehelpService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+  getAll(): Observable<{ data: any[]; length: number }> {
+    return this.http.get<any>(this.apiUrl).pipe(
+      map(res => ({
+        data: res.content,
+        length: res.totalElements
+      }))
+    );
   }
 
   register(househelp: any): Observable<any> {

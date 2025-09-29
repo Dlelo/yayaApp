@@ -6,23 +6,21 @@
       <th>#</th>
       <th>Name</th>
       <th>Email</th>
-      <th>Role</th>
       <th>Status</th>
       <th class="text-end">Actions</th>
     </tr>
     </thead>
     <tbody>
-    @for(user of houseHelps | async; let i = $index; track $index){
+    @for(houseHelp of (houseHelps | async)?.data; let i = $index; track $index){
       <tr>
         <td>{{ i + 1 }}</td>
-        <td>{{ user.name }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.role }}</td>
+        <td>{{ houseHelp.user.name }}</td>
+        <td>{{ houseHelp.user.email }}</td>
         <td>
-          @if(user.active){
+          @if(houseHelp.user.active){
             <span class="badge bg-success">Active</span>
           }
-          @if(!user.active){
+          @if(!houseHelp.user.active){
             <span class="badge bg-secondary">Inactive</span>
           }</td>
         <td class="text-end">
