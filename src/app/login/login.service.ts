@@ -27,6 +27,11 @@ export class LoginService {
   }
 
   isLoggedIn(): boolean {
+    console.log('isLoggedIn', this.authService.getToken());
     return !!this.authService.getToken();
+  }
+
+  userId():string | null{
+    return this.authService.getUserId();
   }
 }

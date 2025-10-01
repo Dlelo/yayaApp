@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import {jwtDecode} from 'jwt-decode';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -19,6 +20,19 @@ export class AuthService {
   clearToken(): void {
     if (typeof window !== 'undefined') {
       localStorage.removeItem(this.TOKEN_KEY);
+    }
+  }
+
+
+  getUserId(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      const decoded: any = jwtDecode(token);
+      return decoded?.sub || decoded?.userId || null;
+    } catch {
+      return null;
     }
   }
 }

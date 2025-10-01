@@ -14,7 +14,6 @@ import {AsyncPipe, JsonPipe} from '@angular/common';
     MatIconModule,
     MatButton,
     AsyncPipe,
-    JsonPipe,
   ],
   standalone: true
 })

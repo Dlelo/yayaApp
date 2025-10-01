@@ -28,7 +28,7 @@ export class LoginComponent {
 
     this.loginService.login(email!, password!).subscribe({
       next: (res) => {
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/']);
       },
       error: (err) => {
       }

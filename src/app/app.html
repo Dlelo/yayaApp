@@ -3,5 +3,15 @@
   <span class="spacer"></span>
   <button mat-button (click)="navigate('/')">Home</button>
   <button mat-button (click)="navigate('/listings')">Listings</button>
-  <button mat-button (click)="navigate('/login')">Sign In</button></mat-toolbar>
+  @if(isLoggedIn) {
+    @if(userId){
+      <button mat-button (click)="navigate(`account/${userId}`)">Account details</button>
+    }
+   <button mat-button (click)="logout()">Logout</button>
+  } @else{
+    <button mat-button (click)="navigate('/login')">Sign In</button>
+    <button mat-button (click)="navigate('/register')">Sign Up</button>
+  }
+
+</mat-toolbar>
 <router-outlet></router-outlet>
