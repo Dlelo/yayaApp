@@ -5,6 +5,8 @@
       <h2 class="mb-0">My Account</h2>
     </div>
 
+    {{ userDetails | async | json}}
+
     <mat-divider></mat-divider>
 
     <div class="row mt-3">

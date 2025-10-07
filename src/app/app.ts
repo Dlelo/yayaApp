@@ -16,10 +16,8 @@ export class App {
   private readonly router: Router = inject(Router);
   private readonly loginService: LoginService =inject(LoginService);
 
-  protected readonly title = signal('yayaApp');
-
   isLoggedIn:boolean = this.loginService.isLoggedIn();
-  userId:string | null = this.loginService.userId();
+  userId:number | null = this.loginService.userId();
 
   navigate(path: string) {
     this.router.navigate([path]);

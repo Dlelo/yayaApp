@@ -10,25 +10,49 @@ import { EditAccountDetailsComponent } from './edit-account/edit-account.compone
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {OverviewComponent} from './dashboard/overview/overview.component';
 import {LoginComponent} from './login/login.component';
+import {AuthGuard} from './auth.guard';
+import {RoleGuard} from './role.guard';
 
 export const routes: Routes = [
-  // Public pages
   { path: '', component: HomeComponent },
-  { path: 'listings', component: ListingsComponent },
+  {
+    path: 'listings',
+    component: ListingsComponent,
+    canActivate: [AuthGuard]
+  },
   { path: 'register', component: RegisterHousehelpComponent },
   { path: 'login', component:LoginComponent },
-  { path: 'profile/:id', component: ProfileComponent },
+  {
+    path: 'profile/:id',
+    component: ProfileComponent,
+    canActivate: [AuthGuard]
+  },
 
-  // User account flow
-  { path: 'hire', component: HireRequestComponent },
-  { path: 'pay', component: PayComponent },
-  { path: 'account/:id', component: AccountDetailsComponent },
-  { path: 'edit-account/:id', component: EditAccountDetailsComponent },
+  { path: 'hire',
+    component: HireRequestComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'pay',
+    component: PayComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'account/:id',
+    component: AccountDetailsComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'edit-account/:id',
+    component: EditAccountDetailsComponent,
+    canActivate: [AuthGuard]
+  },
 
-  // Admin dashboard
   {
     path: 'dashboard',
     component: DashboardComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ADMIN', 'AGENT'] },
     children: [
       { path: 'agents', loadComponent: () => import('./dashboard/agents/agents.component').then(m => m.AgentsComponent) },
       { path: 'houseHelps', loadComponent: () => import('./dashboard/house-helps/house-helps.component').then(m => m.HouseHelpsComponent) },

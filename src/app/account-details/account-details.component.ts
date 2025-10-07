@@ -1,9 +1,12 @@
-import { Component } from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {MatDivider} from '@angular/material/divider';
 import {MatCard} from '@angular/material/card';
-import {DatePipe, NgClass} from '@angular/common';
+import {AsyncPipe, DatePipe, JsonPipe, NgClass} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButton} from '@angular/material/button';
+import {AuthService} from '../auth/auth.service';
+import {AccountDetailsService} from './account-details.service';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-account-details',
@@ -15,11 +18,21 @@ import {MatButton} from '@angular/material/button';
     MatCard,
     NgClass,
     DatePipe,
-    MatButton
+    MatButton,
+    AsyncPipe,
+    JsonPipe
   ],
   standalone: true,
 })
-export class AccountDetailsComponent {
+export class AccountDetailsComponent implements OnInit {
+  private readonly authService = inject(AuthService);
+  private readonly accountDetails:AccountDetailsService  = inject(AccountDetailsService);
+
+
+  userId:string | null = this.authService.getUserId();
+
+  userDetails: Observable<any> | undefined
+
   user = {
     name: 'John Doe',
     email: 'johndoe@example.com',
@@ -30,6 +43,11 @@ export class AccountDetailsComponent {
       expiry: new Date(2025, 11, 31),
     },
   };
+
+  ngOnInit(): void {
+    if(this.userId === null) return;
+   this.userDetails = this.accountDetails.getHomeOwnerById(this.userId)
+  }
 
   editAccount() {
     console.log('Edit account clicked');

@@ -13,11 +13,11 @@ export class AccountDetailsService {
 
   constructor(private http: HttpClient) {}
 
-  getHouseHelpById(id: number): Observable<any> {
+  getHouseHelpById(id: string): Observable<any> {
     return this.http.get<any>(`${this.houseHelpUrl}/${id}`);
   }
 
-  getHomeOwnerById(id: number): Observable<any> {
+  getHomeOwnerById(id: string): Observable<any> {
     return this.http.get<any>(`${this.homeOwnerUrl}/${id}`);
   }
 }
