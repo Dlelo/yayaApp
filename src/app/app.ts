@@ -4,6 +4,7 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatButtonModule} from '@angular/material/button';
 import {Router} from '@angular/router';
 import {LoginService} from './login/login.service';
+import {AuthService} from './auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +16,7 @@ import {LoginService} from './login/login.service';
 export class App {
   private readonly router: Router = inject(Router);
   private readonly loginService: LoginService =inject(LoginService);
+  private readonly authService:AuthService = inject(AuthService);
 
   isLoggedIn:boolean = this.loginService.isLoggedIn();
   userId:number | null = this.loginService.userId();

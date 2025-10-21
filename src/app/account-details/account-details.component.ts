@@ -7,6 +7,7 @@ import {MatButton} from '@angular/material/button';
 import {AuthService} from '../auth/auth.service';
 import {AccountDetailsService} from './account-details.service';
 import {Observable} from 'rxjs';
+import {LoginService} from '../login/login.service';
 
 @Component({
   selector: 'app-account-details',
@@ -25,28 +26,29 @@ import {Observable} from 'rxjs';
   standalone: true,
 })
 export class AccountDetailsComponent implements OnInit {
-  private readonly authService = inject(AuthService);
+  private readonly loginService = inject(LoginService);
   private readonly accountDetails:AccountDetailsService  = inject(AccountDetailsService);
 
 
-  userId:string | null = this.authService.getUserId();
+  userId:number | null = this.loginService.userId();
 
-  userDetails: Observable<any> | undefined
-
-  user = {
-    name: 'John Doe',
-    email: 'johndoe@example.com',
-    phone: '+254712345678',
+  userDetails: Observable<{
+    id: number;
+    name: string;
+    email: string;
+    roles: string[];
+    houseHelp: string | null;
+    homeOwner: string | null;
     subscription: {
-      plan: 'Premium',
-      active: true,
-      expiry: new Date(2025, 11, 31),
+      plan: string,
+      active: boolean,
+      expiry:string,
     },
-  };
+  }> | null = null;
 
   ngOnInit(): void {
     if(this.userId === null) return;
-   this.userDetails = this.accountDetails.getHomeOwnerById(this.userId)
+   this.userDetails = this.accountDetails.getUserById(this.userId)
   }
 
   editAccount() {
@@ -56,6 +58,6 @@ export class AccountDetailsComponent implements OnInit {
 
   logout() {
     console.log('Logout clicked');
-    // TODO: clear session & redirect to login
+    this.loginService.logout();
   }
 }

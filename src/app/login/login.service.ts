@@ -4,18 +4,16 @@ import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environments';
 import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 
 export interface LoginResponse {
   token: string;
-  userId: number;
-  email: string;
-  role: string;
 }
 
 export interface UserInfo {
   userId: number;
   email: string;
-  role: string;
+  role: string[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -28,49 +26,68 @@ export class LoginService {
 
   public currentUser = this.currentUserSignal.asReadonly();
   public isLoggedIn = computed(() => !!this.currentUserSignal());
-  public userRole = computed(() => this.currentUserSignal()?.role || null);
+  public userRoles = computed(() => this.currentUserSignal()?.role || []);
   public userId = computed(() => this.currentUserSignal()?.userId || null);
+  public email = computed(() => this.currentUserSignal()?.email || null);
 
   constructor() {
     this.loadUserFromStorage();
   }
 
   login(email: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, { email, password })
+    return this.http
+      .post<LoginResponse>(`${environment.apiUrl}/auth/login`, { email, password })
       .pipe(
         tap(response => {
-          this.storeUserData(response);
+          this.storeUserData(response.token);
         })
       );
   }
 
-  private storeUserData(response: LoginResponse): void {
-    if (this.isBrowser()) {
-      localStorage.setItem('token', response.token);
-      const userInfo = {
-        userId: response.userId,
-        email: response.email,
-        role: response.role
-      };
-      localStorage.setItem('user', JSON.stringify(userInfo));
+  private storeUserData(token: string): void {
+    if (!this.isBrowser()) return;
 
-      // Update signal
+    // Save token
+    this.authService.setToken(token);
+
+    try {
+      const decoded: any = jwtDecode(token);
+
+      // Extract relevant fields from decoded token
+      const userInfo: UserInfo = {
+        userId: decoded?.userId,
+        email: decoded?.sub,
+        role: this.extractRoles(decoded?.role),
+      };
+
+      localStorage.setItem('user', JSON.stringify(userInfo));
       this.currentUserSignal.set(userInfo);
+    } catch (error) {
+      console.error('Failed to decode token:', error);
+      this.clearStorage();
     }
   }
 
+  private extractRoles(roleClaim: string | string[]): string[] {
+    if (!roleClaim) return [];
+    if (Array.isArray(roleClaim)) return roleClaim;
+
+    // Convert role string to readable role names if in format "[Role(id=1, name=HOMEOWNER,...)]"
+    const roleMatches = [...roleClaim.matchAll(/name=(\w+)/g)];
+    return roleMatches.map(match => match[1]);
+  }
+
   private loadUserFromStorage(): void {
-    // Check if we're in browser environment before accessing localStorage
-    if (this.isBrowser()) {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        try {
-          const user: UserInfo = JSON.parse(userStr);
-          this.currentUserSignal.set(user);
-        } catch (error) {
-          console.error('Error parsing user data from localStorage:', error);
-          this.clearStorage();
-        }
+    if (!this.isBrowser()) return;
+
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const user: UserInfo = JSON.parse(userStr);
+        this.currentUserSignal.set(user);
+      } catch (error) {
+        console.error('Error parsing user data from localStorage:', error);
+        this.clearStorage();
       }
     }
   }
@@ -81,7 +98,7 @@ export class LoginService {
 
   private clearStorage(): void {
     if (this.isBrowser()) {
-      localStorage.removeItem('token');
+      this.authService.clearToken();
       localStorage.removeItem('user');
     }
   }
@@ -91,10 +108,7 @@ export class LoginService {
   }
 
   getToken(): string | null {
-    if (this.isBrowser()) {
-      return localStorage.getItem('token');
-    }
-    return null;
+    return this.authService.getToken();
   }
 
   logout(): void {
@@ -103,14 +117,11 @@ export class LoginService {
     this.router.navigate(['/login']);
   }
 
-  // Check if user has specific role
   hasRole(role: string): boolean {
-    return this.userRole() === role;
+    return this.userRoles().includes(role);
   }
 
-  // Check if user has any of the specified roles
   hasAnyRole(roles: string[]): boolean {
-    const userRole = this.userRole();
-    return userRole ? roles.includes(userRole) : false;
+    return roles.some(r => this.userRoles().includes(r));
   }
 }

@@ -7,17 +7,13 @@ import {map, Observable} from 'rxjs';
   providedIn: 'root'
 })
 export class AccountDetailsService {
-  private houseHelpUrl = `${environment.apiUrl}/househelp`;
-  private homeOwnerUrl =`${environment.apiUrl}/homeowner`;
+  private userUrl =`${environment.apiUrl}/user`;
 
 
   constructor(private http: HttpClient) {}
 
-  getHouseHelpById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.houseHelpUrl}/${id}`);
+  getUserById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.userUrl}/${id}`);
   }
 
-  getHomeOwnerById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.homeOwnerUrl}/${id}`);
-  }
 }
