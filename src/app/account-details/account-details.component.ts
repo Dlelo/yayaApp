@@ -4,7 +4,6 @@ import {MatCard} from '@angular/material/card';
 import {AsyncPipe, DatePipe, JsonPipe, NgClass} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButton} from '@angular/material/button';
-import {AuthService} from '../auth/auth.service';
 import {AccountDetailsService} from './account-details.service';
 import {Observable} from 'rxjs';
 import {LoginService} from '../login/login.service';
@@ -21,12 +20,11 @@ import {LoginService} from '../login/login.service';
     DatePipe,
     MatButton,
     AsyncPipe,
-    JsonPipe
   ],
   standalone: true,
 })
 export class AccountDetailsComponent implements OnInit {
-  private readonly loginService = inject(LoginService);
+  private readonly loginService: LoginService = inject(LoginService);
   private readonly accountDetails:AccountDetailsService  = inject(AccountDetailsService);
 
 

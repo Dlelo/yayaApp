@@ -15,6 +15,7 @@ import {AsyncPipe, JsonPipe} from '@angular/common';
     MatButton,
     AsyncPipe,
   ],
+  providers: [HousehelpService],
   standalone: true
 })
 export class HouseHelpsComponent {

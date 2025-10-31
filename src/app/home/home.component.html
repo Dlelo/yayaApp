@@ -20,36 +20,102 @@
     <div class="col-md-6 text-center">
       <img
         src="/househelp-banner.png"
-        alt="Househelp illustration"
+        alt="Househelp"
         class="img-fluid rounded"
         style="max-height: 280px; object-fit: cover"
       />
     </div>
   </div>
 
-  <!-- Recent Listings -->
-  <div class="recent-listings">
-    <h2 class="text-center mb-4">Recent Listings</h2>
-
-    <div class="row g-4">
-      @for (help of recentHousehelps; track help.name) {
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-          <mat-card class="h-100 text-center">
-            <mat-card-header class="d-flex flex-column align-items-center">
-              <div
-                mat-card-avatar
-                class="rounded-circle bg-secondary mb-2"
-                style="width: 60px; height: 60px"
-              ></div>
-              <mat-card-title>{{ help.name }}</mat-card-title>
-              <mat-card-subtitle>{{ help.role }}</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              <div class="text-warning">⭐️⭐️⭐️⭐️⭐️</div>
-            </mat-card-content>
-          </mat-card>
-        </div>
-      }
+  <section class="py-5" style="background-color: #FFF9F0">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold" style="color: #2E473B">Browse Services</h2>
+      <p class="text-muted">
+        Find the perfect nanny service for your family’s needs
+      </p>
     </div>
-  </div>
+
+    <div class="row g-4 justify-content-center">
+      <!-- Live-in Nanny -->
+      <div class="col-12 col-sm-6 col-md-4">
+        <mat-card class="service-card h-100 shadow-sm">
+          <img
+            mat-card-image
+            src="/live-in.png"
+            alt="Live-in househelp"
+          />
+          <mat-card-content>
+            <h5 class="fw-bold my-2" style="color: #2E473B">Live-in Nanny</h5>
+            <p class="text-muted">
+              Round-the-clock professional care and support for your little ones
+              in the comfort of your home.
+            </p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button
+              mat-button
+              style="color: #E97B32"
+              (click)="navigate('/services/livein')"
+            >
+              View Service →
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+      <!-- Dayburg Nanny -->
+      <div class="col-12 col-sm-6 col-md-4">
+        <mat-card class="service-card h-100 shadow-sm">
+          <img
+            mat-card-image
+            src="/day-burg.png"
+            alt="Dayburg Nanny"
+          />
+          <mat-card-content>
+            <h5 class="fw-bold my-2" style="color: #2E473B">Dayburg Nanny</h5>
+            <p class="text-muted">
+              Daytime childcare for working parents — safe, nurturing, and
+              perfectly aligned with your schedule.
+            </p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button
+              mat-button
+              style="color: #E97B32"
+              (click)="navigate('/services/dayburg')"
+            >
+              View Service →
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+      <!-- Emergency Nanny -->
+      <div class="col-12 col-sm-6 col-md-4">
+        <mat-card class="service-card h-100 shadow-sm">
+          <img
+            mat-card-image
+            src="/emergency.png"
+            alt="Emergency Nanny"
+          />
+          <mat-card-content>
+            <h5 class="fw-bold my-2" style="color: #2E473B">Emergency Nanny</h5>
+            <p class="text-muted">
+              Reliable, on-call childcare whenever you need urgent help.
+              Compassionate support within hours.
+            </p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button
+              mat-button
+              style="color: #E97B32"
+              (click)="navigate('/services/emergency')"
+            >
+              View Service →
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </section>
 </div>
