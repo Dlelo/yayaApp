@@ -3,24 +3,24 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
 import {Router} from '@angular/router';
 import {MatButton} from '@angular/material/button';
+import {HousehelpService} from '../dashboard/house-helps/house-helps.service';
+import {AsyncPipe} from '@angular/common';
 
 
 
 @Component({
   standalone: true,
   selector: 'app-listings',
-  imports: [MatPaginatorModule, MatCardModule, MatButton],
+  imports: [MatPaginatorModule, MatCardModule, MatButton, AsyncPipe],
   templateUrl: './listing.component.html',
   styleUrls: ['./listing.component.scss'],
+  providers: [HousehelpService],
 })
 export class ListingsComponent {
   private readonly router: Router = inject(Router);
-  househelps = [
-      {id:1, name: 'Mary', role: 'Housekeeper', photo: 'assets/mary.png', description: '5 years experience in cleaning and childcare' },
-      {id:2, name: 'Grace', role: 'Cook', photo: 'assets/grace.png', description: 'Expert in Kenyan and continental dishes' },
-      {id:3, name: 'Esther', role: 'Nanny', photo: 'assets/esther.png', description: 'Loving nanny with 3 years of experience' }
+  private readonly  househelpService = inject(HousehelpService);
 
-];
+  houseHelps = this.househelpService.getAll();
 
   onPageChange(event: PageEvent) {
     console.log('Load page', event.pageIndex);

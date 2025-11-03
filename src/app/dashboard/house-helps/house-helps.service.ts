@@ -11,7 +11,7 @@ export class HousehelpService {
 
   getAll(
     page: number = 0,
-    size: number = 10,
+    size: number = 20,
     filter: any = {}
   ): Observable<{ data: any[]; length: number }> {
     const params = new HttpParams()
@@ -19,7 +19,7 @@ export class HousehelpService {
       .set('size', size);
 
 
-    return this.http.post<any>(`${this.apiUrl}/filter`, filter, { params }).pipe(
+    return this.http.post<any>(`${this.apiUrl}/search`, filter, { params }).pipe(
       map(res => ({
         data: res.content ?? res,
         length: res.totalElements ?? res.length ?? 0

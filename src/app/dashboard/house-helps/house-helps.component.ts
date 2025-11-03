@@ -19,7 +19,7 @@ import {AsyncPipe, JsonPipe} from '@angular/common';
   standalone: true
 })
 export class HouseHelpsComponent {
-  private readonly  househelpService = inject(HousehelpService);
+  private readonly  househelpService:HousehelpService = inject(HousehelpService);
 
   houseHelps = this.househelpService.getAll();
 }
