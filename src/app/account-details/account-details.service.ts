@@ -16,4 +16,13 @@ export class AccountDetailsService {
     return this.http.get<any>(`${this.userUrl}/${id}`);
   }
 
+  updateUser(id: number, payload: any): Observable<any> {
+    return this.http.put<any>(`${this.userUrl}/${id}`, payload).pipe(
+      map((response) => {
+        console.log('User updated successfully:', response);
+        return response;
+      })
+    );
+  }
+
 }

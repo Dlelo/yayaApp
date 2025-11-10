@@ -1,11 +1,17 @@
-.container {
-  max-width: 800px;
-}
-
 mat-card {
-  padding: 1.5rem;
+  max-width: 800px;
+  margin: auto;
 }
 
-h2 {
+mat-form-field {
+  font-size: 15px;
+}
+
+h4 {
   font-weight: 600;
+  color: #1976d2;
+}
+
+button {
+  min-width: 120px;
 }

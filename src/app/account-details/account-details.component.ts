@@ -7,6 +7,7 @@ import {MatButton} from '@angular/material/button';
 import {AccountDetailsService} from './account-details.service';
 import {Observable} from 'rxjs';
 import {LoginService} from '../login/login.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-account-details',
@@ -26,6 +27,7 @@ import {LoginService} from '../login/login.service';
 export class AccountDetailsComponent implements OnInit {
   private readonly loginService: LoginService = inject(LoginService);
   private readonly accountDetails:AccountDetailsService  = inject(AccountDetailsService);
+  private readonly router:Router = inject(Router);
 
 
   userId:number | null = this.loginService.userId();
@@ -35,7 +37,20 @@ export class AccountDetailsComponent implements OnInit {
     name: string;
     email: string;
     roles: string[];
-    houseHelp: string | null;
+    houseHelp: {
+      contactPersons:string
+      currentLocation:string,
+      goodConduct:string,
+      homeLocation:string,
+      languages:string[]
+      levelOfEducation:string,
+      medicalReport:string,
+      nationalId:string,
+      numberOfChildren:string,
+      religion:string,
+      skills:string[]
+      yearsOfExperience:number
+    };
     homeOwner: string | null;
     subscription: {
       plan: string,
@@ -50,12 +65,7 @@ export class AccountDetailsComponent implements OnInit {
   }
 
   editAccount() {
-    console.log('Edit account clicked');
-    // TODO: navigate to edit profile form
+    this.router.navigate(['/edit-account']);
   }
 
-  logout() {
-    console.log('Logout clicked');
-    this.loginService.logout();
-  }
 }
