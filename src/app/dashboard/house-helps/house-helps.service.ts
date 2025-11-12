@@ -30,4 +30,10 @@ export class HousehelpService {
   register(househelp: any): Observable<any> {
     return this.http.post(this.apiUrl, househelp);
   }
+
+  updateHouseHelpDetails(id: number, househelp: any): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${id}`, househelp);
+  }
+
+
 }

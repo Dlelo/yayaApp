@@ -13,6 +13,7 @@ import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {LoginService} from '../login/login.service';
 import {AccountDetailsService} from '../account-details/account-details.service';
 import {Observable, take, tap} from 'rxjs';
+import {HousehelpService} from '../dashboard/house-helps/house-helps.service';
 
 @Component({
   selector: 'app-edit-profile',
@@ -29,7 +30,8 @@ import {Observable, take, tap} from 'rxjs';
     MatButtonModule,
     MatSelectModule,
     MatSnackBarModule,
-  ]
+  ],
+  providers: [HousehelpService],
 })
 export class EditAccountDetailsComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
@@ -37,6 +39,7 @@ export class EditAccountDetailsComponent implements OnInit {
   private readonly loginService = inject(LoginService);
   private readonly accountDetails = inject(AccountDetailsService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly  househelpService = inject(HousehelpService);
 
   userId: number | null = this.loginService.userId();
   userDetails$!: Observable<any>;
@@ -128,7 +131,7 @@ export class EditAccountDetailsComponent implements OnInit {
 
 
 
-  save(): void {
+  save(id:number): void {
     if (this.form.invalid || !this.userId) return;
 
     const formValue = this.form.value;
@@ -138,6 +141,23 @@ export class EditAccountDetailsComponent implements OnInit {
         .split(',')
         .map((s: string) => s.trim())
         .filter((s: string) => s.length > 0);
+    }
+
+    if(this.isHouseHelp){
+      this.househelpService.updateHouseHelpDetails(id, formValue.houseHelp).subscribe({
+        next: () => {
+          this.snackBar.open('✅ Account details updated successfully!', 'Close', {
+            duration: 3000,
+          });
+          this.router.navigate([`/account/${this.userId}`]);
+        },
+        error: (err) => {
+          console.error(err);
+          this.snackBar.open('❌ Failed to update account. Please try again.', 'Close', {
+            duration: 3000,
+          });
+        },
+      })
     }
 
     this.accountDetails.updateUser(this.userId, formValue).subscribe({

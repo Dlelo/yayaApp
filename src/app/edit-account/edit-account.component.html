@@ -147,7 +147,14 @@
 
           <div class="d-flex justify-content-end mt-4 gap-2">
             <button mat-stroked-button color="warn" type="button" (click)="cancel()">Cancel</button>
-            <button mat-flat-button color="primary" type="submit" (click)="save()">Save Changes</button>
+            @if(isHouseHelp) {
+              <button mat-flat-button color="primary" type="submit" (click)="save(userDetails?.househelp?.id)">Save Changes</button>
+            }
+
+            @if(isHomeOwner) {
+              <button mat-flat-button color="primary" type="submit" (click)="save(userDetails?.homeowner?.id)">Save Changes</button>
+            }
+
           </div>
         </form>
       }
