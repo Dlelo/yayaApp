@@ -159,21 +159,6 @@ export class EditAccountDetailsComponent implements OnInit {
         },
       })
     }
-
-    this.accountDetails.updateUser(this.userId, formValue).subscribe({
-      next: () => {
-        this.snackBar.open('✅ Account details updated successfully!', 'Close', {
-          duration: 3000,
-        });
-        this.router.navigate(['/account']);
-      },
-      error: (err) => {
-        console.error(err);
-        this.snackBar.open('❌ Failed to update account. Please try again.', 'Close', {
-          duration: 3000,
-        });
-      },
-    });
   }
 
   cancel(): void {
