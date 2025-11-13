@@ -129,8 +129,6 @@ export class EditAccountDetailsComponent implements OnInit {
     }
   }
 
-
-
   save(id:number): void {
     if (this.form.invalid || !this.userId) return;
 

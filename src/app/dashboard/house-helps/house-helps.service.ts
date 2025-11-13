@@ -32,7 +32,6 @@ export class HousehelpService {
   }
 
   updateHouseHelpDetails(id: number, househelp: any): Observable<any> {
-    console.log("I get called");
     return this.http.patch(`${this.apiUrl}/${id}`, househelp);
   }
 
