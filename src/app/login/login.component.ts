@@ -34,7 +34,7 @@ export class LoginComponent {
     this.loginService.login(email!, password!).subscribe({
       next: (res) => {
         this.loading = false;
-        this.redirectBasedOnRole(this.loginService.userRoles());
+        this.router.navigate(['/']);
       },
       error: (err) => {
         this.loading = false;

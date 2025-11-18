@@ -28,6 +28,7 @@ export class DashboardComponent {
     { path: 'subscriptions', label: 'Subscriptions', icon: 'card_membership' },
     { path: 'requests', label: 'Requests', icon: 'assignment' },
     { path: 'reports', label: 'Reports', icon: 'bar_chart' },
+    { path: 'users', label: 'Users', icon: 'people' },
   ];
 
   totalUsers = 120;

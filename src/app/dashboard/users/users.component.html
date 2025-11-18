@@ -1,0 +1,32 @@
+<mat-card class="p-3 shadow-sm">
+  <h2 class="mb-3">Manage  House helps</h2>
+  <table class="table table-striped table-hover">
+    <thead class="table-light">
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Status</th>
+      <th class="text-end">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+      @for(user of (users | async)?.data; let i = $index; track $index){
+        <tr>
+          <td>{{ i + 1 }}</td>
+          <td>{{user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>
+            @for (role of user.roles; track $index; let isLast = $last){
+              <span class="small">{{ role.name }} {{ !isLast ? ', ' : '' }}</span>
+            }
+          </td>
+          <td class="text-end">
+            <button mat-stroked-button color="primary" class="me-2"  (click)="openEditUserDialog(user)">Edit User</button>
+          </td>
+        </tr>
+      }
+
+    </tbody>
+  </table>
+</mat-card>
