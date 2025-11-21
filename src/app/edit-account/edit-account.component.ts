@@ -14,6 +14,7 @@ import {LoginService} from '../login/login.service';
 import {AccountDetailsService} from '../account-details/account-details.service';
 import {Observable, take, tap} from 'rxjs';
 import {HousehelpService} from '../dashboard/house-helps/house-helps.service';
+import {HomeOwnerService} from '../dashboard/home-owners/home-owners.service';
 
 @Component({
   selector: 'app-edit-profile',
@@ -40,6 +41,7 @@ export class EditAccountDetailsComponent implements OnInit {
   private readonly accountDetails = inject(AccountDetailsService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly  househelpService = inject(HousehelpService);
+  private readonly  homeOwnerService = inject(HomeOwnerService);
 
   userId: number | null = this.loginService.userId();
   userDetails$!: Observable<any>;
@@ -143,6 +145,23 @@ export class EditAccountDetailsComponent implements OnInit {
 
     if(this.isHouseHelp){
       this.househelpService.updateHouseHelpDetails(id, formValue.houseHelp).subscribe({
+        next: () => {
+          this.snackBar.open('✅ Account details updated successfully!', 'Close', {
+            duration: 3000,
+          });
+          this.router.navigate([`/account/${this.userId}`]);
+        },
+        error: (err) => {
+          console.error(err);
+          this.snackBar.open('❌ Failed to update account. Please try again.', 'Close', {
+            duration: 3000,
+          });
+        },
+      })
+    }
+
+    if(this.isHomeOwner){
+      this.homeOwnerService.updateHomeOwnerDetails(id, formValue.homeOwner).subscribe({
         next: () => {
           this.snackBar.open('✅ Account details updated successfully!', 'Close', {
             duration: 3000,
