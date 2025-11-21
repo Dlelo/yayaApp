@@ -7,7 +7,7 @@ import {map, Observable} from 'rxjs';
   providedIn: 'root'
 })
 export class AccountDetailsService {
-  private userUrl =`${environment.apiUrl}/user`;
+  private userUrl =`${environment.apiUrl}/users`;
 
 
   constructor(private http: HttpClient) {}
