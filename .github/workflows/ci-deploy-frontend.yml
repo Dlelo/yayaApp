@@ -65,7 +65,7 @@ jobs:
           key: ${{ secrets.DOSSH }}
           port: 22
           script: |
-            cd /opt/yayaApp
+            cd /opt/yaya-deploy
             echo "Pulling latest frontend image..."
             docker compose pull frontend
             echo "Recreating frontend container..."
