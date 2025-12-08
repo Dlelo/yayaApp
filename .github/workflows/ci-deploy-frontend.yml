@@ -40,7 +40,12 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            script: |
             cd ${{ secrets.DEPLOY_PATH }}
+            echo "Pulling latest frontend image..."
             docker compose pull frontend
-            docker compose up -d --no-deps --build frontend
+            echo "Recreating frontend container..."
+            docker compose up -d --no-deps frontend
+
+            echo "Restarting Nginx..."
             docker compose restart nginx
