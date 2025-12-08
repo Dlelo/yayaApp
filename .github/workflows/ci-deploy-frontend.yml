@@ -1,4 +1,4 @@
-name: Build & Deploy Frontend (GHCR)
+name: Deploy to Production
 
 on:
   push:
