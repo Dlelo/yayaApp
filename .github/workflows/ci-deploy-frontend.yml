@@ -60,7 +60,7 @@ jobs:
       - name: Deploy to server
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: ${{ secrets.SERVER_HOST }}
+          host: yayaconnectapp.com
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.DOSSH }}
           script: |
