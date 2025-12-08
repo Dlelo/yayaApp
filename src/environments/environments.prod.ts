@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://your-backend-domain.com/api'  // e.g. deployed backend
+  apiUrl: 'https://api.yayaconnectapp.com'  // e.g. deployed backend
 };
