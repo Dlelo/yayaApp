@@ -44,7 +44,7 @@ jobs:
       # 6️⃣ Build Docker image (copy pre-built Angular dist)
       - name: Build Docker image
         env:
-          IMAGE: ghcr.io/${{ github.repository_owner }}/yaya-frontend
+          IMAGE: ghcr.io/dlelo/yaya-frontend
         run: |
           docker build -t $IMAGE:latest -t $IMAGE:${{ github.sha }} .
 
