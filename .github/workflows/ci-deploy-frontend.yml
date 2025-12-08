@@ -17,7 +17,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2️⃣ Set up Node.js
+      # 2️⃣ Set up Node.js (to build Angular)
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -56,7 +56,7 @@ jobs:
           docker push $IMAGE:latest
           docker push $IMAGE:${{ github.sha }}
 
-      # 8️⃣ Deploy to server (IMPROVED VERSION)
+      # 8️⃣ Deploy to server
       - name: Deploy to server
         uses: appleboy/ssh-action@v0.1.7
         with:
@@ -71,34 +71,21 @@ jobs:
             echo "Logging in to GHCR..."
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u dlelo --password-stdin
 
-            # Clean Docker cache to fix "unable to lease content" error
-            echo "Cleaning Docker cache..."
-            docker system prune -f
-
             # Stop and remove old container
             echo "Stopping old container..."
             docker compose stop frontend 2>/dev/null || true
             docker compose rm -f frontend 2>/dev/null || true
 
-            # Pull new image with retry
+            # Pull new image
             echo "Pulling latest image..."
-            if ! docker compose pull frontend; then
-              echo "Pull failed, waiting and retrying..."
-              sleep 5
-              docker compose pull frontend
-            fi
+            docker compose pull frontend
 
             # Start new container
             echo "Starting container on port 4200..."
             docker compose up -d --no-deps frontend
 
-            # Wait and verify
-            echo "Waiting for container to start..."
-            sleep 3
-            docker ps | grep frontend && echo "✅ Container is running!" || echo "⚠️ Container not found in ps output"
-
             # Cleanup
-            echo "Cleaning up unused images..."
+            echo "Cleaning up..."
             docker image prune -f
 
             echo "✅ Deployment successful! Frontend is now available on port 4200"
