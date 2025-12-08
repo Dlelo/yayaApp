@@ -56,7 +56,7 @@ jobs:
           docker push $IMAGE:latest
           docker push $IMAGE:${{ github.sha }}
 
-      # 8️⃣ Deploy to server (FIXED: script uses pipe | for multi-line)
+      # 8️⃣ Deploy to server
       - name: Deploy to server
         uses: appleboy/ssh-action@v0.1.7
         with:
@@ -66,9 +66,26 @@ jobs:
           port: 22
           script: |
             cd /opt/yaya-deploy
-            echo "Pulling latest frontend image..."
+
+            # Login to GHCR
+            echo "Logging in to GHCR..."
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u dlelo --password-stdin
+
+            # Stop and remove old container
+            echo "Stopping old container..."
+            docker compose stop frontend 2>/dev/null || true
+            docker compose rm -f frontend 2>/dev/null || true
+
+            # Pull new image
+            echo "Pulling latest image..."
             docker compose pull frontend
-            echo "Recreating frontend container..."
+
+            # Start new container
+            echo "Starting container on port 4200..."
             docker compose up -d --no-deps frontend
-            echo "Restarting Nginx..."
-            docker compose restart nginx
+
+            # Cleanup
+            echo "Cleaning up..."
+            docker image prune -f
+
+            echo "✅ Deployment successful! Frontend is now available on port 4200"
