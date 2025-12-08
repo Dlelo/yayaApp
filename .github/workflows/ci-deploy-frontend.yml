@@ -67,6 +67,10 @@ jobs:
           script: |
             cd /opt/yaya-deploy
 
+            # Update docker-compose to correct port mapping
+            echo "Updating port mapping to 4200:4000..."
+            sed -i 's/"4200:80"/"4200:4000"/' docker-compose.yml
+
             # Login to GHCR
             echo "Logging in to GHCR..."
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u dlelo --password-stdin
@@ -101,4 +105,4 @@ jobs:
             echo "Cleaning up unused images..."
             docker image prune -f
 
-            echo "✅ Deployment successful! Frontend is now available on port 4200"
+            echo "✅ Deployment successful!"
