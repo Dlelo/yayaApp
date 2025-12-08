@@ -12,7 +12,7 @@ RUN npm ci --omit=dev
 COPY . .
 
 # Build Angular (Browser + SSR)
-RUN npm run build --configuration production
+RUN npm run build
 
 
 # Stage 2: Run SSR server
