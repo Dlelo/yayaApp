@@ -18,8 +18,8 @@ export class App {
   private readonly loginService: LoginService =inject(LoginService);
   private readonly authService:AuthService = inject(AuthService);
 
-  isLoggedIn:boolean = this.loginService.isLoggedIn();
-  userId:number | null = this.loginService.userId();
+  isLoggedIn = this.loginService.isLoggedIn;
+  userId = this.loginService.userId;
 
   navigate(path: string) {
     this.router.navigate([path]);

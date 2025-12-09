@@ -44,6 +44,10 @@ export class LoginService {
       );
   }
 
+  refreshAuthState(): void {
+    this.loadUserFromStorage();
+  }
+
   private storeUserData(token: string): void {
     if (!this.isBrowser()) return;
 

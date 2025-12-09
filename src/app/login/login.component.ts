@@ -42,6 +42,7 @@ export class LoginComponent {
         console.error('Login error:', err);
       }
     });
+    this.loginService.refreshAuthState();
   }
 
   private redirectBasedOnRole(roleData: string | string[]): void {
