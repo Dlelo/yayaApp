@@ -20,8 +20,7 @@ export class RegisterHousehelpComponent {
 
   form = new FormGroup({
     name: new FormControl('', Validators.required),
-    phone: new FormControl('', [Validators.pattern(/^254\d{9}$/)]),
-    username: new FormControl('', Validators.required),
+    phone: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
     email: new FormControl('', Validators.required),
   });
