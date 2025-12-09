@@ -20,7 +20,7 @@ export class RegisterHousehelpComponent {
 
   form = new FormGroup({
     name: new FormControl('', Validators.required),
-    phone_number: new FormControl('', Validators.required),
+    phoneNumber: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
     email: new FormControl('', Validators.required),
   });
