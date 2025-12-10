@@ -21,17 +21,16 @@
             </mat-form-field>
           </div>
 
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>National ID</mat-label>
+            <input matInput formControlName="nationalId" />
+          </mat-form-field>
+
           <!-- HOUSEHELP fields -->
 
           @if(isHouseHelp){
             <div formGroupName="houseHelp">
               <h4 class="mt-4">Work Details</h4>
-
-              <mat-form-field appearance="outline" class="w-100">
-                <mat-label>National ID</mat-label>
-                <input matInput formControlName="nationalId" />
-              </mat-form-field>
-
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Skills (comma-separated)</mat-label>
                 <input matInput formControlName="skills" />
@@ -126,22 +125,51 @@
 
           <!-- HOMEOWNER fields -->
           @if(isHomeOwner){
-            <div formGroupName="subscription">
-              <h4 class="mt-4">Subscription</h4>
-
+            <div formGroupName="homeOwner" class="row">
+            <div class="col-md-6">
               <mat-form-field appearance="outline" class="w-100">
-                <mat-label>Plan</mat-label>
-                <input matInput formControlName="plan" />
-              </mat-form-field>
-
-              <mat-form-field appearance="outline" class="w-100">
-                <mat-label>Status</mat-label>
-                <mat-select formControlName="active">
-                  <mat-option [value]="true">Active</mat-option>
-                  <mat-option [value]="false">Inactive</mat-option>
-                </mat-select>
+                <mat-label>Number of Children</mat-label>
+                <input matInput formControlName="numberOfDependents" type="number" />
               </mat-form-field>
             </div>
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>House type</mat-label>
+                <mat-select formControlName="houseType">
+                  <mat-option [value]="true">Apartment</mat-option>
+                  <mat-option [value]="false">Bungalow</mat-option>
+                  <mat-option [value]="false">Mansionette</mat-option>
+                </mat-select>
+              </mat-form-field>
+              </div>
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Number of rooms</mat-label>
+                <input matInput formControlName="numberOfRooms" type="number" />
+              </mat-form-field>
+            </div>
+            <div class="col-md-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Location</mat-label>
+                <input matInput formControlName="homeLocation"/>
+              </mat-form-field>
+            </div>
+            </div>
+<!--            <div formGroupName="subscription">-->
+<!--              <h4 class="mt-4">Subscription</h4>-->
+<!--              <mat-form-field appearance="outline" class="w-100">-->
+<!--                <mat-label>Plan</mat-label>-->
+<!--                <input matInput formControlName="plan" />-->
+<!--              </mat-form-field>-->
+
+<!--              <mat-form-field appearance="outline" class="w-100">-->
+<!--                <mat-label>Status</mat-label>-->
+<!--                <mat-select formControlName="active">-->
+<!--                  <mat-option [value]="true">Active</mat-option>-->
+<!--                  <mat-option [value]="false">Inactive</mat-option>-->
+<!--                </mat-select>-->
+<!--              </mat-form-field>-->
+<!--            </div>-->
 
           }
 

@@ -32,7 +32,7 @@ import {HomeOwnerService} from '../dashboard/home-owners/home-owners.service';
     MatSelectModule,
     MatSnackBarModule,
   ],
-  providers: [HousehelpService],
+  providers: [HousehelpService,HomeOwnerService],
 })
 export class EditAccountDetailsComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
@@ -74,10 +74,10 @@ export class EditAccountDetailsComponent implements OnInit {
     this.form = this.fb.group({
       name: [user.name, Validators.required],
       email: [user.email, [Validators.required, Validators.email]],
+      nationalId: [user.houseHelp?.nationalId || ''],
 
       houseHelp: this.isHouseHelp
         ? this.fb.group({
-          nationalId: [user.houseHelp?.nationalId || ''],
           yearsOfExperience: [user.houseHelp?.yearsOfExperience || 0],
           skills: [user.houseHelp?.skills?.join(', ') || ''],
           goodConduct: [user.houseHelp?.goodConduct || ''],
@@ -85,10 +85,12 @@ export class EditAccountDetailsComponent implements OnInit {
         })
         : null,
 
-      subscription: this.isHomeOwner
+      homeOwner: this.isHomeOwner
         ? this.fb.group({
-          plan: [user.subscription?.plan || ''],
-          active: [user.subscription?.active || false],
+          numberOfDependents: [user.homeOwner?.numberOfDependents || ''],
+          houseType: [user.homeOwner?.houseType || ''],
+          numberOfRooms: [user.homeOwner?.numberOfRooms || ''],
+          homeLocation: [user.homeOwner?.homeLocation || ''],
         })
         : null,
     });
