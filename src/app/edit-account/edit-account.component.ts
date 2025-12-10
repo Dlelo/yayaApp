@@ -144,7 +144,7 @@ export class EditAccountDetailsComponent implements OnInit {
     }
 
     if(this.isHouseHelp){
-      this.househelpService.updateHouseHelpDetails(id, formValue.houseHelp).subscribe({
+      this.househelpService.updateHouseHelpDetails(this.userId, formValue.houseHelp).subscribe({
         next: () => {
           this.snackBar.open('✅ Account details updated successfully!', 'Close', {
             duration: 3000,
@@ -161,7 +161,7 @@ export class EditAccountDetailsComponent implements OnInit {
     }
 
     if(this.isHomeOwner){
-      this.homeOwnerService.updateHomeOwnerDetails(id, formValue.homeOwner).subscribe({
+      this.homeOwnerService.updateHomeOwnerDetails(this.userId, formValue.homeOwner).subscribe({
         next: () => {
           this.snackBar.open('✅ Account details updated successfully!', 'Close', {
             duration: 3000,
