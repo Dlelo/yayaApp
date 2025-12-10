@@ -36,6 +36,7 @@ export class AccountDetailsComponent implements OnInit {
     id: number;
     name: string;
     email: string;
+    phoneNumber: string;
     roles: string[];
     houseHelp: {
       contactPersons:string

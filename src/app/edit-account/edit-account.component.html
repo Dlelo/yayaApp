@@ -3,24 +3,10 @@
     <mat-card class="shadow-sm rounded-3 p-3">
       <div class="d-flex align-items-center mb-3">
         <mat-icon class="me-2 text-primary">edit</mat-icon>
-        <h2>Edit My Account</h2>
+        <h2>Hi, {{userDetails.name}} update account details</h2>
       </div>
       @if(form){
         <form [formGroup]="form" class="row g-3">
-          <div class="col-md-6">
-            <mat-form-field appearance="outline" class="w-100">
-              <mat-label>Name</mat-label>
-              <input matInput formControlName="name" />
-            </mat-form-field>
-          </div>
-
-          <div class="col-md-6">
-            <mat-form-field appearance="outline" class="w-100">
-              <mat-label>Email</mat-label>
-              <input matInput formControlName="email"/>
-            </mat-form-field>
-          </div>
-
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>National ID</mat-label>
             <input matInput formControlName="nationalId" />
