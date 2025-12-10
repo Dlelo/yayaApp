@@ -73,7 +73,7 @@ export class EditAccountDetailsComponent implements OnInit {
   private initializeForm(user: any): void {
     this.form = this.fb.group({
       name: [user.name, Validators.required],
-      email: [user.email, [Validators.required, Validators.email]],
+      email: [{value:user.email, disabled: true}, [Validators.required, Validators.email]],
       nationalId: [user.houseHelp?.nationalId || ''],
 
       houseHelp: this.isHouseHelp
