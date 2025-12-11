@@ -5,11 +5,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { LoginService } from './login.service';
+import { MatIconModule } from '@angular/material/icon';
+
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule],
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
@@ -18,6 +20,7 @@ export class LoginComponent {
 
   loading = false;
   errorMessage = '';
+  hidePassword = true;
 
   form = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
