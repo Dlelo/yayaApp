@@ -15,6 +15,9 @@ import {AccountDetailsService} from '../account-details/account-details.service'
 import {Observable, take, tap} from 'rxjs';
 import {HousehelpService} from '../dashboard/house-helps/house-helps.service';
 import {HomeOwnerService} from '../dashboard/home-owners/home-owners.service';
+import {FileUploadService} from '../file-upload/file-upload.service';
+import {HttpEvent} from '@angular/common/http';
+import {MatProgressBar} from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-edit-profile',
@@ -31,6 +34,7 @@ import {HomeOwnerService} from '../dashboard/home-owners/home-owners.service';
     MatButtonModule,
     MatSelectModule,
     MatSnackBarModule,
+    MatProgressBar,
   ],
   providers: [HousehelpService,HomeOwnerService],
 })
@@ -42,6 +46,7 @@ export class EditAccountDetailsComponent implements OnInit {
   private readonly snackBar = inject(MatSnackBar);
   private readonly  househelpService = inject(HousehelpService);
   private readonly  homeOwnerService = inject(HomeOwnerService);
+  private readonly fileUploadService = inject(FileUploadService);
 
   userId: number | null = this.loginService.userId();
   userDetails$!: Observable<any>;
@@ -56,6 +61,11 @@ export class EditAccountDetailsComponent implements OnInit {
   medicalReportFileName: string | null = null;
   medicalReportPreviewUrl: string | null = null;
 
+  uploadProgress = 0;
+  nationalIdPreviewUrl: string | null = null;
+  nationalIdFile: File | null = null;
+  nationalIdFileName = '';
+
   ngOnInit(): void {
     if (!this.userId) return;
 
@@ -68,6 +78,49 @@ export class EditAccountDetailsComponent implements OnInit {
         this.initializeForm(user);
       })
     );
+  }
+
+  uploadNationalId(houseHelpId: number) {
+    if (!this.nationalIdFile) return;
+
+   if(this.isHouseHelp) {
+      this.fileUploadService.uploadHouseHelpNationalId(houseHelpId, this.nationalIdFile)
+      .subscribe((event:HttpEvent<any>) => {
+        if (event.type === 1 && event.total) {
+          this.uploadProgress = Math.round((event.loaded / event.total) * 100);
+        }
+
+        if (event.type === 4) { // response
+          const url = event.body;
+
+          // Save URL into the form
+          this.form.get('houseHelp')?.patchValue({
+            nationalIdDocument: url
+          });
+
+          this.uploadProgress = 0;
+        }
+      }) }
+
+   if(this.isHomeOwner) {
+     this.fileUploadService.uploadHomeOwnerNationalId(houseHelpId, this.nationalIdFile)
+       .subscribe((event:HttpEvent<any>) => {
+         if (event.type === 1 && event.total) {
+           this.uploadProgress = Math.round((event.loaded / event.total) * 100);
+         }
+
+         if (event.type === 4) { // response
+           const url = event.body;
+
+           // Save URL into the form
+           this.form.get('houseHelp')?.patchValue({
+             nationalIdDocument: url
+           });
+
+           this.uploadProgress = 0;
+         }
+       })
+   }
   }
 
   private initializeForm(user: any): void {
@@ -94,7 +147,24 @@ export class EditAccountDetailsComponent implements OnInit {
     });
   }
 
-  onFileSelected(event: Event, controlName: string): void {
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+
+    if (input.files && input.files.length > 0) {
+      this.nationalIdFile = input.files[0];
+      this.nationalIdFileName = this.nationalIdFile.name;
+
+      // Preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.nationalIdPreviewUrl = reader.result as string;
+      };
+      reader.readAsDataURL(this.nationalIdFile);
+    }
+  }
+
+
+  onFilesSelected(event: Event, controlName: string): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;

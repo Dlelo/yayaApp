@@ -1,5 +1,10 @@
 <mat-toolbar color="primary">
-  <span>YayaApp</span>
+  <img
+    src="/logo.png"
+    alt="yayaConnectApp Logo"
+    class="img-fluid rounded"
+    style="max-height: 3rem; object-fit: cover"
+  />
   <span class="spacer"></span>
   <button mat-button (click)="navigate('/')">Home</button>
   @if(isLoggedIn()) {
@@ -15,19 +20,4 @@
 
 </mat-toolbar>
 
-<div class="content-container">
-  <router-outlet></router-outlet>
-</div>
-
-<footer class="app-footer">
-  <div class="footer-content">
-    <div>
-      © {{ currentYear }} yayaConnectApp.com
-    </div>
-
-    <div class="footer-links">
-      <a (click)="navigate('/terms-of-use')">Terms</a>
-      <a (click)="navigate('/privacy-policy')">Privacy</a>
-    </div>
-  </div>
-</footer>
+<router-outlet></router-outlet>

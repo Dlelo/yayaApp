@@ -1,4 +1,4 @@
-<div class="container my-4">
+<div class="container content-container my-4">
   <!-- Hero Section -->
   <div class="row align-items-center bg-light rounded shadow-sm p-4 mb-5">
     <!-- Text -->
@@ -119,3 +119,15 @@
     </div>
   </section>
 </div>
+<footer class="app-footer pt-2">
+  <div class="footer-content">
+    <div>
+      © {{ currentYear }} yayaConnectApp.com
+    </div>
+
+    <div class="footer-links">
+      <a (click)="navigate('/terms-of-use')">Terms</a>
+      <a (click)="navigate('/privacy-policy')">Privacy</a>
+    </div>
+  </div>
+</footer>

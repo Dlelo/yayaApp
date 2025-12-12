@@ -12,6 +12,69 @@
             <input matInput formControlName="nationalId" />
           </mat-form-field>
 
+          <!-- NATIONAL ID UPLOAD -->
+          <div class="w-100 mb-3">
+            <label class="block text-sm font-medium mb-2">Attach National ID</label>
+
+            <label mat-stroked-button color="primary" class="cursor-pointer flex items-center gap-1">
+              <mat-icon>attach_file</mat-icon>
+              <input
+                type="file"
+                hidden
+                accept="image/*,.pdf"
+                (change)="onFileSelected($event)"
+              />
+            </label>
+
+            <!-- Preview -->
+            @if(nationalIdPreviewUrl || nationalIdFileName){
+              <div class="mt-2">
+                  @if(nationalIdPreviewUrl){
+                    <img [src]="nationalIdPreviewUrl" class="h-24 border rounded" />
+                  }
+                @if(!nationalIdPreviewUrl){
+                  <span>{{ nationalIdFileName }}</span>
+                }
+
+                <button mat-icon-button color="warn" type="button" (click)="nationalIdFile=null; nationalIdPreviewUrl=null">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                @if(isHouseHelp){
+
+                  <button
+                    mat-flat-button
+                    color="primary"
+                    (click)="uploadNationalId(userDetails?.houseHelp?.id)">
+                    Upload National ID
+                  </button>
+
+                }
+                @if(isHomeOwner){
+                  <button
+                    mat-flat-button
+                    color="primary"
+                    (click)="uploadNationalId(userDetails?.homeOwner.id)">
+                    Upload National ID
+                  </button>
+                }
+              </div>
+
+            }
+            @if(uploadProgress > 0 && uploadProgress < 100){
+              <mat-progress-bar
+                mode="determinate"
+                [value]="uploadProgress">
+              </mat-progress-bar>
+            }
+          </div>
+
+          <div class="w-50 mb-3">
+
+
+
+          </div>
+
+
           <!-- HOUSEHELP fields -->
 
           @if(isHouseHelp){
@@ -26,85 +89,6 @@
                 <mat-label>Years of Experience</mat-label>
                 <input matInput type="number" formControlName="yearsOfExperience" />
               </mat-form-field>
-
-              <!-- GOOD CONDUCT -->
-              <div class="w-100 mb-3">
-                <label class="block text-sm font-medium mb-2">Add certificate of good Conduct</label>
-
-                <label mat-stroked-button color="primary" class="ms-2 cursor-pointer flex items-center gap-1">
-                  <mat-icon>attach_file</mat-icon>
-                  <input
-                    type="file"
-                    hidden
-                    accept="image/*,.pdf"
-                    (change)="onFileSelected($event, 'goodConduct')"
-                  />
-                </label>
-
-                @if(goodConductPreviewUrl || goodConductFileName) {
-                  <div class="mt-2 flex items-center gap-3">
-                    @if(goodConductPreviewUrl) {
-                      <img
-                        [src]="goodConductPreviewUrl"
-                        alt="Good Conduct Preview"
-                        class="h-20 w-auto rounded border"
-                      />
-                    } @else {
-                      <span class="text-sm text-gray-600">{{ goodConductFileName }}</span>
-                    }
-
-                    <button
-                      mat-icon-button
-                      color="warn"
-                      type="button"
-                      (click)="removeFile('goodConduct')"
-                      matTooltip="Remove file"
-                    >
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </div>
-                }
-              </div>
-
-              <!-- MEDICAL REPORT -->
-              <div class="w-100 mb-3">
-                <label class="block text-sm font-medium mb-2">Add medical Report</label>
-
-                <label mat-stroked-button color="primary" class="ms-2 cursor-pointer flex items-center gap-1">
-                  <mat-icon>attach_file</mat-icon>
-                  <input
-                    type="file"
-                    hidden
-                    accept="image/*,.pdf"
-                    (change)="onFileSelected($event, 'medicalReport')"
-                  />
-                </label>
-
-                @if(medicalReportPreviewUrl || medicalReportFileName) {
-                  <div class="mt-2 flex items-center gap-3">
-                    @if(medicalReportPreviewUrl) {
-                      <img
-                        [src]="medicalReportPreviewUrl"
-                        alt="Medical Report Preview"
-                        class="h-20 w-auto rounded border"
-                      />
-                    } @else {
-                      <span class="text-sm text-gray-600">{{ medicalReportFileName }}</span>
-                    }
-
-                    <button
-                      mat-icon-button
-                      color="warn"
-                      type="button"
-                      (click)="removeFile('medicalReport')"
-                      matTooltip="Remove file"
-                    >
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </div>
-                }
-              </div>
-
 
             </div>
           }

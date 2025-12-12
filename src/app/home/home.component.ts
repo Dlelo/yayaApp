@@ -11,12 +11,9 @@ import {Router} from '@angular/router';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent {
+
+  currentYear = new Date().getFullYear();
   private readonly router:Router = inject(Router);
-  recentHousehelps = [
-    { name: 'Mary', role: 'Housekeeper' },
-    { name: 'Grace', role: 'Cook' },
-    { name: 'Esther', role: 'Nanny' },
-  ];
 
   navigate(path: string) {
     this.router.navigate([path]);

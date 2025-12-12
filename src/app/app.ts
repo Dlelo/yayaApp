@@ -21,8 +21,6 @@ export class App {
   isLoggedIn = this.loginService.isLoggedIn;
   userId = this.loginService.userId;
 
-  currentYear = new Date().getFullYear();
-
   navigate(path: string) {
     this.router.navigate([path]);
   }
