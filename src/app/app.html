@@ -14,4 +14,20 @@
   }
 
 </mat-toolbar>
-<router-outlet></router-outlet>
+
+<div class="content-container">
+  <router-outlet></router-outlet>
+</div>
+
+<footer class="app-footer">
+  <div class="footer-content">
+    <div>
+      © {{ currentYear }} yayaConnectApp.com
+    </div>
+
+    <div class="footer-links">
+      <a (click)="navigate('/terms-of-use')">Terms</a>
+      <a (click)="navigate('/privacy-policy')">Privacy</a>
+    </div>
+  </div>
+</footer>
