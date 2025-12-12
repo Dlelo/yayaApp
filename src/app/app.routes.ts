@@ -12,6 +12,8 @@ import {OverviewComponent} from './dashboard/overview/overview.component';
 import {LoginComponent} from './login/login.component';
 import {AuthGuard} from './auth.guard';
 import {RoleGuard} from './role.guard';
+import {TermsOfUseComponent} from './terms-of-use/terms-of-use.component';
+import {PrivacyPolicyComponent} from './privacy-policy/privacy-policy.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -48,6 +50,15 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
 
+  {
+    path:'terms-of-use',
+    component:TermsOfUseComponent,
+  },
+
+  {
+    path:'privacy-policy',
+    component:PrivacyPolicyComponent,
+  },
   {
     path: 'dashboard',
     component: DashboardComponent,
