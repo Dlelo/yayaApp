@@ -1,6 +1,12 @@
 import { Component, Inject } from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef} from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatButton} from '@angular/material/button';
 import {MatSelectModule} from '@angular/material/select';
@@ -20,7 +26,8 @@ export interface EditUserData {
     MatFormFieldModule,
     MatSelectModule,
     MatDialogActions,
-    MatButton
+    MatButton,
+    MatDialogTitle
   ],
   templateUrl: './edit-user-dialog.component.html'
 })

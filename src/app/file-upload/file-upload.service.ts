@@ -14,7 +14,7 @@ export class FileUploadService {
 
     const req = new HttpRequest(
       'POST',
-      `${environment.apiUrl}/${houseHelpId}/upload-national-id`,
+      `${environment.apiUrl}/househelp/${houseHelpId}/upload-national-id`,
       formData,
       {
         reportProgress: true,
