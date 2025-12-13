@@ -20,6 +20,7 @@ export class App {
 
   isLoggedIn = this.loginService.isLoggedIn;
   userId = this.loginService.userId;
+  roles = this.loginService.userRoles;
 
   navigate(path: string) {
     this.router.navigate([path]);

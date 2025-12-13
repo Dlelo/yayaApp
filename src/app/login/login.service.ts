@@ -30,6 +30,7 @@ export class LoginService {
   public userId = computed(() => this.currentUserSignal()?.userId || null);
   public email = computed(() => this.currentUserSignal()?.email || null);
 
+
   constructor() {
     this.loadUserFromStorage();
   }

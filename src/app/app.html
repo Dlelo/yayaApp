@@ -11,7 +11,11 @@
     @if(userId(); as userId ){
       <button mat-button (click)="navigate(`account/${userId}`)">Account details</button>
     }
-    <button mat-button (click)="navigate('/listings')">Listings</button>
+    <button mat-button (click)="navigate('/listings')">Listings </button>
+
+    @if(roles().includes('ADMIN') || roles().includes('AGENT')) {
+      <button mat-button (click)="navigate('/dashboard')">Dashboard</button>
+    }
    <button mat-button (click)="logout()">Logout</button>
   } @else{
     <button mat-button (click)="navigate('/login')">Sign In</button>
