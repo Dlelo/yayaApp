@@ -9,7 +9,7 @@ interface HouseHelp {
   levelOfEducation: string;
   medicalReport: string;
   nationalId: string;
-  numberOfChildren: string;
+  numberOfDependents: string;
   religion: string;
   skills: string[];
   yearsOfExperience: number;
@@ -35,7 +35,7 @@ interface UserDetails {
   phoneNumber: string;
   roles: string[];
   houseHelp: HouseHelp;
-  homeOwner: string | null;
+  homeOwner: HomeOwner;
   subscription: {
     plan: string;
     active: boolean;

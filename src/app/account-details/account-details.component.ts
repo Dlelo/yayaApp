@@ -1,18 +1,19 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {MatDivider} from '@angular/material/divider';
-import {MatCard} from '@angular/material/card';
-import {AsyncPipe, DatePipe, JsonPipe, NgClass} from '@angular/common';
-import {MatIconModule} from '@angular/material/icon';
-import {MatButton} from '@angular/material/button';
-import {AccountDetailsService} from './account-details.service';
-import {map, Observable, switchMap, take} from 'rxjs';
-import {LoginService} from '../login/login.service';
-import {Router} from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { MatDivider } from '@angular/material/divider';
+import { MatCard } from '@angular/material/card';
+import { AsyncPipe, NgClass } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
+import { AccountDetailsService } from './account-details.service';
+import { Observable, filter, shareReplay, switchMap } from 'rxjs';
+import { LoginService } from '../login/login.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-account-details',
   templateUrl: './account-details.component.html',
   styleUrls: ['./account-details.component.scss'],
+  standalone: true,
   imports: [
     MatDivider,
     MatIconModule,
@@ -21,70 +22,49 @@ import {Router} from '@angular/router';
     MatButton,
     AsyncPipe,
   ],
-  standalone: true,
 })
 export class AccountDetailsComponent implements OnInit {
-  private readonly loginService: LoginService = inject(LoginService);
-  private readonly accountDetails:AccountDetailsService  = inject(AccountDetailsService);
-  private readonly router:Router = inject(Router);
+  private readonly loginService = inject(LoginService);
+  private readonly accountDetails = inject(AccountDetailsService);
+  private readonly router = inject(Router);
 
+  userId = this.loginService.userId();
 
-  userId:number | null = this.loginService.userId();
-  houseHelpDetails: HouseHelp | null = null;
-  homeOwnerDetails: HomeOwner | null = null;
+  /** Primary stream */
+  userDetails$!: Observable<UserDetails>;
 
-  userDetails: Observable<UserDetails> | null = null;
+  /** Derived streams */
+  houseHelpDetails$!: Observable<HouseHelp>;
+  homeOwnerDetails$!: Observable<HomeOwner>;
 
   ngOnInit(): void {
-    if(this.userId === null) return;
-   this.userDetails = this.accountDetails.getUserById(this.userId);
-   this.getHouseHelpDetails();
-   this.getHomeOwnerDetails();
-  }
-
-
-  getHouseHelpDetails(): void {
     if (!this.userId) return;
 
-    this.accountDetails
+    /** Fetch user ONCE */
+    this.userDetails$ = this.accountDetails
       .getUserById(this.userId)
-      .pipe(
-        switchMap(user => {
-          if (!user.houseHelp?.id) {
-            throw new Error('HouseHelp ID not found');
-          }
-          return this.accountDetails.getHouseHelpDetails(user.houseHelp.id);
-        })
+      .pipe(shareReplay(1));
+
+    /** HouseHelp details */
+    this.houseHelpDetails$ = this.userDetails$.pipe(
+      filter(user => user.roles.includes('HOUSEHELP')),
+      filter(user => !!user.houseHelp?.id),
+      switchMap(user =>
+        this.accountDetails.getHouseHelpDetails(user.houseHelp.id)
       )
-      .subscribe({
-        next: details => (this.houseHelpDetails = details),
-        error: err => console.error(err),
-      });
+    );
+
+    /** HomeOwner details */
+    this.homeOwnerDetails$ = this.userDetails$.pipe(
+      filter(user => user.roles.includes('HOMEOWNER')),
+      filter(user => !!user.homeOwner?.id),
+      switchMap(user =>
+        this.accountDetails.getHomeOwnerDetails(user.homeOwner.id)
+      )
+    );
   }
 
-  getHomeOwnerDetails(): void {
-    if (!this.userId) return;
-
-    this.accountDetails
-      .getUserById(this.userId)
-      .pipe(
-        switchMap(user => {
-          if (!user.houseHelp?.id) {
-            throw new Error('HomeOwner ID not found');
-          }
-          return this.accountDetails.getHomeOwnerDetails(user.homeOwner.id);
-        })
-      )
-      .subscribe({
-        next: details => (this.homeOwnerDetails = details),
-        error: err => console.error(err),
-      });
-  }
-
-  editAccount() {
+  editAccount(): void {
     this.router.navigate(['/edit-account']);
   }
-
-
-
 }

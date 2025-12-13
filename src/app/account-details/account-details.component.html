@@ -6,7 +6,7 @@
     </div>
 
     <mat-divider></mat-divider>
-    @if(userDetails | async; as userDetails){
+    @if(userDetails$ | async; as userDetails){
       <div class="row mt-3">
         <!-- Left Column -->
         <div class="col-md-12">
@@ -40,19 +40,21 @@
         </div>
   @if(userDetails?.roles?.includes('HOMEOWNER'))
   {
-  <div class="col-md-12">
-    <p><strong>Status:</strong>
-      <span
-        class="badge"
-        [ngClass]="homeOwnerDetails?.active ? 'bg-success' : 'bg-danger'">
+    @if(houseHelpDetails$ |async; as homeOwnerDetails ){
+      <div class="col-md-12">
+        <p><strong>Status:</strong>
+          <span
+            class="badge"
+            [ngClass]="homeOwnerDetails?.active ? 'bg-success' : 'bg-danger'">
                                                                  {{ homeOwnerDetails?.active ? 'Active' : 'Inactive' }}
               </span>
-    </p>
-    <p><strong>Number of children:</strong> {{ "-" }}</p>
-    <p><strong>House size:</strong> {{ '-'}}</p>
-    <p><strong>Location:</strong> {{  '-'}}</p>
+        </p>
+        <p><strong>Number of children:</strong> {{homeOwnerDetails?.numberOfDependents ?? "-" }}</p>
+        <p><strong>House size:</strong> {{homeOwnerDetails?.numberOfDependents + " bedroom" ?? '-'}}</p>
+        <p><strong>Location:</strong> {{ homeOwnerDetails?.homeLocation ??  '-'}}</p>
 
-  </div>
+      </div>
+    }
   }
 
       </div>
