@@ -16,6 +16,15 @@ export class AccountDetailsService {
     return this.http.get<any>(`${this.userUrl}/${id}`);
   }
 
+  getHouseHelpDetails(id: number): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/househelp/${id}`);
+  }
+
+  getHomeOwnerDetails(id: number): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/homeowner/${id}`);
+  }
+
+
   updateUser(id: number, payload: any): Observable<any> {
     return this.http.put<any>(`${this.userUrl}/${id}`, payload).pipe(
       map((response) => {

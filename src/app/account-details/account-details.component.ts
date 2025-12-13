@@ -5,7 +5,7 @@ import {AsyncPipe, DatePipe, JsonPipe, NgClass} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButton} from '@angular/material/button';
 import {AccountDetailsService} from './account-details.service';
-import {Observable} from 'rxjs';
+import {map, Observable, switchMap, take} from 'rxjs';
 import {LoginService} from '../login/login.service';
 import {Router} from '@angular/router';
 
@@ -18,7 +18,6 @@ import {Router} from '@angular/router';
     MatIconModule,
     MatCard,
     NgClass,
-    DatePipe,
     MatButton,
     AsyncPipe,
   ],
@@ -31,42 +30,61 @@ export class AccountDetailsComponent implements OnInit {
 
 
   userId:number | null = this.loginService.userId();
+  houseHelpDetails: HouseHelp | null = null;
+  homeOwnerDetails: HomeOwner | null = null;
 
-  userDetails: Observable<{
-    id: number;
-    name: string;
-    email: string;
-    phoneNumber: string;
-    roles: string[];
-    houseHelp: {
-      contactPersons:string
-      currentLocation:string,
-      goodConduct:string,
-      homeLocation:string,
-      languages:string[]
-      levelOfEducation:string,
-      medicalReport:string,
-      nationalId:string,
-      numberOfChildren:string,
-      religion:string,
-      skills:string[]
-      yearsOfExperience:number
-    };
-    homeOwner: string | null;
-    subscription: {
-      plan: string,
-      active: boolean,
-      expiry:string,
-    },
-  }> | null = null;
+  userDetails: Observable<UserDetails> | null = null;
 
   ngOnInit(): void {
     if(this.userId === null) return;
-   this.userDetails = this.accountDetails.getUserById(this.userId)
+   this.userDetails = this.accountDetails.getUserById(this.userId);
+   this.getHouseHelpDetails();
+   this.getHomeOwnerDetails();
+  }
+
+
+  getHouseHelpDetails(): void {
+    if (!this.userId) return;
+
+    this.accountDetails
+      .getUserById(this.userId)
+      .pipe(
+        switchMap(user => {
+          if (!user.houseHelp?.id) {
+            throw new Error('HouseHelp ID not found');
+          }
+          return this.accountDetails.getHouseHelpDetails(user.houseHelp.id);
+        })
+      )
+      .subscribe({
+        next: details => (this.houseHelpDetails = details),
+        error: err => console.error(err),
+      });
+  }
+
+  getHomeOwnerDetails(): void {
+    if (!this.userId) return;
+
+    this.accountDetails
+      .getUserById(this.userId)
+      .pipe(
+        switchMap(user => {
+          if (!user.houseHelp?.id) {
+            throw new Error('HomeOwner ID not found');
+          }
+          return this.accountDetails.getHomeOwnerDetails(user.homeOwner.id);
+        })
+      )
+      .subscribe({
+        next: details => (this.homeOwnerDetails = details),
+        error: err => console.error(err),
+      });
   }
 
   editAccount() {
     this.router.navigate(['/edit-account']);
   }
+
+
 
 }
