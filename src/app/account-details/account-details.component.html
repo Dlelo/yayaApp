@@ -15,32 +15,36 @@
           <p><strong>Email:</strong> {{ userDetails?.email }}</p>
           <p><strong>Phone number: </strong> {{ userDetails?.phoneNumber }}</p>
 
-          @if(userDetails?.roles?.includes('HOUSEHELP')){
-            <p><strong>Skills: </strong>
-              @for (skills of userDetails?.houseHelp?.skills; track $index; let isLast = $last){
-                <span class="small">{{ skills }} {{ !isLast ? ', ' : '' }}</span>
-              }</p>
-            <p><strong>Years of experience:</strong> {{ userDetails?.houseHelp?.yearsOfExperience ?? '-'}}</p>
-            <p><strong>Status:</strong>
-              <span
-                class="badge"
-                [ngClass]="houseHelpDetails?.active ? 'bg-success' : 'bg-danger'">
-                                                                 {{ houseHelpDetails?.active ? 'Active' : 'Inactive' }}
-              </span>
-            </p>
-            <p><strong>ID:</strong> {{ userDetails?.houseHelp?.nationalId ?? '-'}}</p>
-            <p><strong>Good conduct: </strong> {{ userDetails?.houseHelp?.goodConduct ?? '-'}}</p>
-            <p><strong>Medical report: </strong> {{ userDetails?.houseHelp?.medicalReport ?? '-'}}</p>
-
-            <p><strong>Age:</strong> {{"-" }}</p>
-            <p><strong>Height:</strong> {{ "-" }}</p>
-            <p><strong>Weight:</strong> {{ "-" }}</p>
-            <p><strong>Number of children:</strong> {{ "-" }}</p>
-          }
         </div>
+      </div>
+      @if(userDetails?.roles?.includes('HOUSEHELP')){
+        @if(houseHelpDetails$ |async; as houseHelpDetails ){
+        <p><strong>Skills: </strong>
+          @for (skills of userDetails?.houseHelp?.skills; track $index; let isLast = $last){
+        <span class="small">{{ skills }} {{ !isLast ? ', ' : '' }}</span>
+        }</p>
+        <p><strong>Years of experience:</strong> {{ userDetails?.houseHelp?.yearsOfExperience ?? '-'}}</p>
+        <p><strong>Status:</strong>
+          <span
+            class="badge"
+            [ngClass]="houseHelpDetails?.active ? 'bg-success' : 'bg-danger'">
+          {{ houseHelpDetails?.active ? 'Active' : 'Inactive' }}
+          </span>
+    </p>
+    <p><strong>ID:</strong> {{ userDetails?.houseHelp?.nationalId ?? '-'}}</p>
+        <p><strong>Good conduct: </strong> {{ userDetails?.houseHelp?.goodConduct ?? '-'}}</p>
+        <p><strong>Medical report: </strong> {{ userDetails?.houseHelp?.medicalReport ?? '-'}}</p>
+
+        <p><strong>Age:</strong> {{"-" }}</p>
+        <p><strong>Height:</strong> {{ "-" }}</p>
+        <p><strong>Weight:</strong> {{ "-" }}</p>
+        <p><strong>Number of children:</strong> {{ "-" }}</p>
+        }
+
+      }
   @if(userDetails?.roles?.includes('HOMEOWNER'))
   {
-    @if(houseHelpDetails$ |async; as homeOwnerDetails ){
+    @if(homeOwnerDetails$ |async; as homeOwnerDetails ){
       <div class="col-md-12">
         <p><strong>Status:</strong>
           <span
@@ -56,8 +60,6 @@
       </div>
     }
   }
-
-      </div>
     }
 
     <mat-divider class="my-3"></mat-divider>
