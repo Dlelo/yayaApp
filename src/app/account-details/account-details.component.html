@@ -54,7 +54,7 @@
               </span>
         </p>
         <p><strong>Number of children:</strong> {{homeOwnerDetails?.numberOfDependents ?? "-" }}</p>
-        <p><strong>House size:</strong> {{homeOwnerDetails?.numberOfDependents + " bedroom" ?? '-'}}</p>
+        <p><strong>House size:</strong> {{((homeOwnerDetails?.numberOfDependents) + " bedroom") }}</p>
         <p><strong>Location:</strong> {{ homeOwnerDetails?.homeLocation ??  '-'}}</p>
 
       </div>
