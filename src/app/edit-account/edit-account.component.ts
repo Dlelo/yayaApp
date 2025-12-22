@@ -113,7 +113,7 @@ export class EditAccountDetailsComponent implements OnInit {
            const url = event.body;
 
            // Save URL into the form
-           this.form.get('houseHelp')?.patchValue({
+           this.form.get('homeOwner')?.patchValue({
              nationalIdDocument: url
            });
 
@@ -133,6 +133,15 @@ export class EditAccountDetailsComponent implements OnInit {
           skills: [user.houseHelp?.skills?.join(', ') || ''],
           goodConduct: [user.houseHelp?.goodConduct || ''],
           medicalReport: [user.houseHelp?.medicalReport || ''],
+          numberOfChildren:[user.houseHelp?.medicalReport || ''],
+          nationalIdDocument:[user.houseHelp?.nationalIdDocument || ''],
+          height: [user.houseHelp?.height || ''],
+          weight: [user.houseHelp?.weight || ''],
+          religion: [user.houseHelp?.religion || ''],
+          levelOfEducation: [user.houseHelp?.levelOfEducation || ''],
+          languages: [user.houseHelp?.languages || []],
+          currentLocation: [user.houseHelp?.currentLocation || ''],
+          contactPersons: [user.houseHelp?.contactPersons || ''],
         })
         : null,
 
@@ -142,6 +151,7 @@ export class EditAccountDetailsComponent implements OnInit {
           houseType: [user.homeOwner?.houseType || ''],
           numberOfRooms: [user.homeOwner?.numberOfRooms || ''],
           homeLocation: [user.homeOwner?.homeLocation || ''],
+          nationalIdDocument:[user.homeOwner?.nationalIdDocument || ''],
         })
         : null,
     });
