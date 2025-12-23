@@ -1,10 +1,9 @@
-@if(houseHelpDetails$ | async; as houseHelp){
-
-  @let userDetails = userDetails$ | async; as userDetails;
-  <div class="container my-4 profile-page">
-    <mat-card class="p-4 shadow-sm profile-card">
-      <!-- Header Section -->
-      <div class="row align-items-center mb-3 profile-header">
+@if( userDetails$ | async; as userDetails){
+  @if(houseHelpDetails$ | async; as houseHelp){
+    <div class="container my-4 profile-page">
+      <mat-card class="p-4 shadow-sm profile-card">
+        <!-- Header Section -->
+        <div class="row align-items-center mb-3 profile-header">
           <div class="col-md-3 text-center">
             <img
               [src]="'/househelp-banner.png'"
@@ -16,57 +15,58 @@
             <h2 class="mb-1">{{ userDetails?.name }}</h2>
             <div class="rating text-warning fs-5">⭐⭐⭐⭐☆</div>
             <p class="location mt-2 text-secondary">
-              <mat-icon inline>location_on</mat-icon> {{houseHelp?.currentLocation}}
+              <mat-icon inline>location_on</mat-icon> {{houseHelp?.currentLocation ?? "-}}
             </p>
           </div>
         </div>
-      <mat-divider></mat-divider>
+        <mat-divider></mat-divider>
 
-      <!-- Details Section -->
-      <div class="profile-details mt-4">
-        <h3 class="mb-2">About</h3>
-<!--        <p>{{ houseHelp.description }}</p>-->
+        <!-- Details Section -->
+        <div class="profile-details mt-4">
+          <h3 class="mb-2">About</h3>
+          <!--        <p>{{ houseHelp.description }}</p>-->
 
-        <h3 class="mt-4 mb-2">Number of children</h3>
-        <p>{{ houseHelp?.numberOfDependents ?? "-" }} children</p>
-
-
-        <h3 class="mt-4 mb-2">Level of education</h3>
-        <p>{{ houseHelp?.levelOfEducation ?? "-" }}</p>
-
-        <h3 class="mt-4 mb-2">Languages</h3>
-        <p>{{ houseHelp?.languages ?? "-"  }}</p>
+          <h3 class="mt-4 mb-2">Number of children</h3>
+          <p>{{ houseHelp?.numberOfDependents ?? "-" }} children</p>
 
 
-        <h3 class="mt-4 mb-2">Religion</h3>
-        <p>{{ houseHelp?.religion ?? "-" }}</p>
+          <h3 class="mt-4 mb-2">Level of education</h3>
+          <p>{{ houseHelp?.levelOfEducation ?? "-" }}</p>
+
+          <h3 class="mt-4 mb-2">Languages</h3>
+          <p>{{ houseHelp?.languages ?? "-"  }}</p>
 
 
-        <h3 class="mt-4 mb-2">Skills</h3>
-        <ul class="list-unstyled row">
-          @for (skill of houseHelp.skills; track $index) {
-            <li class="col-md-6 mb-2">
-              <span class="text-success">✔</span> {{ skill }}
-            </li>
-          }
-        </ul>
+          <h3 class="mt-4 mb-2">Religion</h3>
+          <p>{{ houseHelp?.religion ?? "-" }}</p>
 
-        <h3 class="mt-4 mb-2">Experience</h3>
-        <p>{{ houseHelp?.yearsOfExperience ?? "-" }} years of experience</p>
 
-      </div>
+          <h3 class="mt-4 mb-2">Skills</h3>
+          <ul class="list-unstyled row">
+            @for (skill of houseHelp.skills; track $index) {
+              <li class="col-md-6 mb-2">
+                <span class="text-success">✔</span> {{ skill }}
+              </li>
+            }
+          </ul>
 
-      <div class="profile-actions text-center mt-4">
-        <button
-          mat-raised-button
-          color="primary"
-          class="px-4"
-          (click)="navigate('/pay')"
-        >
-          Hire {{ userDetails?.name ?? "" }}
-        </button>
-      </div>
-    </mat-card>
-  </div>
+          <h3 class="mt-4 mb-2">Experience</h3>
+          <p>{{ houseHelp?.yearsOfExperience ?? "-" }} years of experience</p>
 
+        </div>
+
+        <div class="profile-actions text-center mt-4">
+          <button
+            mat-raised-button
+            color="primary"
+            class="px-4"
+            (click)="navigate('/pay')"
+          >
+            Hire {{ userDetails?.name ?? "" }}
+          </button>
+        </div>
+      </mat-card>
+    </div>
+  }
 }
+
