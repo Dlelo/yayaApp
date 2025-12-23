@@ -32,14 +32,14 @@
 
 
         <h3 class="mt-4 mb-2">Level of education</h3>
-        <p>{{ houseHelp?.levelOfEducation }}/p>
+        <p>{{ houseHelp?.levelOfEducation ?? "-" }}</p>
 
         <h3 class="mt-4 mb-2">Languages</h3>
-        <p>{{ houseHelp?.languages }}/p>
+        <p>{{ houseHelp?.languages ?? "-"  }}</p>
 
 
         <h3 class="mt-4 mb-2">Religion</h3>
-        <p>{{ houseHelp?.religion }}/p>
+        <p>{{ houseHelp?.religion ?? "-" }}</p>
 
 
         <h3 class="mt-4 mb-2">Skills</h3>
@@ -52,7 +52,7 @@
         </ul>
 
         <h3 class="mt-4 mb-2">Experience</h3>
-        <p>{{ houseHelp?.yearsOfExperience }} years of experience</p>
+        <p>{{ houseHelp?.yearsOfExperience ?? "-" }} years of experience</p>
 
       </div>
 
