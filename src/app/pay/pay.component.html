@@ -2,7 +2,7 @@
   <mat-card class="p-4 shadow-sm">
     <h2 class="mb-3 text-center">Complete Payment to Hire</h2>
     <p class="lead text-center">
-      To hire <strong>{{ houseHelpName }}</strong>, please pay first.
+      To complete hiring, please pay first.
     </p>
 
     @if (isProcessing) {
@@ -18,8 +18,9 @@
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Select Plan</mat-label>
               <mat-select formControlName="plan">
-                <mat-option value="basic">Basic – KES 500/month</mat-option>
-                <mat-option value="premium">Premium – KES 1000/month</mat-option>
+                <mat-option value="emergency">Emergency services – KES 500</mat-option>
+                <mat-option value="day-burg">Day-burg services – KES 2500</mat-option>
+                <mat-option value="live-in">Live in Service – KES 2500</mat-option>
               </mat-select>
             </mat-form-field>
           </div>

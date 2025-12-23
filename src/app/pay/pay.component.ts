@@ -38,6 +38,8 @@ export class PayComponent implements OnInit {
   houseHelpId: string = '';
   isProcessing: boolean = false;
 
+  user = localStorage.getItem('user');
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -64,9 +66,9 @@ export class PayComponent implements OnInit {
     if (this.payForm.invalid || this.isProcessing) return;
 
     this.isProcessing = true;
-    
-    const amount = this.payForm.value.plan === 'premium' ? 1000 : 500;
-    
+
+    const amount = this.payForm.value.plan === 'emergency' ? 500 : 2500;
+
     let phone = this.payForm.value.phone;
     if (phone.startsWith('0')) {
       phone = '254' + phone.substring(1);
@@ -92,19 +94,19 @@ export class PayComponent implements OnInit {
     this.paymentService.initiateStkPush(paymentRequest).subscribe({
       next: (response) => {
         this.snackBar.open(
-          'Check your phone for M-Pesa prompt!', 
-          'OK', 
+          'Check your phone for M-Pesa prompt!',
+          'OK',
           { duration: 5000 }
         );
-        
+
         // Start checking payment status
         this.checkPaymentStatus(response?.CheckoutRequestID);
       },
       error: (error) => {
         this.isProcessing = false;
         this.snackBar.open(
-          error.error?.message || 'Payment initiation failed', 
-          'Close', 
+          error.error?.message || 'Payment initiation failed',
+          'Close',
           { duration: 5000 }
         );
       }
@@ -124,20 +126,20 @@ export class PayComponent implements OnInit {
             clearInterval(intervalId);
             this.isProcessing = false;
             this.snackBar.open('Payment successful!', 'Close', { duration: 3000 });
-            
+
             // Navigate to success page or confirm hire
             this.router.navigate(['/hire'], {
-              queryParams: { 
+              queryParams: {
                 houseHelpId: this.houseHelpId,
-                houseHelpName: this.houseHelpName 
+                houseHelpName: this.houseHelpName
               }
             });
           } else if (status.status === 'FAILED') {
             clearInterval(intervalId);
             this.isProcessing = false;
             this.snackBar.open(
-              `Payment failed: ${status.failureReason}`, 
-              'Close', 
+              `Payment failed: ${status.failureReason}`,
+              'Close',
               { duration: 5000 }
             );
             this.router.navigate(['/listings']);
@@ -153,11 +155,11 @@ export class PayComponent implements OnInit {
         clearInterval(intervalId);
         this.isProcessing = false;
         this.snackBar.open(
-          'Payment verification timed out. Please check your M-Pesa messages.', 
-          'Close', 
+          'Payment verification timed out. Please check your M-Pesa messages.',
+          'Close',
           { duration: 5000 }
         );
       }
-    }, 1000); 
+    }, 1000);
   }
 }
