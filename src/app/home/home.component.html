@@ -121,13 +121,46 @@
 </div>
 <footer class="app-footer pt-2">
   <div class="footer-content">
-    <div>
-      © {{ currentYear }} yayaConnectApp.com
+
+    <div class="footer-links">
+      Call us / Whatsapp 0118266951
+      <a href="https://www.instagram.com/yayaconnectapp"  title="yayaconnectapp instagram icon" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram" >
+        <img
+          src="/instagram.png"
+          alt="yayaconnectapp instagram"
+          class="social-icon"
+        />
+        Instagram
+      </a>
+
+
+      <a href="https://www.linkedin.com/company/yayaconnectapp"  title="yayaconnectapp linkedin icon" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram" >
+        <img
+          src="/linkedin.png"
+          alt="yayaconnectapp linkedin"
+          class="social-icon"
+        />
+        LinkedIn
+      </a>
+
+      <a href=""  title="yayaconnectapp tiktok icon" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram" >
+        <img
+          src="/tiktok.png"
+          alt="yayaconnectapp tiktok"
+          class="social-icon"
+        />
+        &#64;yayaConnectApp
+      </a>
+
     </div>
 
     <div class="footer-links">
       <a (click)="navigate('/terms-of-use')">Terms</a>
       <a (click)="navigate('/privacy-policy')">Privacy</a>
     </div>
+    <div class="footer-copy">
+      &copy; {{ currentYear }} yayaConnectApp.com . All rights reserved.
+    </div>
+
   </div>
 </footer>
