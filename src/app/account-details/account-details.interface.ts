@@ -9,7 +9,7 @@ interface HouseHelp {
   levelOfEducation: string;
   medicalReport: string;
   nationalId: string;
-  numberOfDependents: string;
+  numberOfChildren: string;
   religion: string;
   skills: string[];
   yearsOfExperience: number;

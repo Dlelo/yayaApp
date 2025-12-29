@@ -130,7 +130,18 @@ export class EditAccountDetailsComponent implements OnInit {
       houseHelp: this.isHouseHelp
         ? this.fb.group({
           yearsOfExperience: [user.houseHelp?.yearsOfExperience || 0],
-          skills: [user.houseHelp?.skills?.join(', ') || ''],
+          skills: Array.isArray(user.houseHelp?.skills)
+            ? user.houseHelp.skills
+            : user.houseHelp?.skills
+              ? user.houseHelp.skills.split(',')
+              : [],
+
+          languages:Array.isArray(user.houseHelp?.languages)
+            ? user.houseHelp.languages
+            : user.houseHelp?.languages
+              ? user.houseHelp.languages.split(',')
+              : [],
+
           goodConduct: [user.houseHelp?.goodConduct || ''],
           medicalReport: [user.houseHelp?.medicalReport || ''],
           numberOfChildren:[user.houseHelp?.medicalReport || ''],
@@ -139,7 +150,6 @@ export class EditAccountDetailsComponent implements OnInit {
           weight: [user.houseHelp?.weight || ''],
           religion: [user.houseHelp?.religion || ''],
           levelOfEducation: [user.houseHelp?.levelOfEducation || ''],
-          languages: [user.houseHelp?.languages || []],
           currentLocation: [user.houseHelp?.currentLocation || ''],
           contactPersons: [user.houseHelp?.contactPersons || ''],
           contactPersonsPhoneNumber: [user.houseHelp?.contactPersonsPhoneNumber || ''],
@@ -224,7 +234,15 @@ export class EditAccountDetailsComponent implements OnInit {
         .filter((s: string) => s.length > 0);
     }
 
+    if (formValue.houseHelp?.languages) {
+      formValue.houseHelp.languages = formValue.houseHelp.languages
+        .split(',')
+        .map((s: string) => s.trim())
+        .filter((s: string) => s.length > 0);
+    }
+
     if(this.isHouseHelp){
+
       this.househelpService.updateHouseHelpDetails(id, formValue.houseHelp).subscribe({
         next: () => {
           this.snackBar.open('✅ Account details updated successfully!', 'Close', {

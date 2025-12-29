@@ -27,14 +27,23 @@
           <!--        <p>{{ houseHelp.description }}</p>-->
 
           <h3 class="mt-4 mb-2">Number of children</h3>
-          <p>{{ houseHelp?.numberOfDependents ?? "-" }} children</p>
+          <p>{{ houseHelp?.numberOfChildren ?? "-" }} children</p>
 
 
           <h3 class="mt-4 mb-2">Level of education</h3>
           <p>{{ houseHelp?.levelOfEducation ?? "-" }}</p>
 
           <h3 class="mt-4 mb-2">Languages</h3>
-          <p>{{ houseHelp?.languages ?? "-"  }}</p>
+          <ul class="list-unstyled row">
+            @for (languages of houseHelp?.languages; track $index) {
+              <li class="col-md-6 mb-2">
+                <span class="text-success">✔</span> {{ languages }}
+              </li>
+            }
+          </ul>
+
+          <h3 class="mt-4 mb-2">Religion</h3>
+          <p>{{ houseHelp?.religion ?? "-"  }}</p>
 
 
           <h3 class="mt-4 mb-2">Religion</h3>
