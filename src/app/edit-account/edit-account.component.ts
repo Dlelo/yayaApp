@@ -142,6 +142,7 @@ export class EditAccountDetailsComponent implements OnInit {
           languages: [user.houseHelp?.languages || []],
           currentLocation: [user.houseHelp?.currentLocation || ''],
           contactPersons: [user.houseHelp?.contactPersons || ''],
+          contactPersonsPhoneNumber: [user.houseHelp?.contactPersonsPhoneNumber || ''],
         })
         : null,
 
