@@ -13,6 +13,7 @@ export interface LoginResponse {
 export interface UserInfo {
   userId: number;
   email: string;
+  phoneNumber?: string;
   role: string[];
 }
 
@@ -29,15 +30,16 @@ export class LoginService {
   public userRoles = computed(() => this.currentUserSignal()?.role || []);
   public userId = computed(() => this.currentUserSignal()?.userId || null);
   public email = computed(() => this.currentUserSignal()?.email || null);
+  public phoneNumber = computed(() => this.currentUserSignal()?.phoneNumber || null);
 
 
   constructor() {
     this.loadUserFromStorage();
   }
 
-  login(email: string, password: string): Observable<LoginResponse> {
+  login(identifier: string, password: string): Observable<LoginResponse> {
     return this.http
-      .post<LoginResponse>(`${environment.apiUrl}/auth/login`, { email, password })
+      .post<LoginResponse>(`${environment.apiUrl}/auth/login`, { identifier, password })
       .pipe(
         tap(response => {
           this.storeUserData(response.token);

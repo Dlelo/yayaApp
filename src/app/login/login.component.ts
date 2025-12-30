@@ -23,7 +23,7 @@ export class LoginComponent {
   hidePassword = true;
 
   form = new FormGroup({
-    email: new FormControl('', [Validators.required, Validators.email]),
+    identifier: new FormControl('', [Validators.required]),
     password: new FormControl('', Validators.required),
   });
 
@@ -32,9 +32,9 @@ export class LoginComponent {
     this.loading = true;
     this.errorMessage = '';
 
-    const { email, password } = this.form.value;
+    const { identifier, password } = this.form.value;
 
-    this.loginService.login(email!, password!).subscribe({
+    this.loginService.login(identifier!, password!).subscribe({
       next: (res) => {
         this.loading = false;
         this.router.navigate(['/']);
