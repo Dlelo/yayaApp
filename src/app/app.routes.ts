@@ -63,7 +63,7 @@ export const routes: Routes = [
     path: 'dashboard',
     component: DashboardComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['ADMIN', 'AGENT'] },
+    data: { roles: ['ROLE_ADMIN', 'ROLE_AGENT'] },
     children: [
       {path:'users', loadComponent: () => import('./dashboard/users/users.component').then(m => m.UsersComponent) },
       { path: 'agents', loadComponent: () => import('./dashboard/agents/agents.component').then(m => m.AgentsComponent) },
