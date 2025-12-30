@@ -34,7 +34,7 @@
   <div class="d-flex justify-content-center mt-4">
     <mat-paginator
       [length]="(houseHelps | async)?.length"
-      [pageSize]="200"
+      [pageSize]="(houseHelps | async)?.pages?.pageSize"
       (page)="onPageChange($event)"
     >
     </mat-paginator>

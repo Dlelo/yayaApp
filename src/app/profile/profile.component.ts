@@ -2,11 +2,11 @@ import {Component, inject} from '@angular/core';
 import {MatCard} from '@angular/material/card';
 import {MatDivider} from '@angular/material/divider';
 import {MatIconModule} from '@angular/material/icon';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {MatButton} from '@angular/material/button';
 import {LoginService} from '../login/login.service';
 import {AccountDetailsService} from '../account-details/account-details.service';
-import {filter, Observable, shareReplay, switchMap} from 'rxjs';
+import {catchError, filter, Observable, of, shareReplay, switchMap} from 'rxjs';
 import {AsyncPipe} from '@angular/common';
 
 @Component({
@@ -26,44 +26,33 @@ export class ProfileComponent {
   private readonly router:Router = inject(Router);
   private readonly loginService = inject(LoginService);
   private readonly accountDetails = inject(AccountDetailsService);
+  private readonly activatedRoute = inject(ActivatedRoute)
 
-  userId = this.loginService.userId();
-
-  /** Primary stream */
-  userDetails$!: Observable<UserDetails>;
 
   /** Derived streams */
   houseHelpDetails$!: Observable<HouseHelp>;
 
+    ngOnInit(): void {
+      this.houseHelpDetails$ = this.activatedRoute.paramMap.pipe(
+        switchMap(params => {
+          const idParam = params.get('id');
 
-  houseHelp = {
-    name: 'Mary Akinyi',
-    role: 'Housekeeper',
-    photo: '/househelp-banner.png',
-    description: 'Mary is a reliable housekeeper with 5 years of experience in managing households, cooking, and childcare.',
-    skills: ['Cleaning', 'Cooking', 'Childcare', 'Laundry'],
-    experience: 5,
-    phone: '+254 712 345678',
-    email: 'mary@example.com'
-  };
+          // Validate ID
+          if (!idParam || isNaN(Number(idParam))) {
+            console.error('Invalid house help ID:', idParam);
+            return of(null); // Return null if ID is invalid
+          }
 
-  ngOnInit(): void {
-    if (!this.userId) return;
-
-    /** Fetch user ONCE */
-    this.userDetails$ = this.accountDetails
-      .getUserById(this.userId)
-      .pipe(shareReplay(1));
-
-    /** HouseHelp details */
-    this.houseHelpDetails$ = this.userDetails$.pipe(
-      filter(user => user.roles.includes('HOUSEHELP')),
-      filter(user => !!user.houseHelp?.id),
-      switchMap(user =>
-        this.accountDetails.getHouseHelpDetails(user.houseHelp.id)
-      )
-    );
-  }
+          const id = Number(idParam);
+          return this.accountDetails.getHouseHelpDetails(id).pipe(
+            catchError(error => {
+              console.error('Error fetching house help:', error);
+              return of(null);
+            })
+          );
+        })
+      );
+    }
 
 
   navigate(path: string) {

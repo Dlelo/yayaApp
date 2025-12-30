@@ -15,17 +15,19 @@ export class HousehelpService {
     filter: any = {
       active: true
     }
-  ): Observable<{ data: any[]; length: number }> {
+  ): Observable<{ data: any[]; length: number; pages: any }> {
     const params = new HttpParams()
       .set('page', page)
       .set('size', size)
+
     ;
 
 
     return this.http.post<any>(`${this.apiUrl}/search`, filter, { params }).pipe(
       map(res => ({
         data: res.content ?? res,
-        length: res.totalElements ?? res.length ?? 0
+        length: res.totalElements ?? res.length ?? 0,
+        pages:res.pageable ?? 0
       }))
     );
   }

@@ -13,7 +13,8 @@ interface HouseHelp {
   religion: string;
   skills: string[];
   yearsOfExperience: number;
-  nationalIdDocument:string
+  nationalIdDocument:string;
+  user:UserDetails;
 }
 
 interface HomeOwner {

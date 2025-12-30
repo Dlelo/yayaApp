@@ -1,5 +1,4 @@
-@if( userDetails$ | async; as userDetails){
-  @if(houseHelpDetails$ | async; as houseHelp){
+@if(houseHelpDetails$ | async; as houseHelp){
     <div class="container my-4 profile-page">
       <mat-card class="p-4 shadow-sm profile-card">
         <!-- Header Section -->
@@ -7,12 +6,12 @@
           <div class="col-md-3 text-center">
             <img
               [src]="'/househelp-banner.png'"
-              alt="{{ userDetails?.name }}"
+              alt="{{ houseHelp?.user?.name }}"
               class="rounded-circle img-fluid profile-photo mb-3 mb-md-0"
             />
           </div>
           <div class="col-md-9 profile-info">
-            <h2 class="mb-1">{{ userDetails?.name }}</h2>
+            <h2 class="mb-1">{{ houseHelp?.user?.name }}</h2>
             <div class="rating text-warning fs-5">⭐⭐⭐⭐☆</div>
             <p class="location mt-2 text-secondary">
               <mat-icon inline>location_on</mat-icon> {{ houseHelp?.currentLocation ?? "-"}}
@@ -24,8 +23,6 @@
         <!-- Details Section -->
         <div class="profile-details mt-4">
           <h3 class="mb-2">About</h3>
-          <!--        <p>{{ houseHelp.description }}</p>-->
-
           <h3 class="mt-4 mb-2">Number of children</h3>
           <p>{{ houseHelp?.numberOfChildren ?? "-" }} children</p>
 
@@ -71,11 +68,10 @@
             class="px-4"
             (click)="navigate('/pay')"
           >
-            Hire {{ userDetails?.name ?? "" }}
+            Hire {{ houseHelp?.user?.name ?? "" }}
           </button>
         </div>
       </mat-card>
     </div>
   }
-}
 
