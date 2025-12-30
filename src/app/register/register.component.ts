@@ -155,7 +155,6 @@ export class RegisterHousehelpComponent {
     ]),
     confirmPassword: new FormControl('', [Validators.required]),
     email: new FormControl('', [
-      Validators.required,
       Validators.email
     ]),
   }, { validators: passwordMatchValidator });
