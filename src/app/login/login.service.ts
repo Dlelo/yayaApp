@@ -64,7 +64,7 @@ export class LoginService {
       const userInfo: UserInfo = {
         userId: decoded?.userId,
         email: decoded?.sub,
-        role: this.extractRoles(decoded?.role),
+        role: decoded?.roles,
       };
 
       localStorage.setItem('user', JSON.stringify(userInfo));
