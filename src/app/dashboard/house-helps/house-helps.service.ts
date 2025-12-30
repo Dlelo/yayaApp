@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {map, Observable} from 'rxjs';
 import {environment} from '../../../environments/environments';
+import {HouseHelpStatus} from './house-helps-status.enum';
 
 @Injectable()
 export class HousehelpService {
@@ -12,11 +13,14 @@ export class HousehelpService {
   getAll(
     page: number = 0,
     size: number = 20,
-    filter: any = {}
+    filter: any = {
+      active: true
+    }
   ): Observable<{ data: any[]; length: number }> {
     const params = new HttpParams()
       .set('page', page)
-      .set('size', size);
+      .set('size', size)
+    ;
 
 
     return this.http.post<any>(`${this.apiUrl}/search`, filter, { params }).pipe(
