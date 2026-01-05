@@ -79,6 +79,24 @@
 
           @if(isHouseHelp){
             <div formGroupName="houseHelp">
+
+              <div class="col-md-12">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Availability Type</mat-label>
+
+                  <mat-select formControlName="availabilityType">
+
+                    @for(type of availabilityTypes; track $index){
+                      <mat-option
+                        [value]="type">
+                        {{ type.replace('_', ' ') }}
+                      </mat-option>
+                    }
+
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
               <div class="col-md-12">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Skills (comma-separated)</mat-label>

@@ -66,6 +66,8 @@ export class EditAccountDetailsComponent implements OnInit {
   nationalIdFile: File | null = null;
   nationalIdFileName = '';
 
+  availabilityTypes = ['DAYBURG', 'EMERGENCY', 'LIVE_IN'];
+
   ngOnInit(): void {
     if (!this.userId) return;
 
@@ -124,37 +126,50 @@ export class EditAccountDetailsComponent implements OnInit {
   }
 
   private initializeForm(user: any): void {
-    this.form = this.fb.group({
+    this.form = this.fb?.group({
       nationalId: [user.houseHelp?.nationalId || ''],
 
       houseHelp: this.isHouseHelp
         ? this.fb.group({
           yearsOfExperience: [user.houseHelp?.yearsOfExperience || 0],
-          skills: Array.isArray(user.houseHelp?.skills)
-            ? user.houseHelp.skills
-            : user.houseHelp?.skills
-              ? user.houseHelp.skills.split(',')
-              : [],
 
-          languages:Array.isArray(user.houseHelp?.languages)
-            ? user.houseHelp.languages
-            : user.houseHelp?.languages
-              ? user.houseHelp.languages.split(',')
-              : [],
+          availabilityType: [
+            user.houseHelp?.availabilityType || null,
+            Validators.required
+          ],
+
+          skills: [
+            Array.isArray(user.houseHelp?.skills)
+              ? user.houseHelp.skills
+              : user.houseHelp?.skills
+                ? user.houseHelp.skills.split(',')
+                : []
+          ],
+
+          languages: [
+            Array.isArray(user.houseHelp?.languages)
+              ? user.houseHelp.languages
+              : user.houseHelp?.languages
+                ? user.houseHelp.languages.split(',')
+                : []
+          ],
 
           goodConduct: [user.houseHelp?.goodConduct || ''],
           medicalReport: [user.houseHelp?.medicalReport || ''],
-          numberOfChildren:[user.houseHelp?.medicalReport || ''],
-          nationalIdDocument:[user.houseHelp?.nationalIdDocument || ''],
+          numberOfChildren: [user.houseHelp?.numberOfChildren || 0],
+          nationalIdDocument: [user.houseHelp?.nationalIdDocument || ''],
           height: [user.houseHelp?.height || ''],
           weight: [user.houseHelp?.weight || ''],
           religion: [user.houseHelp?.religion || ''],
           levelOfEducation: [user.houseHelp?.levelOfEducation || ''],
           currentLocation: [user.houseHelp?.currentLocation || ''],
           contactPersons: [user.houseHelp?.contactPersons || ''],
-          contactPersonsPhoneNumber: [user.houseHelp?.contactPersonsPhoneNumber || ''],
+          contactPersonsPhoneNumber: [
+            user.houseHelp?.contactPersonsPhoneNumber || ''
+          ],
         })
         : null,
+
 
       homeOwner: this.isHomeOwner
         ? this.fb.group({
@@ -229,14 +244,12 @@ export class EditAccountDetailsComponent implements OnInit {
 
     if (formValue.houseHelp?.skills) {
       formValue.houseHelp.skills = formValue.houseHelp.skills
-        .split(',')
         .map((s: string) => s.trim())
         .filter((s: string) => s.length > 0);
     }
 
     if (formValue.houseHelp?.languages) {
       formValue.houseHelp.languages = formValue.houseHelp.languages
-        .split(',')
         .map((s: string) => s.trim())
         .filter((s: string) => s.length > 0);
     }
