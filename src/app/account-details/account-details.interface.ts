@@ -15,7 +15,7 @@ interface HouseHelp {
   yearsOfExperience: number;
   nationalIdDocument:string;
   user:UserDetails;
-  availabilityTypes:[]
+  houseHelpType:[]
 }
 
 interface HomeOwner {

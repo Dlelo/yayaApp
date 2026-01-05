@@ -133,7 +133,7 @@ export class EditAccountDetailsComponent implements OnInit {
         ? this.fb.group({
           yearsOfExperience: [user.houseHelp?.yearsOfExperience || 0],
 
-          availabilityType: [
+          houseHelpType: [
             user.houseHelp?.availabilityType || null,
             Validators.required
           ],

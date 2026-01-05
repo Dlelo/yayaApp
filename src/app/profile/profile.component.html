@@ -23,14 +23,14 @@
         <!-- Details Section -->
         <div class="profile-details mt-4">
           <h3 class="mb-2">About</h3>
-          <h3 class="mt-4 mb-2">Number of children</h3>
+          <h5 class="mt-4 mb-2">Number of children</h5>
           <p>{{ houseHelp?.numberOfChildren ?? "-" }} children</p>
 
 
-          <h3 class="mt-4 mb-2">Level of education</h3>
+          <h5 class="mt-4 mb-2">Level of education</h5>
           <p>{{ houseHelp?.levelOfEducation ?? "-" }}</p>
 
-          <h3 class="mt-4 mb-2">Languages</h3>
+          <h5 class="mt-4 mb-2">Languages</h5>
           <ul class="list-unstyled row">
             @for (languages of houseHelp?.languages; track $index) {
               <li class="col-md-6 mb-2">
@@ -39,15 +39,15 @@
             }
           </ul>
 
-          <h3 class="mt-4 mb-2">Religion</h3>
-          <p>{{ houseHelp?.religion ?? "-"  }}</p>
+          <h5 class="mt-4 mb-2">Availability Type</h5>
+          <p>{{ houseHelp?.houseHelpType ?? "-"  }}</p>
 
 
-          <h3 class="mt-4 mb-2">Religion</h3>
+          <h5 class="mt-4 mb-2">Religion</h5>
           <p>{{ houseHelp?.religion ?? "-" }}</p>
 
 
-          <h3 class="mt-4 mb-2">Skills</h3>
+          <h5 class="mt-4 mb-2">Skills</h5>
           <ul class="list-unstyled row">
             @for (skill of houseHelp.skills; track $index) {
               <li class="col-md-6 mb-2">
@@ -56,7 +56,7 @@
             }
           </ul>
 
-          <h3 class="mt-4 mb-2">Experience</h3>
+          <h5 class="mt-4 mb-2">Experience</h5>
           <p>{{ houseHelp?.yearsOfExperience ?? "-" }} years of experience</p>
 
         </div>
