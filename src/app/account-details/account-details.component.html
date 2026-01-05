@@ -31,15 +31,15 @@
           {{ houseHelpDetails?.active ? 'Active' : 'Inactive' }}
           </span>
     </p>
-    <p><strong>ID:</strong> {{ userDetails?.houseHelp?.nationalId ?? '-'}}</p>
-        <p><strong>Good conduct: </strong> {{ userDetails?.houseHelp?.goodConduct ?? '-'}}</p>
-        <p><strong>Medical report: </strong> {{ userDetails?.houseHelp?.medicalReport ?? '-'}}</p>
-          <p><strong>Availability type: </strong> {{ userDetails?.houseHelp?.houseHelpType ?? '-'}}</p>
+    <p><strong>ID:</strong> {{ houseHelpDetails?.nationalId ?? '-'}}</p>
+        <p><strong>Good conduct: </strong> {{ houseHelpDetails?.goodConduct ?? '-'}}</p>
+        <p><strong>Medical report: </strong> {{ houseHelpDetails?.medicalReport ?? '-'}}</p>
+          <p><strong>Availability type: </strong> {{houseHelpDetails?.houseHelpType ?? '-'}}</p>
 
-        <p><strong>Age:</strong> {{"-" }}</p>
-        <p><strong>Height:</strong> {{ "-" }}</p>
-        <p><strong>Weight:</strong> {{ "-" }}</p>
-        <p><strong>Number of children:</strong> {{ "-" }}</p>
+        <p><strong>Age:</strong>  {{ houseHelpDetails?.age ?? "-" }}</p>
+        <p><strong>Height:</strong> {{ houseHelpDetails?.height ?? "-" }}</p>
+        <p><strong>Weight:</strong> {{ houseHelpDetails?.weight ?? "-" }}</p>
+        <p><strong>Number of children:</strong> {{ houseHelpDetails?.numberOfChildren ?? "-" }}</p>
         }
 
       }

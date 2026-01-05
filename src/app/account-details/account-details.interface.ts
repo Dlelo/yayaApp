@@ -15,7 +15,10 @@ interface HouseHelp {
   yearsOfExperience: number;
   nationalIdDocument:string;
   user:UserDetails;
-  houseHelpType:[]
+  houseHelpType:[];
+  age:string;
+  weight:string;
+  height:string;
 }
 
 interface HomeOwner {
