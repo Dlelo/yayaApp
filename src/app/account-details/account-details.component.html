@@ -1,3 +1,5 @@
+@let userDetails = userDetails$ | async;
+
 <div class="container my-4">
   <mat-card class="shadow-sm rounded-3">
     <div class="d-flex align-items-center mb-3">
@@ -6,14 +8,14 @@
     </div>
 
     <mat-divider></mat-divider>
-    @if(userDetails$ | async; as userDetails){
+    @if(userDetails){
       <div class="row mt-3">
         <!-- Left Column -->
         <div class="col-md-12">
           <h4 class="mb-3">Personal Info</h4>
-          <p><strong>Name:</strong> {{ userDetails?.name }}</p>
-          <p><strong>Email:</strong> {{ userDetails?.email }}</p>
-          <p><strong>Phone number: </strong> {{ userDetails?.phoneNumber }}</p>
+          <p><strong>Name:</strong> {{ userDetails?.name ?? "-" }}</p>
+          <p><strong>Email:</strong> {{ userDetails?.email ?? "-"}}</p>
+          <p><strong>Phone number: </strong> {{ userDetails?.phoneNumber ?? "-" }}</p>
 
         </div>
       </div>
@@ -65,10 +67,13 @@
 
     <mat-divider class="my-3"></mat-divider>
 
-    <div class="d-flex justify-content-end gap-2">
-      <button mat-stroked-button color="primary" (click)="editAccount()">
-        Edit Profile
-      </button>
-    </div>
+    @if(userDetails?.roles?.includes('ADMIN')){
+      <div class="d-flex justify-content-end gap-2">
+        <button mat-stroked-button color="primary" (click)="editAccount()">
+          Edit Profile
+        </button>
+      </div>
+    }
+
   </mat-card>
 </div>
