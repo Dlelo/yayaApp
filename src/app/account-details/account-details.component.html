@@ -69,7 +69,7 @@
 
     @if(userDetails?.roles?.includes('ADMIN')){
       <div class="d-flex justify-content-end gap-2">
-        <button mat-stroked-button color="primary" (click)="editAccount()">
+        <button mat-stroked-button color="primary" (click)="editAccount(userId)">
           Edit Profile
         </button>
       </div>

@@ -64,7 +64,7 @@ export class AccountDetailsComponent implements OnInit {
     );
   }
 
-  editAccount(): void {
-    this.router.navigate(['/edit-account']);
+  editAccount(userID:number|null): void {
+    this.router.navigate(['/edit-account/', userID]);
   }
 }

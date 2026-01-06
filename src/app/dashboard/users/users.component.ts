@@ -6,6 +6,7 @@ import {AsyncPipe, JsonPipe} from '@angular/common';
 import {UsersService} from './users.service';
 import {EditUserDialogComponent} from './edit-user-dialog/edit-user-dialog.component';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {Router} from '@angular/router';
 
 
 
@@ -25,6 +26,7 @@ import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 export class UsersComponent{
   private readonly  usersService:UsersService = inject(UsersService);
   private dialog: MatDialog = inject(MatDialog);
+  private readonly router = inject(Router);
 
   allRoles = ["ADMIN", "HOMEOWNER", "HOUSEHELP", "AGENT"];
 
@@ -48,5 +50,9 @@ export class UsersComponent{
         });
       }
     });
+  }
+
+  openUserAccountDetails(userID:number|null){
+    this.router.navigate(['/edit-account/', userID]);
   }
 }

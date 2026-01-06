@@ -1,6 +1,6 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import { Router } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {MatCard, MatCardModule} from '@angular/material/card';
 import {MatButton, MatButtonModule} from '@angular/material/button';
 import {MatDivider} from '@angular/material/divider';
@@ -41,6 +41,7 @@ import {MatProgressBar} from '@angular/material/progress-bar';
 export class EditAccountDetailsComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly activatesRoute = inject(ActivatedRoute);
   private readonly loginService = inject(LoginService);
   private readonly accountDetails = inject(AccountDetailsService);
   private readonly snackBar = inject(MatSnackBar);
@@ -48,7 +49,7 @@ export class EditAccountDetailsComponent implements OnInit {
   private readonly  homeOwnerService = inject(HomeOwnerService);
   private readonly fileUploadService = inject(FileUploadService);
 
-  userId: number | null = this.loginService.userId();
+  userId = this.activatesRoute.snapshot.paramMap.get('id');
   userDetails$!: Observable<any>;
 
   form!: FormGroup;
@@ -71,7 +72,7 @@ export class EditAccountDetailsComponent implements OnInit {
   ngOnInit(): void {
     if (!this.userId) return;
 
-    this.userDetails$ = this.accountDetails.getUserById(this.userId)
+    this.userDetails$ = this.accountDetails.getUserById(Number(this.userId))
       .pipe(
         take(1),
       tap((user) => {
