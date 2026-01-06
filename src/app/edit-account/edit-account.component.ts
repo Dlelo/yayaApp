@@ -128,14 +128,12 @@ export class EditAccountDetailsComponent implements OnInit {
 
   private initializeForm(user: any): void {
     this.form = this.fb?.group({
-      nationalId: [user.houseHelp?.nationalId || ''],
-
       houseHelp: this.isHouseHelp
         ? this.fb.group({
           yearsOfExperience: [user.houseHelp?.yearsOfExperience || 0],
-
+          nationalId: [user.houseHelp?.nationalId || ''],
           houseHelpType: [
-            user.houseHelp?.availabilityType || null,
+            user.houseHelp?.houseHelpType || null,
             Validators.required
           ],
 
@@ -160,10 +158,12 @@ export class EditAccountDetailsComponent implements OnInit {
           numberOfChildren: [user.houseHelp?.numberOfChildren || 0],
           nationalIdDocument: [user.houseHelp?.nationalIdDocument || ''],
           height: [user.houseHelp?.height || ''],
+          age: [user.houseHelp?.age || ''],
           weight: [user.houseHelp?.weight || ''],
           religion: [user.houseHelp?.religion || ''],
           levelOfEducation: [user.houseHelp?.levelOfEducation || ''],
           currentLocation: [user.houseHelp?.currentLocation || ''],
+          homeLocation: [user.houseHelp?.homeLocation || ''],
           contactPersons: [user.houseHelp?.contactPersons || ''],
           contactPersonsPhoneNumber: [
             user.houseHelp?.contactPersonsPhoneNumber || ''
@@ -179,6 +179,7 @@ export class EditAccountDetailsComponent implements OnInit {
           numberOfRooms: [user.homeOwner?.numberOfRooms || ''],
           homeLocation: [user.homeOwner?.homeLocation || ''],
           nationalIdDocument:[user.homeOwner?.nationalIdDocument || ''],
+          nationalId: [user.homeOwner?.nationalId || ''],
         })
         : null,
     });
