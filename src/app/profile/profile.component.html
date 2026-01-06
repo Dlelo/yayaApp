@@ -23,6 +23,14 @@
         <!-- Details Section -->
         <div class="profile-details mt-4">
           <h3 class="mb-2">About</h3>
+
+          <h5 class="mt-4 mb-2">Availability Type</h5>
+          <p>
+              <span class="badge bg-success">
+                {{ houseHelp?.houseHelpType }}
+              </span>
+          </p>
+
           <h5 class="mt-4 mb-2">Number of children</h5>
           <p>{{ houseHelp?.numberOfChildren ?? "-" }} children</p>
 
@@ -38,10 +46,6 @@
               </li>
             }
           </ul>
-
-          <h5 class="mt-4 mb-2">Availability Type</h5>
-          <p>{{ houseHelp?.houseHelpType ?? "-"  }}</p>
-
 
           <h5 class="mt-4 mb-2">Religion</h5>
           <p>{{ houseHelp?.religion ?? "-" }}</p>
