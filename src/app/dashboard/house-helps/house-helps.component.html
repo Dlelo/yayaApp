@@ -1,35 +1,68 @@
 <mat-card class="p-3 shadow-sm">
-  <h2 class="mb-3">Manage  House helps</h2>
-  <table class="table table-striped table-hover">
-    <thead class="table-light">
-    <tr>
-      <th>#</th>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Status</th>
-      <th class="text-end">Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    @for(houseHelp of (houseHelps | async)?.data; let i = $index; track $index){
-      <tr>
-        <td>{{ i + 1 }}</td>
-        <td>{{ houseHelp.user.name }}</td>
-        <td>{{ houseHelp.user.email }}</td>
-        <td>
-          @if(houseHelp.user.active){
-            <span class="badge bg-success">Active</span>
-          }
-          @if(!houseHelp.user.active){
-            <span class="badge bg-secondary">Inactive</span>
-          }</td>
-        <td class="text-end">
-          <button mat-stroked-button color="primary" class="me-2">Edit</button>
-          <button mat-stroked-button color="warn">Delete</button>
-        </td>
-      </tr>
-    }
+  <h2 class="mb-3">Manage House Helps</h2>
 
-    </tbody>
-  </table>
+  @if (houseHelpsPage$ | async; as pageData) {
+
+    <table class="table table-striped table-hover">
+      <thead class="table-light">
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone number</th>
+        <th>Status</th>
+        <th class="text-end">Actions</th>
+      </tr>
+      </thead>
+
+      <tbody>
+        @for (houseHelp of pageData.content; let i = $index; track houseHelp.id) {
+          <tr>
+            <td>{{ i + 1 + (pageData.number * pageData.size) }}</td>
+
+            <td>{{ houseHelp.user?.name }}</td>
+
+            <td>{{ houseHelp.user?.email || '—' }}</td>
+
+            <td>{{ houseHelp.user?.phoneNumber || '—' }}</td>
+
+            <td>
+              @if (houseHelp?.active) {
+                <span class="badge bg-success">Active</span>
+              } @else {
+                <span class="badge bg-secondary">Inactive</span>
+              }
+            </td>
+
+            <td class="text-end">
+              <button
+                mat-stroked-button
+                color="primary"
+                class="me-2"
+                (click)="editHouseHelp(houseHelp.id)">
+                Edit
+              </button>
+
+              <button
+                mat-stroked-button
+                color="warn"
+                (click)="activateDeactivate(houseHelp.id)">
+                Activate/Deactivate
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <mat-paginator
+      [length]="pageData.totalElements"
+      [pageSize]="pageData.size"
+      [pageIndex]="pageData.number"
+      [pageSizeOptions]="[10, 20, 50]"
+      (page)="onHouseHelpPageChange($event)">
+    </mat-paginator>
+
+  }
 </mat-card>

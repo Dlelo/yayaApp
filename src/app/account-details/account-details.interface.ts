@@ -46,4 +46,5 @@ interface UserDetails {
     active: boolean;
     expiry: string;
   };
+  active:boolean;
 }

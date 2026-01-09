@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {MatCard} from '@angular/material/card';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButton} from '@angular/material/button';
@@ -26,10 +26,10 @@ import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
   providers: [UsersService],
   standalone: true
 })
-export class UsersComponent{
+export class UsersComponent implements OnInit{
   private readonly  usersService:UsersService = inject(UsersService);
   private dialog: MatDialog = inject(MatDialog);
-  private readonly router = inject(Router);
+  private readonly router:Router = inject(Router);
 
   allRoles = ["ADMIN", "HOMEOWNER", "HOUSEHELP", "AGENT"];
 

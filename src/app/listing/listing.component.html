@@ -13,7 +13,6 @@
             @for (skills of houseHelp.skills; track $index; let isLast = $last){
               <span class="small">{{ skills }} {{ !isLast ? ', ' : '' }}</span>
             }
-
             <p>
               <span class="badge bg-success">
                 {{ houseHelp?.houseHelpType }}

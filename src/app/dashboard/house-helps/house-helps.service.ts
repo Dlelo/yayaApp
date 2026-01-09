@@ -9,6 +9,29 @@ export class HousehelpService {
 
   constructor(private http: HttpClient) {}
 
+
+  getHouseHelps(
+    page: number,
+    size: number,
+    filter: any = {
+      active: true
+    }
+  ): Observable<PageResponse<HouseHelp>> {
+
+    const params = new HttpParams()
+      .set('page', page)
+      .set('size', size)
+
+    ;
+
+    return this.http.post<PageResponse<HouseHelp>>(
+      `${this.apiUrl}/search`,
+      filter,
+      { params }
+    );
+  }
+
+
   getAll(
     page: number = 0,
     size: number = 20,
