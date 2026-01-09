@@ -1,34 +1,63 @@
 <mat-card class="p-3 shadow-sm">
   <h2 class="mb-3">Manage Users</h2>
-  <table class="table table-striped table-hover">
-    <thead class="table-light">
-    <tr>
-      <th>#</th>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Status</th>
-      <th class="text-end">Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-      @for(user of (users | async)?.data; let i = $index; track $index){
-        <tr>
-          <td>{{ i + 1 }}</td>
-          <td>{{user.name }}</td>
-          <td>{{ user.email }}</td>
-          <td>
-            @for (role of user.roles; track $index; let isLast = $last){
-              <span class="small">{{ role.name }} {{ !isLast ? ', ' : '' }}</span>
-            }
-          </td>
-          <td class="text-end">
-            <button mat-stroked-button color="primary" class="me-2"  (click)="openEditUserDialog(user)">Update Role</button>
-            <button mat-stroked-button color="primary" class="me-2" (click)="openUserAccountDetails(user?.id)">Edit user details</button>
 
-          </td>
-        </tr>
-      }
+  @if (usersPage$ | async; as pageData) {
 
-    </tbody>
-  </table>
+    <table class="table table-striped table-hover">
+      <thead class="table-light">
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Roles</th>
+        <th class="text-end">Actions</th>
+      </tr>
+      </thead>
+
+      <tbody>
+        @for (user of pageData.content; let i = $index; track user.id) {
+          <tr>
+            <td>{{ i + 1 + (pageData.number * pageData.size) }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email || '—' }}</td>
+
+            <td>
+              @for (role of user.roles; let isLast = $last; track $index) {
+                <span class="small">
+                  {{ role?.name }}{{ !isLast ? ', ' : '' }}
+                </span>
+              }
+            </td>
+
+            <td class="text-end">
+              <button
+                mat-stroked-button
+                color="primary"
+                class="me-2"
+                (click)="openEditUserDialog(user)">
+                Update Role
+              </button>
+
+              <button
+                mat-stroked-button
+                color="primary"
+                (click)="openUserAccountDetails(user.id)">
+                Edit user details
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <mat-paginator
+      [length]="pageData.totalElements"
+      [pageSize]="pageData.size"
+      [pageIndex]="pageData.number"
+      [pageSizeOptions]="[10, 20, 50]"
+      (page)="onPageChange($event)">
+    </mat-paginator>
+
+  }
 </mat-card>

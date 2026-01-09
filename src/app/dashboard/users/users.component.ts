@@ -7,6 +7,8 @@ import {UsersService} from './users.service';
 import {EditUserDialogComponent} from './edit-user-dialog/edit-user-dialog.component';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {Router} from '@angular/router';
+import {Observable} from 'rxjs';
+import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 
 
 
@@ -19,6 +21,7 @@ import {Router} from '@angular/router';
     MatDialogModule,
     MatButton,
     AsyncPipe,
+    MatPaginatorModule,
   ],
   providers: [UsersService],
   standalone: true
@@ -30,7 +33,11 @@ export class UsersComponent{
 
   allRoles = ["ADMIN", "HOMEOWNER", "HOUSEHELP", "AGENT"];
 
-  users = this.usersService.getAll();
+  page = 0;
+  size = 20;
+
+  usersPage$!: Observable<PageResponse<User>>;
+
 
   openEditUserDialog(user: any) {
     const ref = this.dialog.open(EditUserDialogComponent, {
@@ -45,14 +52,28 @@ export class UsersComponent{
 
     ref.afterClosed().subscribe(newRoles => {
       if (newRoles) {
-        this.usersService.updateUserRoles(user.id, newRoles).subscribe(() => {
-          this.users = this.usersService.getAll();
-        });
+        this.usersService.updateUserRoles(user.id, newRoles)
+          .subscribe(() => this.loadUsers());
       }
     });
+
   }
 
   openUserAccountDetails(userID:number|null){
     this.router.navigate(['/edit-account/', userID]);
+  }
+
+  ngOnInit(): void {
+    this.loadUsers();
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.page = event.pageIndex;
+    this.size = event.pageSize;
+    this.loadUsers();
+  }
+
+  loadUsers(): void {
+    this.usersPage$ = this.usersService.getUsers(this.page, this.size);
   }
 }

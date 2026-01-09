@@ -9,21 +9,38 @@ export class UsersService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(
-    page: number = 0,
-    size: number = 20,
+  // getAll(
+  //   page: number = 0,
+  //   size: number = 20,
+  //   filter: any = {}
+  // ): Observable<{ data: any[]; length: number }> {
+  //   const params = new HttpParams()
+  //     .set('page', page)
+  //     .set('size', size);
+  //
+  //
+  //   return this.http.post<any>(`${this.apiUrl}/search`, filter, { params }).pipe(
+  //     map(res => ({
+  //       data: res.content ?? res,
+  //       length: res.totalElements ?? res.length ?? 0
+  //     }))
+  //   );
+  // }
+
+  getUsers(
+    page:number,
+    size:number,
     filter: any = {}
-  ): Observable<{ data: any[]; length: number }> {
+  ): Observable<PageResponse<User>> {
+
     const params = new HttpParams()
       .set('page', page)
       .set('size', size);
 
-
-    return this.http.post<any>(`${this.apiUrl}/search`, filter, { params }).pipe(
-      map(res => ({
-        data: res.content ?? res,
-        length: res.totalElements ?? res.length ?? 0
-      }))
+    return this.http.post<PageResponse<User>>(
+      `${this.apiUrl}/search`,
+      filter,
+      { params }
     );
   }
 
