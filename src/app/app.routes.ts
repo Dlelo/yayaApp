@@ -69,8 +69,7 @@ export const routes: Routes = [
       { path: 'agents', loadComponent: () => import('./dashboard/agents/agents.component').then(m => m.AgentsComponent) },
       { path: 'houseHelps', loadComponent: () => import('./dashboard/house-helps/house-helps.component').then(m => m.HouseHelpsComponent) },
       { path: 'homeOwners', loadComponent: () => import('./dashboard/home-owners/home-owners.component').then(m => m.HomeOwnersComponent) },
-      { path: 'subscriptions', loadComponent: () => import('./dashboard/subscriptions/subscriptions.component').then(m => m.SubscriptionsComponent) },
-      { path: 'requests', loadComponent: () => import('./dashboard/hire-requests/hire-requests.component').then(m => m.HireRequestsComponent) },
+     { path: 'requests', loadComponent: () => import('./dashboard/hire-requests/hire-requests.component').then(m => m.HireRequestsComponent) },
       { path: 'reports', loadComponent: () => import('./dashboard/reports/reports.component').then(m => m.ReportsComponent) }, { path: '', component: OverviewComponent, pathMatch: 'full' },
     ]
   },
