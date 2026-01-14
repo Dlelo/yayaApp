@@ -15,7 +15,7 @@ export class HomeComponent {
   currentYear = new Date().getFullYear();
   private readonly router:Router = inject(Router);
 
-  navigate(path: string) {
-    this.router.navigate([path]);
+  navigate(type: string) {
+    this.router.navigate(['/listing', type.toLowerCase()]);
   }
 }

@@ -18,7 +18,7 @@ import {PrivacyPolicyComponent} from './privacy-policy/privacy-policy.component'
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   {
-    path: 'listings',
+    path: 'listing/:type',
     component: ListingsComponent,
     canActivate: [AuthGuard],
     data: { roles: ['ROLE_HOMEOWNER','ROLE_ADMIN', 'ROLE_AGENT', 'ROLE_SECURITY', 'ROLE_SALES'] },

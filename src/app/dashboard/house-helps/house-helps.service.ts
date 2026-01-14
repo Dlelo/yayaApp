@@ -33,18 +33,20 @@ export class HousehelpService {
 
 
   getAll(
+    type?:string,
     page: number = 0,
     size: number = 20,
     filter: any = {
-      active: true
+      active: true,
+      houseHelpType: type && type !== 'all' ? type : undefined
     }
   ): Observable<{ data: any[]; length: number; pages: any }> {
-    const params = new HttpParams()
+    let params = new HttpParams()
       .set('page', page)
-      .set('size', size)
-
-    ;
-
+      .set('size', size);
+    if (type && type !== 'all') {
+      params = params.set('houseHelpType', type);
+    }
 
     return this.http.post<any>(`${this.apiUrl}/search`, filter, { params }).pipe(
       map(res => ({
