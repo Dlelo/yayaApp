@@ -1,7 +1,90 @@
 <div class="container mt-4">
   <h2 class="mb-4 text-center">Available Househelps</h2>
 
-  <div class="row g-4">
+
+    <!-- FILTERS -->
+    <mat-card class="mb-4 p-3 shadow-sm">
+      <div class="row g-3">
+
+        <!-- Experience -->
+        <div class="col-md-3">
+          <input
+            type="number"
+            class="form-control"
+            placeholder="Min Experience (years)"
+            [(ngModel)]="filters.experience"
+          />
+        </div>
+
+        <!-- Location -->
+        <div class="col-md-3">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Location"
+            [(ngModel)]="filters.location"
+          />
+        </div>
+
+<!--        &lt;!&ndash; Language &ndash;&gt;-->
+<!--        <div class="col-md-3">-->
+<!--          <input-->
+<!--            type="text"-->
+<!--            class="form-control"-->
+<!--            placeholder="Language"-->
+<!--            [(ngModel)]="filters?.languages"-->
+<!--          />-->
+<!--        </div>-->
+
+        <!-- Availability -->
+        <div class="col-md-3">
+          <select
+            class="form-select"
+            [(ngModel)]="filters.houseHelpType"
+          >
+            <option [ngValue]="null">All Types</option>
+            <option value="DAYBURG">Dayburg</option>
+            <option value="LIVE_IN">Live-in</option>
+            <option value="EMERGENCY">Emergency</option>
+          </select>
+        </div>
+
+<!--        &lt;!&ndash; Salary Min &ndash;&gt;-->
+<!--        <div class="col-md-3">-->
+<!--          <input-->
+<!--            type="number"-->
+<!--            class="form-control"-->
+<!--            placeholder="Min Salary"-->
+<!--            [(ngModel)]="filters.minExpectedSalary"-->
+<!--          />-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Salary Max &ndash;&gt;-->
+<!--        <div class="col-md-3">-->
+<!--          <input-->
+<!--            type="number"-->
+<!--            class="form-control"-->
+<!--            placeholder="Max Salary"-->
+<!--            [(ngModel)]="filters.maxExpectedSalary"-->
+<!--          />-->
+<!--        </div>-->
+
+        <!-- Actions -->
+        <div class="col-md-6 d-flex gap-2">
+          <button mat-raised-button color="primary" (click)="applyFilters()">
+            Apply Filters
+          </button>
+
+          <button mat-button color="warn" (click)="clearFilters()">
+            Clear
+          </button>
+        </div>
+
+      </div>
+    </mat-card>
+
+
+    <div class="row g-4">
     @for (houseHelp of (houseHelps$ | async)?.data; track houseHelp.id) {
       <div class="col-12 col-sm-6 col-md-4 col-lg-3">
         <mat-card class="h-100 text-center p-3">

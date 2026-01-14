@@ -11,7 +11,9 @@
       <button mat-button (click)="navigate(`account/${userId}`)">Account details</button>
     }
     @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_HOMEOWNER') || roles().includes('ROLE_SALES') ||  roles().includes('ROLE_SECURITY')) {
-      <button mat-button (click)="navigate('/listings')">Listing</button>
+      <button mat-button [routerLink]="['/listing', 'all']">
+        Listing
+      </button>
     }
     @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_SALES') ||  roles().includes('ROLE_SECURITY')) {
       <button mat-button (click)="navigate('/dashboard')">Dashboard</button>
