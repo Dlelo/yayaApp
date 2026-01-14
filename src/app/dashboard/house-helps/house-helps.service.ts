@@ -38,7 +38,7 @@ export class HousehelpService {
     size: number = 20,
     filter: any = {
       active: true,
-      houseHelpType: type && type !== 'all' ? type : undefined
+      houseHelpType: type && type !== 'ALL' ? type : undefined
     }
   ): Observable<{ data: any[]; length: number; pages: any }> {
     let params = new HttpParams()
