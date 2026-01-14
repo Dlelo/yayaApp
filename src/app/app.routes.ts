@@ -20,7 +20,8 @@ export const routes: Routes = [
   {
     path: 'listings',
     component: ListingsComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
+    data: { roles: ['ROLE_HOMEOWNER','ROLE_ADMIN', 'ROLE_AGENT', 'ROLE_SECURITY', 'ROLE_SALES'] },
   },
   { path: 'register', component: RegisterHousehelpComponent },
   { path: 'login', component:LoginComponent },
