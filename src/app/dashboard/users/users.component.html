@@ -30,19 +30,27 @@
             </td>
 
             <td class="text-end">
+              @if(roles()?.includes('ROLE_ADMIN') || roles()?.includes('ROLE_SALES')){
+                <button
+                  mat-stroked-button
+                  color="primary"
+                  class="me-2"
+                  (click)="openEditUserDialog(user)">
+                  Update Role
+                </button>
+              }
               <button
                 mat-stroked-button
                 color="primary"
-                class="me-2"
-                (click)="openEditUserDialog(user)">
-                Update Role
+                (click)="openUserAccountDetails(user.id)">
+                Edit
               </button>
 
               <button
                 mat-stroked-button
                 color="primary"
-                (click)="openUserAccountDetails(user.id)">
-                Edit user details
+                (click)="openViewUserDetails(user.id)">
+                View
               </button>
             </td>
           </tr>

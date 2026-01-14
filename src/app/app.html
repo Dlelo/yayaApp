@@ -10,10 +10,10 @@
     @if(userId(); as userId ){
       <button mat-button (click)="navigate(`account/${userId}`)">Account details</button>
     }
-    @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_HOMEOWNER')) {
+    @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_HOMEOWNER') || roles().includes('ROLE_SALES') ||  roles().includes('ROLE_SECURITY')) {
       <button mat-button (click)="navigate('/listings')">Listings </button>
     }
-    @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT')) {
+    @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_SALES') ||  roles().includes('ROLE_SECURITY')) {
       <button mat-button (click)="navigate('/dashboard')">Dashboard</button>
     }
    <button mat-button (click)="logout()">Logout</button>

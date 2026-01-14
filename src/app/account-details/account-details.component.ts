@@ -7,7 +7,7 @@ import { MatButton } from '@angular/material/button';
 import { AccountDetailsService } from './account-details.service';
 import { Observable, filter, shareReplay, switchMap } from 'rxjs';
 import { LoginService } from '../login/login.service';
-import { Router } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-account-details',
@@ -27,8 +27,9 @@ export class AccountDetailsComponent implements OnInit {
   private readonly loginService = inject(LoginService);
   private readonly accountDetails = inject(AccountDetailsService);
   private readonly router = inject(Router);
+  private readonly activatesRoute = inject(ActivatedRoute);
 
-  userId = this.loginService.userId();
+  userId = this.activatesRoute.snapshot.paramMap.get('id');
 
   /** Primary stream */
   userDetails$!: Observable<UserDetails>;
@@ -42,7 +43,7 @@ export class AccountDetailsComponent implements OnInit {
 
     /** Fetch user ONCE */
     this.userDetails$ = this.accountDetails
-      .getUserById(this.userId)
+      .getUserById(Number(this.userId))
       .pipe(shareReplay(1));
 
     /** HouseHelp details */
@@ -64,7 +65,7 @@ export class AccountDetailsComponent implements OnInit {
     );
   }
 
-  editAccount(userID:number|null): void {
-    this.router.navigate(['/edit-account/', userID]);
+  editAccount(userID:string|null): void {
+    this.router.navigate(['/edit-account/', Number(userID)]);
   }
 }

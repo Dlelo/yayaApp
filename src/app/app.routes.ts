@@ -63,14 +63,29 @@ export const routes: Routes = [
     path: 'dashboard',
     component: DashboardComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['ROLE_ADMIN', 'ROLE_AGENT'] },
+    data: { roles: ['ROLE_ADMIN', 'ROLE_AGENT', 'ROLE_SECURITY', 'ROLE_SALES'] },
     children: [
-      {path:'users', loadComponent: () => import('./dashboard/users/users.component').then(m => m.UsersComponent) },
-      { path: 'agents', loadComponent: () => import('./dashboard/agents/agents.component').then(m => m.AgentsComponent) },
-      { path: 'houseHelps', loadComponent: () => import('./dashboard/house-helps/house-helps.component').then(m => m.HouseHelpsComponent) },
-      { path: 'homeOwners', loadComponent: () => import('./dashboard/home-owners/home-owners.component').then(m => m.HomeOwnersComponent) },
-     { path: 'requests', loadComponent: () => import('./dashboard/hire-requests/hire-requests.component').then(m => m.HireRequestsComponent) },
-      { path: 'reports', loadComponent: () => import('./dashboard/reports/reports.component').then(m => m.ReportsComponent) }, { path: '', component: OverviewComponent, pathMatch: 'full' },
+      {
+        path:'users',
+        loadComponent: () => import('./dashboard/users/users.component').then(m => m.UsersComponent) },
+      {
+        path: 'agents', loadComponent: () => import('./dashboard/agents/agents.component').then(m => m.AgentsComponent) },
+      {
+        path: 'houseHelps', loadComponent: () => import('./dashboard/house-helps/house-helps.component').then(m => m.HouseHelpsComponent) },
+      {
+        path: 'homeOwners', loadComponent: () => import('./dashboard/home-owners/home-owners.component').then(m => m.HomeOwnersComponent) },
+     {
+       path: 'requests',
+       canActivate: [RoleGuard],
+       data: { roles: ['ROLE_ADMIN'] },
+       loadComponent: () => import('./dashboard/hire-requests/hire-requests.component').then(m => m.HireRequestsComponent),
+     },
+      {
+        path: 'reports',
+        canActivate: [RoleGuard],
+        data: { roles: ['ROLE_ADMIN'] },
+        loadComponent: () => import('./dashboard/reports/reports.component').then(m => m.ReportsComponent) },
+       { path: '', component: OverviewComponent, pathMatch: 'full' },
     ]
   },
 

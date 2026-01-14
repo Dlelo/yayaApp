@@ -1,33 +1,39 @@
 <mat-sidenav-container class="dashboard-container">
-  <!-- Sidebar -->
-  <mat-sidenav mode="side" opened class="sidenav bg-dark text-white">
+  <mat-sidenav
+    #sidenav
+    [mode]="sidenavMode"
+    [opened]="sidenavOpened"
+    class="sidenav"
+  >
     <div class="p-3">
-      <h3 class="text-white mb-4">
-        <a
-          [routerLink]="['/dashboard']"
-          routerLinkActive="active-link"
-          class="text-white">
+      <h3 class="mb-4">
+        <a [routerLink]="['/dashboard']" >
           Admin Panel
         </a>
       </h3>
+
       <mat-nav-list>
-        @for(link of navLinks; track $index) {
-          <a
-            mat-list-item
-            [routerLink]="link.path"
-            routerLinkActive="active-link"
-            class="text-white"
-          >
-            <mat-icon class="me-2 text-white">{{ link.icon }}</mat-icon>
-            <span class="text-white">{{ link.label }}</span>
+        @for (link of allowedNavLinks(); track link.path) {
+          <a class="mb-2" mat-list-item [routerLink]="link.path" routerLinkActive="active-link">
+            <mat-icon class="me-2">{{ link.icon }}</mat-icon>
+            <span>{{ link.label }}</span>
           </a>
         }
       </mat-nav-list>
     </div>
   </mat-sidenav>
 
-  <!-- Main Content -->
-  <mat-sidenav-content class="p-4">
-    <router-outlet></router-outlet>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button mat-icon-button (click)="sidenav.toggle()" class="d-md-none">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>Dashboard</span>
+    </mat-toolbar>
+
+    <div class="p-4">
+      <router-outlet></router-outlet>
+    </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
+

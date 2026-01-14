@@ -3,35 +3,34 @@
   display: flex;
 }
 
-.sidenav {
-  width: 240px;
-  background-color: #212529; // dark background
-  color: #fff;
+mat-sidenav {
   border-right: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: #cacaca;
+}
 
-  .mat-nav-list {
-    padding: 0;
+mat-nav-list {
+  padding: 0;
 
-    a {
-      color: #fff;
-      border-radius: 6px;
-      margin: 4px 0;
-      padding: 10px 16px;
-      transition: background 0.2s;
+  a.mat-list-item {
+    color: #fff;
+    border-radius: 6px;
+    margin: 4px 8px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    transition: background 0.2s;
 
-      &:hover {
-        background: rgba(255, 255, 255, 0.1);
-      }
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
 
-      &.active-link {
-        background: rgba(255, 255, 255, 0.2);
-        font-weight: 600;
-      }
+    &.active-link {
+      background: rgba(255, 255, 255, 0.2);
+      font-weight: 600;
+    }
 
-      mat-icon {
-        margin-right: 8px;
-        vertical-align: middle;
-      }
+    mat-icon {
+      margin-right: 8px;
     }
   }
 }

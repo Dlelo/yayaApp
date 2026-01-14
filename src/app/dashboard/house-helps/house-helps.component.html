@@ -47,7 +47,11 @@
                 mat-stroked-button
                 color="warn"
                 (click)="activateDeactivate(houseHelp.id)">
-                Activate/Deactivate
+                @if (houseHelp?.active) {
+                  <span>Deactivate</span>
+                } @else {
+                  <span>Activate</span>
+                }
               </button>
             </td>
           </tr>

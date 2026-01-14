@@ -67,7 +67,7 @@
 
     <mat-divider class="my-3"></mat-divider>
 
-    @if(userDetails?.roles?.includes('ADMIN')){
+    @if(userDetails?.roles?.includes('ADMIN') || userDetails?.roles?.includes('SALES')){
       <div class="d-flex justify-content-end gap-2">
         <button mat-stroked-button color="primary" (click)="editAccount(userId)">
           Edit Profile

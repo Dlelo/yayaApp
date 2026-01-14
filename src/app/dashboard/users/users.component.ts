@@ -9,6 +9,7 @@ import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
+import {LoginService} from '../../login/login.service';
 
 
 
@@ -30,13 +31,16 @@ export class UsersComponent implements OnInit{
   private readonly  usersService:UsersService = inject(UsersService);
   private dialog: MatDialog = inject(MatDialog);
   private readonly router:Router = inject(Router);
+  private readonly loginService = inject(LoginService);
 
-  allRoles = ["ADMIN", "HOMEOWNER", "HOUSEHELP", "AGENT"];
+  allRoles = ["ADMIN", "HOMEOWNER", "HOUSEHELP", "AGENT",'SALES','SECURITY'];
 
   page = 0;
   size = 20;
 
   usersPage$!: Observable<PageResponse<User>>;
+
+  roles = this.loginService.userRoles;
 
 
   openEditUserDialog(user: any) {
@@ -61,6 +65,10 @@ export class UsersComponent implements OnInit{
 
   openUserAccountDetails(userID:number|null){
     this.router.navigate(['/edit-account/', userID]);
+  }
+
+  openViewUserDetails(userID:number|null){
+    this.router.navigate(['/account/', userID]);
   }
 
   ngOnInit(): void {
