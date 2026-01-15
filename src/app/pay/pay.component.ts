@@ -14,6 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../environments/environments';
+import { MatIcon } from '@angular/material/icon';
 
 
 @Component({
@@ -29,7 +30,8 @@ import { environment } from '../../environments/environments';
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatIcon,
   ],
 })
 
@@ -69,6 +71,10 @@ export class PayComponent implements OnInit {
 
   goToSuccess() {
     this.router.navigate(['/listings']);
+  }
+
+  getAmount() {
+    return this.payForm.value.plan === 'emergency' ? 500 : 2500;
   }
 
 
