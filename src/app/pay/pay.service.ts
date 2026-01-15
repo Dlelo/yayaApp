@@ -2,6 +2,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import {environment} from '../../environments/environments';
+
 
 export interface StkPushRequest {
   phoneNumber: string;
@@ -31,8 +33,7 @@ export interface PaymentStatus {
   providedIn: 'root'
 })
 export class PaymentService {
-  // private apiUrl = 'http://localhost:8080/api/payments';
-  private apiUrl = 'https://api.yayaconnectapp.com/api/payments';
+  private apiUrl = `${environment.apiUrl}/payments`;
 
   constructor(private http: HttpClient) {}
 
