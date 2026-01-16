@@ -37,7 +37,7 @@ export class LoginComponent {
     this.loginService.login(identifier!, password!).subscribe({
       next: (res) => {
         this.loading = false;
-        this.router.navigate(['/']);
+        this.router.navigate(['/listing']);
       },
       error: (err) => {
         this.loading = false;

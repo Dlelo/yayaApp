@@ -18,6 +18,11 @@ import {PrivacyPolicyComponent} from './privacy-policy/privacy-policy.component'
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   {
+    path: 'listing',
+    pathMatch: 'full',
+    redirectTo: 'listing/all',
+  },
+  {
     path: 'listing/:type',
     component: ListingsComponent,
     canActivate: [AuthGuard],
