@@ -13,6 +13,8 @@ import { PaymentService } from './pay.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../environments/environments';
+import { MatIcon } from '@angular/material/icon';
 
 
 @Component({
@@ -28,7 +30,8 @@ import { CommonModule } from '@angular/common';
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatIcon,
   ],
 })
 
@@ -37,6 +40,9 @@ export class PayComponent implements OnInit {
   houseHelpName: string = '';
   houseHelpId: string = '';
   isProcessing: boolean = false;
+  isManualPayment: boolean = false; //remove after mpesa automation
+  paybillNumber: number = environment.paybillNumber;
+  accountNumber: number = environment.accountNumber;
 
   user = localStorage.getItem('user');
 
@@ -60,12 +66,23 @@ export class PayComponent implements OnInit {
   ngOnInit() {
     this.houseHelpName = this.route.snapshot.queryParams['name'] || 'House Help';
     this.houseHelpId = this.route.snapshot.queryParams['id'] || '';
+    console.log(this.houseHelpName, this.houseHelpId);
   }
 
-  pay() {
-    if (this.payForm.invalid || this.isProcessing) return;
+  goToSuccess() {
+    this.router.navigate(['/listings']);
+  }
 
-    this.isProcessing = true;
+  getAmount() {
+    return this.payForm.value.plan === 'emergency' ? 500 : 2500;
+  }
+
+
+  pay() {
+    if (this.payForm.invalid || this.isProcessing || this.isManualPayment) return;
+
+    // this.isProcessing = true;
+    this.isManualPayment = true;
 
     const amount = this.payForm.value.plan === 'emergency' ? 500 : 2500;
 
@@ -89,18 +106,25 @@ export class PayComponent implements OnInit {
       transactionDesc: `Subscription for ${this.houseHelpName}`
     };
 
-    this.snackBar.open('Initiating payment...', 'Close', { duration: 3000 });
+    // TODO bring this back once MPESA goes live
+    // this.snackBar.open('Initiating payment...', 'Close', { duration: 3000 });
 
     this.paymentService.initiateStkPush(paymentRequest).subscribe({
       next: (response) => {
-        this.snackBar.open(
-          'Check your phone for M-Pesa prompt!',
-          'OK',
-          { duration: 5000 }
-        );
+        console.log(response)
+        this.isManualPayment = true;
+        this.isProcessing = false;
 
+        // TODO bring back after automation
+        // this.snackBar.open(
+        // 'Check your phone for M-Pesa prompt!',
+        // 'OK',
+        // { duration: 5000 }
+        // );
         // Start checking payment status
-        this.checkPaymentStatus(response?.CheckoutRequestID);
+        // this.checkPaymentStatus(response?.CheckoutRequestID); 
+      
+
       },
       error: (error) => {
         this.isProcessing = false;
@@ -115,7 +139,7 @@ export class PayComponent implements OnInit {
 
   checkPaymentStatus(checkoutRequestId: string) {
     let attempts = 0;
-    const maxAttempts = 20; // Check for 20 seconds
+    const maxAttempts = this.isManualPayment ? 1 : 20; // Check for 20 seconds
 
     const intervalId = setInterval(() => {
       attempts++;
