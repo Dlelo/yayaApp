@@ -10,6 +10,73 @@
         <mat-spinner diameter="50" class="mx-auto mb-3"></mat-spinner>
         <p class="text-muted">Processing payment... Check your phone for M-Pesa prompt</p>
       </div>
+    }
+    @else if (isManualPayment) {
+
+      
+      <div>
+        <mat-card class="instructions-card mb-4">
+          <mat-card-content>
+            <h4 class="text-success text-center mb-3">Manual Payment</h4>
+            <h5 class="text-success mb-3">(Automation of this process coming soon!)</h5>
+            <h5 class="mb-3">
+              <mat-icon class="align-middle me-2 text-success">phone_android</mat-icon>
+              How to Pay via M-Pesa
+            </h5>
+            
+            <ol class="payment-steps">
+              <li>
+                <mat-icon class="step-icon">looks_one</mat-icon>
+                <span>Go to M-Pesa menu on your phone</span>
+              </li>
+              <li>
+                <mat-icon class="step-icon">looks_two</mat-icon>
+                <span>Select <strong>Lipa na M-Pesa</strong></span>
+              </li>
+              <li>
+                <mat-icon class="step-icon">looks_3</mat-icon>
+                <span>Select <strong>Pay Bill</strong></span>
+              </li>
+              <li>
+                <mat-icon class="step-icon">looks_4</mat-icon>
+                <span>Enter Business Number: <strong>{{ paybillNumber }}</strong></span>
+              </li>
+              <li>
+                <mat-icon class="step-icon">looks_5</mat-icon>
+                <span>Enter Account Number: <strong>{{ accountNumber }}</strong></span>
+              </li>
+              <li>
+                <mat-icon class="step-icon">looks_6</mat-icon>
+                <span>Enter Amount: <strong>KES {{ getAmount() | number }}</strong></span>
+              </li>
+              <li>
+                <mat-icon class="step-icon">check_circle</mat-icon>
+                <span>Enter your M-Pesa PIN and confirm</span>
+              </li>
+            </ol>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Important Note -->
+        <div class="alert alert-success">
+          <mat-icon class="align-middle me-2">verified</mat-icon>
+          <small>After payment, you will receive an M-Pesa confirmation SMS. Please keep it for your records.</small>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+          <button
+            mat-raised-button
+            color="primary"
+            class="px-5 py-2"
+            type="button"
+            (click)="goToSuccess()"
+          >
+            <mat-icon class="me-2">check_circle</mat-icon>
+            I've Completed Payment
+          </button>
+        </div>
+
     } @else {
       <form [formGroup]="payForm" (ngSubmit)="pay()" class="mt-4">
         <div class="row g-3">
