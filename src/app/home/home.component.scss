@@ -101,16 +101,23 @@
 }
 
 .app-footer {
-  background: #ccd0ce;
-  color: #535050;
-  border-top: 1px solid #ccd0ce;
   text-align: center;
 }
 
+.footer-contact{
+  background: #1a3c34;
+  color: #fff;
+  font-size:2rem;
+  padding: 2.5rem 2rem
+}
+
 .footer-content {
+  background: #e27220;
+  color: #fff;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  padding: 2rem 2rem 0.5rem 2rem;
+
 }
 
 .footer-links a {
