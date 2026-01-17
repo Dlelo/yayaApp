@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { RegisterService } from './register.service';
 import { Router } from '@angular/router';
 import libphonenumber from 'google-libphonenumber';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 // Custom validator for password match
 export function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
@@ -130,7 +131,9 @@ export function createRegionSpecificPhoneValidator(regionCode: string) {
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatIconModule,
+    MatCheckboxModule
   ],
   templateUrl: './register.component.html',
 })
@@ -147,16 +150,16 @@ export class RegisterHousehelpComponent {
     name: new FormControl('', [Validators.required]),
     phoneNumber: new FormControl('', [
       Validators.required,
-      phoneNumberValidator // Using the simple validator
+      phoneNumberValidator
     ]),
     password: new FormControl('', [
       Validators.required,
       Validators.minLength(6)
     ]),
     confirmPassword: new FormControl('', [Validators.required]),
-    email: new FormControl('', [
-      Validators.email
-    ]),
+    email: new FormControl('', [Validators.email]),
+
+    termsAccepted: new FormControl(false, [Validators.requiredTrue]),
   }, { validators: passwordMatchValidator });
 
   submit() {

@@ -7,6 +7,9 @@
         <mat-form-field class="w-100">
           <mat-label>Email or Phone number</mat-label>
           <input matInput formControlName="identifier" />
+          <mat-hint>
+            Format: use valid email format or phone number format <strong>+254XXXXXXXXX</strong>
+          </mat-hint>
           @if(form.controls.identifier.hasError('required')){
             <mat-error>Email or Phone number is required</mat-error>
           }
