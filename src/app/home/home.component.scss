@@ -108,7 +108,22 @@
   background: #1a3c34;
   color: #fff;
   font-size:2rem;
-  padding: 2.5rem 2rem
+  padding: 2.5rem 2rem;
+  text-align: center;
+  word-break: break-word;
+}
+
+@media (max-width: 768px) {
+  .footer-contact {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-contact {
+    font-size: 1.2rem;
+    padding: 2rem 1.5rem;
+  }
 }
 
 .footer-content {
