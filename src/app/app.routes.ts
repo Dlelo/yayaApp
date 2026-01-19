@@ -75,16 +75,25 @@ export const routes: Routes = [
         path:'users',
         loadComponent: () => import('./dashboard/users/users.component').then(m => m.UsersComponent) },
       {
-        path: 'agents', loadComponent: () => import('./dashboard/agents/agents.component').then(m => m.AgentsComponent) },
+        path: 'agents', 
+        loadComponent: () => import('./dashboard/agents/agents.component').then(m => m.AgentsComponent) },
       {
-        path: 'houseHelps', loadComponent: () => import('./dashboard/house-helps/house-helps.component').then(m => m.HouseHelpsComponent) },
+        path: 'houseHelps', 
+        loadComponent: () => import('./dashboard/house-helps/house-helps.component').then(m => m.HouseHelpsComponent) },
       {
-        path: 'homeOwners', loadComponent: () => import('./dashboard/home-owners/home-owners.component').then(m => m.HomeOwnersComponent) },
+        path: 'homeOwners', 
+        loadComponent: () => import('./dashboard/home-owners/home-owners.component').then(m => m.HomeOwnersComponent) },
      {
        path: 'requests',
        canActivate: [RoleGuard],
        data: { roles: ['ROLE_ADMIN'] },
        loadComponent: () => import('./dashboard/hire-requests/hire-requests.component').then(m => m.HireRequestsComponent),
+     },
+     {
+       path: 'payments',
+       canActivate: [RoleGuard],
+       data: { roles: ['ROLE_ADMIN'] },
+       loadComponent: () => import('./dashboard/payments/payments.component').then(m => m.PaymentsComponent),
      },
       {
         path: 'reports',
