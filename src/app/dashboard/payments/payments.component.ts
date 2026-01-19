@@ -11,6 +11,8 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PaymentService, Payment, PaymentPage } from './payments-list.service';
+import { ChangeDetectorRef } from '@angular/core';
+
 
 @Component({
   selector: 'app-payments',
@@ -36,6 +38,7 @@ export class PaymentsComponent implements OnInit {
   @ViewChild('paymentDetailsDialog') paymentDetailsDialog!: TemplateRef<any>;
 
   payments: Payment[] = [];
+
   displayedColumns: string[] = [
     'transactionId',
     'user',
@@ -58,7 +61,8 @@ export class PaymentsComponent implements OnInit {
 
   constructor(
     private paymentService: PaymentService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -72,6 +76,8 @@ export class PaymentsComponent implements OnInit {
     this.loading = true;
     this.error = null;
 
+    console.log(this.payments);
+
     this.paymentService.getPayments(page, size).subscribe({
       next: (response: PaymentPage) => {
           this.payments = response.content;
@@ -79,6 +85,9 @@ export class PaymentsComponent implements OnInit {
           this.currentPage = response.number;
           this.pageSize = response.size;
           this.loading = false;
+          console.log("2===")
+          this.cdr.detectChanges();
+          console.log(this.payments)
       },
       error: (error: HttpErrorResponse) => {
         console.error('Error loading payments:', error);
