@@ -116,6 +116,10 @@
                     <mat-icon>visibility</mat-icon>
                     <span>View Details</span>
                   </button>
+                  <button mat-menu-item (click)="verifyPayment(payment)">
+                    <mat-icon>check_circle</mat-icon>
+                    <span>Verify Payment</span>
+                  </button>
                   <button mat-menu-item (click)="downloadReceipt(payment)">
                     <mat-icon>download</mat-icon>
                     <span>Download Receipt</span>
