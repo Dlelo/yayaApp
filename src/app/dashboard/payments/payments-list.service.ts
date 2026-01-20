@@ -22,11 +22,11 @@ export interface Payment {
 }
 
 export enum PaymentStatus {
-  SUCCESS = 'SUCCESS',
+  COMPLETED = 'COMPLETED',
   PENDING = 'PENDING',
   FAILED = 'FAILED',
-  // CANCELLED = 'CANCELLED',
-  // REFUNDED = 'REFUNDED'
+  CANCELLED = 'CANCELLED',
+  REFUNDED = 'REFUNDED'
 }
 
 // Paginated response interface
@@ -62,10 +62,6 @@ export class PaymentService {
       .set('sort', 'createdAt,desc'); // Sort by newest first
 
     return this.http.get<PaymentPage>(this.apiUrl, { params });
-  }
-
-  verifyPayment(payment: Payment): Observable<any> {
-    return this.http.post(`${environment.mpesaApiUrl}/manual-callback`, payment);
   }
 
   /**

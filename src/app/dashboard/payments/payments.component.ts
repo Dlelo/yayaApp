@@ -10,7 +10,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { HttpErrorResponse } from '@angular/common/http';
-import { PaymentService, Payment, PaymentPage, PaymentStatus } from './payments-list.service';
+import { PaymentService, Payment, PaymentPage } from './payments-list.service';
 import { ChangeDetectorRef } from '@angular/core';
 
 
@@ -111,11 +111,11 @@ export class PaymentsComponent implements OnInit {
    */
   getStatusIcon(status: string): string {
     const iconMap: { [key: string]: string } = {
-      'SUCCESS': 'check_circle',
+      'COMPLETED': 'check_circle',
       'PENDING': 'schedule',
       'FAILED': 'cancel',
-      // 'CANCELLED': 'block',
-      // 'REFUNDED': 'replay'
+      'CANCELLED': 'block',
+      'REFUNDED': 'replay'
     };
     return iconMap[status] || 'help';
   }
@@ -127,21 +127,6 @@ export class PaymentsComponent implements OnInit {
     this.selectedPayment = payment;
     this.dialog.open(this.paymentDetailsDialog, {
       width: '500px'
-    });
-  }
-
-  verifyPayment(payment: Payment): void {
-    // TODO: Implement payment verification
-    console.log('Verifying payment:', payment.id);
-    payment.status = PaymentStatus.SUCCESS;
-    this.paymentService.verifyPayment(payment).subscribe({
-      next: (response) => {
-        console.log('Payment verified successfully:', response);
-        this.cdr.detectChanges();
-      },
-      error: (error) => {
-        console.error('Error verifying payment:', error);
-      }
     });
   }
 
