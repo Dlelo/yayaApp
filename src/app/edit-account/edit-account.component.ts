@@ -245,13 +245,25 @@ export class EditAccountDetailsComponent implements OnInit {
     const formValue = this.form.value;
 
     if (formValue.houseHelp?.skills) {
-      formValue.houseHelp.skills = formValue.houseHelp.skills
+      const skills = Array.isArray(formValue.houseHelp.skills)
+        ? formValue.houseHelp.skills
+        : typeof formValue.houseHelp.skills === 'string'
+          ? formValue.houseHelp.skills.split(',')
+          : [];
+
+      formValue.houseHelp.skills = skills
         .map((s: string) => s.trim())
         .filter((s: string) => s.length > 0);
     }
 
     if (formValue.houseHelp?.languages) {
-      formValue.houseHelp.languages = formValue.houseHelp.languages
+      const languages = Array.isArray(formValue.houseHelp.languages)
+        ? formValue.houseHelp.languages
+        : typeof formValue.houseHelp.languages === 'string'
+          ? formValue.houseHelp.languages.split(',')
+          : [];
+
+      formValue.houseHelp.languages = languages
         .map((s: string) => s.trim())
         .filter((s: string) => s.length > 0);
     }

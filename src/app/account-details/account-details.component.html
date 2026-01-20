@@ -25,6 +25,10 @@
           @for (skills of userDetails?.houseHelp?.skills; track $index; let isLast = $last){
         <span class="small">{{ skills }} {{ !isLast ? ', ' : '' }}</span>
         }</p>
+          <p><strong>Languages: </strong>
+            @for (language of userDetails?.houseHelp?.languages; track $index; let isLast = $last){
+              <span class="small">{{ language }} {{ !isLast ? ', ' : '' }}</span>
+            }</p>
         <p><strong>Years of experience:</strong> {{ userDetails?.houseHelp?.yearsOfExperience ?? '-'}}</p>
         <p><strong>Status:</strong>
           <span
