@@ -65,7 +65,8 @@ export class PaymentService {
   }
 
   verifyPayment(payment: Payment): Observable<any> {
-    return this.http.post(`${environment.mpesaApiUrl}/manual-callback`, payment);
+    const baseUri = environment.apiUrl.replace(/\/api$/, '');
+    return this.http.post(`${baseUri}/mpesa/manual-callback`, payment);
   }
 
   /**
