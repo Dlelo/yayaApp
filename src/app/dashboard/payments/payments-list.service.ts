@@ -64,6 +64,11 @@ export class PaymentService {
     return this.http.get<PaymentPage>(this.apiUrl, { params });
   }
 
+  verifyPayment(payment: Payment): Observable<any> {
+    const baseUri = environment.apiUrl.replace(/\/api$/, '');
+    return this.http.post(`${baseUri}/mpesa/manual-callback`, payment);
+  }
+
   /**
    * Get payments by status
    * @param status Payment status
