@@ -38,6 +38,9 @@
           </span>
     </p>
     <p><strong>ID:</strong> {{ houseHelpDetails?.nationalId ?? '-'}}</p>
+          @if(houseHelpDetails?.nationalIdDocument){
+            <p><strong>ID document:</strong> {{ 'Available'}}</p>
+          }
         <p><strong>Good conduct: </strong> {{ houseHelpDetails?.goodConduct ?? '-'}}</p>
         <p><strong>Medical report: </strong> {{ houseHelpDetails?.medicalReport ?? '-'}}</p>
           <p><strong>Availability type: </strong> {{houseHelpDetails?.houseHelpType ?? '-'}}</p>
