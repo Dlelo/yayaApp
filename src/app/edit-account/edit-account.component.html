@@ -1,235 +1,341 @@
 @if(userDetails$ | async; as userDetails){
   <div class="container my-4">
-    <mat-card class="shadow-sm rounded-3 p-3">
-      <div class="d-flex align-items-center mb-3">
+    <mat-card class="shadow-sm rounded-3 p-4">
+      <div class="d-flex align-items-center mb-4">
         <mat-icon class="me-2 text-primary">edit</mat-icon>
         <h2>Update {{userDetails.name}} account details</h2>
       </div>
+      
       @if(form){
         <form [formGroup]="form" class="row g-3">
-          <!-- NATIONAL ID UPLOAD -->
-          <div class="w-100 mb-3">
-            <label class="block text-sm font-medium mb-2">Attach National ID</label>
-
-            <label mat-stroked-button color="primary" class="cursor-pointer flex items-center gap-1">
-              <mat-icon>attach_file</mat-icon>
-              <input
-                type="file"
-                hidden
-                accept="image/*,.pdf"
-                (change)="onFileSelected($event)"
-              />
-            </label>
-
-            <!-- Preview -->
-            @if(nationalIdPreviewUrl || nationalIdFileName){
-              <div class="mt-2">
-                  @if(nationalIdPreviewUrl){
-                    <img [src]="nationalIdPreviewUrl" class="h-24 border rounded" />
+          
+          <!-- UPLOAD SECTION -->
+          <div class="upload-section mb-4">
+            <h4 class="section-title mb-3">Documents & Photo</h4>
+            
+            <div class="row g-3">
+              <!-- Profile Picture Upload -->
+              <div class="col-md-6">
+                <div class="upload-card">
+                  <label class="upload-label">Profile Picture</label>
+                  
+                  <div class="preview-window">
+                    @if(profilePicturePreviewUrl){
+                      <img [src]="profilePicturePreviewUrl" alt="Profile" class="preview-image profile-preview" />
+                      <button 
+                        mat-icon-button 
+                        class="delete-btn" 
+                        type="button" 
+                        (click)="profilePictureFile=null; profilePicturePreviewUrl=null">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    } @else {
+                      <div class="placeholder">
+                        <mat-icon>account_circle</mat-icon>
+                        <span>No image</span>
+                      </div>
+                    }
+                  </div>
+                  
+                  <div class="upload-actions">
+                    <label mat-stroked-button class="upload-btn">
+                      <mat-icon>upload</mat-icon>
+                      Choose File
+                      <input
+                        type="file"
+                        hidden
+                        accept="image/jpeg,image/jpg"
+                        (change)="onProfilePictureSelected($event)"
+                      />
+                    </label>
+                    
+                    @if(profilePicturePreviewUrl){
+                      <button
+                        mat-flat-button
+                        color="primary"
+                        type="button"
+                        class="upload-submit-btn"
+                        (click)="uploadProfilePicture(userDetails?.houseHelp?.id || userDetails?.homeOwner?.id)">
+                        Upload
+                      </button>
+                    }
+                  </div>
+                  
+                  @if(profileUploadProgress > 0 && profileUploadProgress < 100){
+                    <mat-progress-bar
+                      mode="determinate"
+                      [value]="profileUploadProgress"
+                      class="mt-2">
+                    </mat-progress-bar>
                   }
-                @if(!nationalIdPreviewUrl){
-                  <span>{{ nationalIdFileName }}</span>
-                }
-
-                <button mat-icon-button color="warn" type="button" (click)="nationalIdFile=null; nationalIdPreviewUrl=null">
-                  <mat-icon>delete</mat-icon>
-                </button>
-                @if(isHouseHelp){
-
-                  <button
-                    mat-flat-button
-                    color="primary"
-                    (click)="uploadNationalId(userDetails?.houseHelp?.id)">
-                    Upload National ID
-                  </button>
-
-                }
-                @if(isHomeOwner){
-                  <button
-                    mat-flat-button
-                    color="primary"
-                    (click)="uploadNationalId(userDetails?.homeOwner.id)">
-                    Upload National ID
-                  </button>
-                }
+                </div>
               </div>
-
-            }
-            @if(uploadProgress > 0 && uploadProgress < 100){
-              <mat-progress-bar
-                mode="determinate"
-                [value]="uploadProgress">
-              </mat-progress-bar>
-            }
+              
+              <!-- National ID Upload -->
+              <div class="col-md-6">
+                <div class="upload-card">
+                  <label class="upload-label">National ID</label>
+                  
+                  <div class="preview-window">
+                    @if(nationalIdPreviewUrl){
+                      <img [src]="nationalIdPreviewUrl" alt="National ID" class="preview-image" />
+                      <button 
+                        mat-icon-button 
+                        class="delete-btn" 
+                        type="button" 
+                        (click)="nationalIdFile=null; nationalIdPreviewUrl=null">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    } @else if(nationalIdFileName){
+                      <div class="file-preview">
+                        <mat-icon>description</mat-icon>
+                        <span class="file-name">{{ nationalIdFileName }}</span>
+                      </div>
+                      <button 
+                        mat-icon-button 
+                        class="delete-btn" 
+                        type="button" 
+                        (click)="nationalIdFile=null; nationalIdFileName=null">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    } @else {
+                      <div class="placeholder">
+                        <mat-icon>badge</mat-icon>
+                        <span>No document</span>
+                      </div>
+                    }
+                  </div>
+                  
+                  <div class="upload-actions">
+                    <label mat-stroked-button class="upload-btn">
+                      <mat-icon>upload</mat-icon>
+                      Choose File
+                      <input
+                        type="file"
+                        hidden
+                        accept="application/pdf"
+                        (change)="onFileSelected($event)"
+                      />
+                    </label>
+                    
+                    @if(nationalIdPreviewUrl || nationalIdFileName){
+                      @if(isHouseHelp){
+                        <button
+                          mat-flat-button
+                          color="primary"
+                          type="button"
+                          class="upload-submit-btn"
+                          (click)="uploadNationalId(userDetails?.houseHelp?.id)">
+                          Upload
+                        </button>
+                      }
+                      @if(isHomeOwner){
+                        <button
+                          mat-flat-button
+                          color="primary"
+                          type="button"
+                          class="upload-submit-btn"
+                          (click)="uploadNationalId(userDetails?.homeOwner?.id)">
+                          Upload
+                        </button>
+                      }
+                    }
+                  </div>
+                  
+                  @if(uploadProgress > 0 && uploadProgress < 100){
+                    <mat-progress-bar
+                      mode="determinate"
+                      [value]="uploadProgress"
+                      class="mt-2">
+                    </mat-progress-bar>
+                  }
+                </div>
+              </div>
+            </div>
           </div>
-
-          <div class="w-50 mb-3">
-
-
-
-          </div>
-
 
           <!-- HOUSEHELP fields -->
-
           @if(isHouseHelp){
             <div formGroupName="houseHelp">
+              <h4 class="section-title mb-3">Personal Information</h4>
+              
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>National ID</mat-label>
+                    <input matInput formControlName="nationalId" />
+                  </mat-form-field>
+                </div>
 
-              <mat-form-field appearance="outline" class="w-100">
-                <mat-label>National ID</mat-label>
-                <input matInput formControlName="nationalId" />
-              </mat-form-field>
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Availability Type</mat-label>
+                    <mat-select formControlName="houseHelpType">
+                      @for(type of availabilityTypes; track $index){
+                        <mat-option [value]="type">
+                          {{ type.replace('_', ' ') }}
+                        </mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                </div>
 
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Age</mat-label>
+                    <input matInput formControlName="age" type="number" />
+                  </mat-form-field>
+                </div>
 
-              <div class="col-md-12">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Availability Type</mat-label>
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Religion</mat-label>
+                    <input matInput formControlName="religion" />
+                  </mat-form-field>
+                </div>
 
-                  <mat-select formControlName="houseHelpType">
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Number of Children</mat-label>
+                    <input matInput formControlName="numberOfChildren" type="number" />
+                  </mat-form-field>
+                </div>
 
-                    @for(type of availabilityTypes; track $index){
-                      <mat-option
-                        [value]="type">
-                        {{ type.replace('_', ' ') }}
-                      </mat-option>
-                    }
-
-                  </mat-select>
-                </mat-form-field>
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Level of Education</mat-label>
+                    <input matInput formControlName="levelOfEducation" />
+                  </mat-form-field>
+                </div>
               </div>
 
-              <div class="col-md-12">
-              <mat-form-field appearance="outline" class="w-100">
-                <mat-label>Skills (comma-separated)</mat-label>
-                <input matInput formControlName="skills" />
-              </mat-form-field>
+              <h4 class="section-title mb-3 mt-4">Professional Details</h4>
+              
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Skills (comma-separated)</mat-label>
+                    <input matInput formControlName="skills" />
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Years of Experience</mat-label>
+                    <input matInput type="number" formControlName="yearsOfExperience" />
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-12">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Languages (comma-separated)</mat-label>
+                    <input matInput formControlName="languages" />
+                  </mat-form-field>
+                </div>
               </div>
 
-              <div class="col-md-12">
-              <mat-form-field appearance="outline" class="w-100">
-                <mat-label>Years of Experience</mat-label>
-                <input matInput type="number" formControlName="yearsOfExperience" />
-              </mat-form-field>
+              <h4 class="section-title mb-3 mt-4">Location & Physical Details</h4>
+              
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Current Location</mat-label>
+                    <input matInput formControlName="currentLocation" />
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Home Location</mat-label>
+                    <input matInput formControlName="homeLocation" />
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-4">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Height (cm)</mat-label>
+                    <input matInput formControlName="height" type="number" />
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-4">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Weight (kg)</mat-label>
+                    <input matInput formControlName="weight" type="number" />
+                  </mat-form-field>
+                </div>
               </div>
 
-              <div class="col-md-12">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Number of Children</mat-label>
-                  <input matInput formControlName="numberOfChildren" type="number" />
-                </mat-form-field>
-              </div>
+              <h4 class="section-title mb-3 mt-4">Emergency Contact</h4>
+              
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Contact Person Name</mat-label>
+                    <input matInput formControlName="contactPersons" />
+                  </mat-form-field>
+                </div>
 
-              <div class="col-md-12">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Religion</mat-label>
-                  <input matInput formControlName="religion" />
-                </mat-form-field>
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Contact Person Phone</mat-label>
+                    <input matInput formControlName="contactPersonsPhoneNumber" />
+                  </mat-form-field>
+                </div>
               </div>
-
-              <div class="col-md-12">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Level of Education</mat-label>
-                  <input matInput formControlName="levelOfEducation" />
-                </mat-form-field>
-              </div>
-
-              <div class="col-md-12">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Languages (comma-separated)</mat-label>
-                  <input matInput formControlName="languages" />
-                </mat-form-field>
-              </div>
-
-              <div class="col-md-12">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Current Location</mat-label>
-                  <input matInput formControlName="currentLocation" />
-                </mat-form-field>
-              </div>
-
-              <div class="col-md-12">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Home Location</mat-label>
-                  <input matInput formControlName="homeLocation" />
-                </mat-form-field>
-              </div>
-
-              <div class="col-md-12">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Contact person name</mat-label>
-                  <input matInput formControlName="contactPersons" />
-                </mat-form-field>
-              </div>
-
-              <div class="col-md-12">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Contact Person phone number</mat-label>
-                  <input matInput formControlName="contactPersonsPhoneNumber" />
-                </mat-form-field>
-              </div>
-
-              <div class="col-md-12">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Age</mat-label>
-                  <input matInput formControlName="age" type="number" />
-                </mat-form-field>
-              </div>
-
-              <div class="col-md-12">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Height in CM</mat-label>
-                  <input matInput formControlName="height" type="number" />
-                </mat-form-field>
-              </div>
-
-              <div class="col-md-12">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Weight in KG</mat-label>
-                  <input matInput formControlName="weight" type="number" />
-                </mat-form-field>
-              </div>
-
             </div>
           }
 
           <!-- HOMEOWNER fields -->
           @if(isHomeOwner){
-            <div formGroupName="homeOwner" class="row">
-            <mat-form-field appearance="outline" class="w-100">
-              <mat-label>National ID</mat-label>
-              <input matInput formControlName="nationalId" />
-            </mat-form-field>
+            <div formGroupName="homeOwner">
+              <h4 class="section-title mb-3">Personal Information</h4>
+              
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>National ID</mat-label>
+                    <input matInput formControlName="nationalId" />
+                  </mat-form-field>
+                </div>
 
-            <div class="col-md-12">
-              <mat-form-field appearance="outline" class="w-100">
-                <mat-label>Number of Children</mat-label>
-                <input matInput formControlName="numberOfDependents" type="number" />
-              </mat-form-field>
-            </div>
-            <div class="col-md-6">
-              <mat-form-field appearance="outline" class="w-100">
-                <mat-label>House type</mat-label>
-                <mat-select formControlName="houseType">
-                  <mat-option [value]="true">Apartment</mat-option>
-                  <mat-option [value]="false">Bungalow</mat-option>
-                  <mat-option [value]="false">Mansionette</mat-option>
-                </mat-select>
-              </mat-form-field>
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Number of Dependents</mat-label>
+                    <input matInput formControlName="numberOfDependents" type="number" />
+                  </mat-form-field>
+                </div>
               </div>
-            <div class="col-md-6">
-              <mat-form-field appearance="outline" class="w-100">
-                <mat-label>Number of bedrooms</mat-label>
-                <input matInput formControlName="numberOfRooms" type="number" />
-              </mat-form-field>
-            </div>
-            <div class="col-md-12">
-              <mat-form-field appearance="outline" class="w-100">
-                <mat-label>Location</mat-label>
-                <input matInput formControlName="homeLocation"/>
-              </mat-form-field>
-            </div>
-            </div>
 
+              <h4 class="section-title mb-3 mt-4">Property Details</h4>
+              
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>House Type</mat-label>
+                    <mat-select formControlName="houseType">
+                      <mat-option value="apartment">Apartment</mat-option>
+                      <mat-option value="bungalow">Bungalow</mat-option>
+                      <mat-option value="mansionette">Mansionette</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Number of Bedrooms</mat-label>
+                    <input matInput formControlName="numberOfRooms" type="number" />
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-12">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Location</mat-label>
+                    <input matInput formControlName="homeLocation"/>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
           }
 
           <div class="d-flex justify-content-end mt-4 gap-2">
@@ -239,15 +345,14 @@
                 Save Changes
               </button>
             }
-
             @if(isHomeOwner) {
-              <button mat-flat-button color="primary" type="submit" (click)="save(userDetails?.homeOwner?.id)">Save Changes</button>
+              <button mat-flat-button color="primary" type="submit" (click)="save(userDetails?.homeOwner?.id)">
+                Save Changes
+              </button>
             }
-
           </div>
         </form>
       }
     </mat-card>
   </div>
 }
-

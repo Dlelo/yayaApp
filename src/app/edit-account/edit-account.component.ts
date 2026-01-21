@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit, ChangeDetectorRef, NgZone} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatCard, MatCardModule} from '@angular/material/card';
@@ -48,6 +48,8 @@ export class EditAccountDetailsComponent implements OnInit {
   private readonly  househelpService = inject(HousehelpService);
   private readonly  homeOwnerService = inject(HomeOwnerService);
   private readonly fileUploadService = inject(FileUploadService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly ngZone = inject(NgZone);
 
   userId = this.activatesRoute.snapshot.paramMap.get('id');
   userDetails$!: Observable<any>;
@@ -65,7 +67,12 @@ export class EditAccountDetailsComponent implements OnInit {
   uploadProgress = 0;
   nationalIdPreviewUrl: string | null = null;
   nationalIdFile: File | null = null;
-  nationalIdFileName = '';
+  nationalIdFileName: string | null = '';
+
+  // Profile Picture properties
+  profilePictureFile: File | null = null;
+  profilePicturePreviewUrl: string | null = null;
+  profileUploadProgress = 0;
 
   availabilityTypes = ['DAYBURG', 'EMERGENCY', 'LIVE_IN'];
 
@@ -81,6 +88,103 @@ export class EditAccountDetailsComponent implements OnInit {
         this.initializeForm(user);
       })
     );
+  }
+
+  // Profile Picture handler
+  onProfilePictureSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+
+      // Validate file type - ONLY JPEG
+      if (file.type !== 'image/jpeg' && file.type !== 'image/jpg') {
+        this.snackBar.open('Please select a JPEG image only', 'Close', { duration: 3000 });
+        input.value = ''; // Clear the input
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024;
+      if (file.size > maxSize) {
+        this.snackBar.open('File size must be less than 5MB', 'Close', { duration: 3000 });
+        input.value = ''; // Clear the input
+        return;
+      }
+
+      this.profilePictureFile = file;
+
+      // Create preview immediately with NgZone
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        this.ngZone.run(() => {
+          this.profilePicturePreviewUrl = e.target?.result as string;
+          this.cdr.markForCheck();
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // Upload Profile Picture
+  uploadProfilePicture(userId: number): void {
+    if (!this.profilePictureFile || !userId) return;
+
+    if (this.isHouseHelp) {
+      this.fileUploadService.uploadHouseHelpProfilePicture(userId, this.profilePictureFile)
+        .subscribe({
+          next: (event: HttpEvent<any>) => {
+            if (event.type === 1 && event.total) {
+              this.profileUploadProgress = Math.round((event.loaded / event.total) * 100);
+            }
+
+            if (event.type === 4) { // response
+              const url = event.body;
+
+              // Save URL into the form
+              this.form.get('houseHelp')?.patchValue({
+                profilePicture: url
+              });
+
+              this.profileUploadProgress = 0;
+              this.snackBar.open('✅ Profile picture uploaded successfully!', 'Close', { duration: 3000 });
+            }
+          },
+          error: (err) => {
+            console.error(err);
+            this.profileUploadProgress = 0;
+            this.snackBar.open('❌ Failed to upload profile picture', 'Close', { duration: 3000 });
+          }
+        });
+    }
+
+    if (this.isHomeOwner) {
+      this.fileUploadService.uploadHomeOwnerProfilePicture(userId, this.profilePictureFile)
+        .subscribe({
+          next: (event: HttpEvent<any>) => {
+            if (event.type === 1 && event.total) {
+              this.profileUploadProgress = Math.round((event.loaded / event.total) * 100);
+            }
+
+            if (event.type === 4) { // response
+              const url = event.body;
+
+              // Save URL into the form
+              this.form.get('homeOwner')?.patchValue({
+                profilePicture: url
+              });
+
+              this.profileUploadProgress = 0;
+              this.snackBar.open('✅ Profile picture uploaded successfully!', 'Close', { duration: 3000 });
+            }
+          },
+          error: (err) => {
+            console.error(err);
+            this.profileUploadProgress = 0;
+            this.snackBar.open('❌ Failed to upload profile picture', 'Close', { duration: 3000 });
+          }
+        });
+    }
   }
 
   uploadNationalId(houseHelpId: number) {
@@ -102,6 +206,7 @@ export class EditAccountDetailsComponent implements OnInit {
           });
 
           this.uploadProgress = 0;
+          this.snackBar.open('✅ National ID uploaded successfully!', 'Close', { duration: 3000 });
         }
       }) }
 
@@ -121,6 +226,7 @@ export class EditAccountDetailsComponent implements OnInit {
            });
 
            this.uploadProgress = 0;
+           this.snackBar.open('✅ National ID uploaded successfully!', 'Close', { duration: 3000 });
          }
        })
    }
@@ -157,6 +263,7 @@ export class EditAccountDetailsComponent implements OnInit {
           medicalReport: [user.houseHelp?.medicalReport || ''],
           numberOfChildren: [user.houseHelp?.numberOfChildren || 0],
           nationalIdDocument: [user.houseHelp?.nationalIdDocument || ''],
+          profilePicture: [user.houseHelp?.profilePicture || ''],
           height: [user.houseHelp?.height || ''],
           age: [user.houseHelp?.age || ''],
           weight: [user.houseHelp?.weight || ''],
@@ -180,6 +287,7 @@ export class EditAccountDetailsComponent implements OnInit {
           homeLocation: [user.homeOwner?.homeLocation || ''],
           nationalIdDocument:[user.homeOwner?.nationalIdDocument || ''],
           nationalId: [user.homeOwner?.nationalId || ''],
+          profilePicture: [user.homeOwner?.profilePicture || ''],
         })
         : null,
     });
@@ -189,15 +297,31 @@ export class EditAccountDetailsComponent implements OnInit {
     const input = event.target as HTMLInputElement;
 
     if (input.files && input.files.length > 0) {
-      this.nationalIdFile = input.files[0];
+      const file = input.files[0];
+
+      // Validate file type - ONLY PDF
+      if (file.type !== 'application/pdf') {
+        this.snackBar.open('Please select a PDF file only', 'Close', { duration: 3000 });
+        input.value = ''; // Clear the input
+        return;
+      }
+
+      // Validate file size (max 10MB for PDFs)
+      const maxSize = 10 * 1024 * 1024;
+      if (file.size > maxSize) {
+        this.snackBar.open('File size must be less than 10MB', 'Close', { duration: 3000 });
+        input.value = ''; // Clear the input
+        return;
+      }
+
+      this.nationalIdFile = file;
       this.nationalIdFileName = this.nationalIdFile.name;
 
-      // Preview
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.nationalIdPreviewUrl = reader.result as string;
-      };
-      reader.readAsDataURL(this.nationalIdFile);
+      // For PDFs, we'll show the filename instead of preview
+      this.ngZone.run(() => {
+        this.nationalIdPreviewUrl = null; // No image preview for PDF
+        this.cdr.markForCheck();
+      });
     }
   }
 
