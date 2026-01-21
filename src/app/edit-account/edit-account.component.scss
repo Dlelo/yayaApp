@@ -1,5 +1,5 @@
 mat-card {
-  max-width: 800px;
+  max-width: 900px;
   margin: auto;
 }
 
@@ -7,11 +7,189 @@ mat-form-field {
   font-size: 15px;
 }
 
-h4 {
+h2 {
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.section-title {
   font-weight: 600;
   color: #1976d2;
+  font-size: 16px;
+  margin-top: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e3f2fd;
 }
 
 button {
   min-width: 120px;
+}
+
+// Upload Section Styles
+.upload-section {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.upload-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  height: 100%;
+}
+
+.upload-label {
+  display: block;
+  font-weight: 600;
+  color: #424242;
+  margin-bottom: 1rem;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+// Preview Window
+.preview-window {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  border: 2px dashed #e0e0e0;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  
+  &:hover {
+    border-color: #bdbdbd;
+  }
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  
+  &.profile-preview {
+    object-fit: cover;
+    object-position: center;
+  }
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: #9e9e9e;
+  
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    opacity: 0.4;
+  }
+  
+  span {
+    font-size: 13px;
+    font-weight: 500;
+  }
+}
+
+.file-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: #616161;
+  
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #1976d2;
+  }
+  
+  .file-name {
+    font-size: 12px;
+    text-align: center;
+    word-break: break-word;
+    max-width: 90%;
+  }
+}
+
+.delete-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  
+  &:hover {
+    background: white;
+  }
+  
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// Upload Actions
+.upload-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.upload-btn {
+  flex: 1;
+  
+  mat-icon {
+    margin-right: 0.25rem;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.upload-submit-btn {
+  flex: 1;
+}
+
+// Progress Bar
+mat-progress-bar {
+  height: 6px;
+  border-radius: 3px;
+  
+  ::ng-deep .mdc-linear-progress__bar-inner {
+    border-radius: 3px;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .upload-section {
+    padding: 1rem;
+  }
+  
+  .preview-window {
+    height: 160px;
+  }
+  
+  .upload-actions {
+    flex-direction: column;
+    
+    .upload-btn,
+    .upload-submit-btn {
+      width: 100%;
+    }
+  }
 }

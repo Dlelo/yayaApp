@@ -31,7 +31,7 @@ export class FileUploadService {
 
     const req = new HttpRequest(
       'POST',
-      `${environment.apiUrl}/${homeOwnerId}/upload-national-id`,
+      `${environment.apiUrl}/homeowner/${homeOwnerId}/upload-national-id`,
       formData,
       {
         reportProgress: true,
@@ -41,4 +41,34 @@ export class FileUploadService {
 
     return this.http.request(req);
   }
+
+  // Add these methods to your FileUploadService
+
+uploadHouseHelpProfilePicture(houseHelpId: number, file: File): Observable<HttpEvent<any>> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  return this.http.post(
+    `${environment.apiUrl}/househelp/${houseHelpId}/profile-picture`,
+    formData,
+    {
+      reportProgress: true,
+      observe: 'events'
+    }
+  );
+}
+
+uploadHomeOwnerProfilePicture(homeOwnerId: number, file: File): Observable<HttpEvent<any>> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  return this.http.post(
+    `${environment.apiUrl}/homeowner/${homeOwnerId}/profile-picture`,
+    formData,
+    {
+      reportProgress: true,
+      observe: 'events'
+    }
+  );
+}
 }
