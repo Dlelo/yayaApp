@@ -38,6 +38,9 @@
           <h5 class="mt-4 mb-2">Level of education</h5>
           <p>{{ houseHelp?.levelOfEducation ?? "-" }}</p>
 
+          <h5 class="mt-4 mb-2">Age</h5>
+          <p>{{ houseHelp?.age ?? "-" }} years</p>
+
           <h5 class="mt-4 mb-2">Languages</h5>
           <ul class="list-unstyled row">
             @for (languages of houseHelp?.languages; track $index) {
@@ -51,6 +54,11 @@
           <p>{{ houseHelp?.religion ?? "-" }}</p>
 
 
+          <h5 class="mt-4 mb-2">Home location</h5>
+          <p>{{ houseHelp?.homeLocation ?? "-" }}</p>
+
+
+
           <h5 class="mt-4 mb-2">Skills</h5>
           <ul class="list-unstyled row">
             @for (skill of houseHelp.skills; track $index) {
@@ -62,6 +70,10 @@
 
           <h5 class="mt-4 mb-2">Experience</h5>
           <p>{{ houseHelp?.yearsOfExperience ?? "-" }} years of experience</p>
+
+          <h5 class="mt-4 mb-2">Weight</h5>
+          <p>{{ houseHelp?.weight ?? "-" }} kg</p>
+
 
         </div>
 
