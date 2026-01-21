@@ -97,9 +97,10 @@ export class EditAccountDetailsComponent implements OnInit {
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
 
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        this.snackBar.open('Please select an image file', 'Close', { duration: 3000 });
+      // Validate file type - ONLY JPEG
+      if (file.type !== 'image/jpeg' && file.type !== 'image/jpg') {
+        this.snackBar.open('Please select a JPEG image only', 'Close', { duration: 3000 });
+        input.value = ''; // Clear the input
         return;
       }
 
@@ -107,6 +108,7 @@ export class EditAccountDetailsComponent implements OnInit {
       const maxSize = 5 * 1024 * 1024;
       if (file.size > maxSize) {
         this.snackBar.open('File size must be less than 5MB', 'Close', { duration: 3000 });
+        input.value = ''; // Clear the input
         return;
       }
 
@@ -295,18 +297,31 @@ export class EditAccountDetailsComponent implements OnInit {
     const input = event.target as HTMLInputElement;
 
     if (input.files && input.files.length > 0) {
-      this.nationalIdFile = input.files[0];
+      const file = input.files[0];
+
+      // Validate file type - ONLY PDF
+      if (file.type !== 'application/pdf') {
+        this.snackBar.open('Please select a PDF file only', 'Close', { duration: 3000 });
+        input.value = ''; // Clear the input
+        return;
+      }
+
+      // Validate file size (max 10MB for PDFs)
+      const maxSize = 10 * 1024 * 1024;
+      if (file.size > maxSize) {
+        this.snackBar.open('File size must be less than 10MB', 'Close', { duration: 3000 });
+        input.value = ''; // Clear the input
+        return;
+      }
+
+      this.nationalIdFile = file;
       this.nationalIdFileName = this.nationalIdFile.name;
 
-      // Preview immediately with NgZone
-      const reader = new FileReader();
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        this.ngZone.run(() => {
-          this.nationalIdPreviewUrl = e.target?.result as string;
-          this.cdr.markForCheck();
-        });
-      };
-      reader.readAsDataURL(this.nationalIdFile);
+      // For PDFs, we'll show the filename instead of preview
+      this.ngZone.run(() => {
+        this.nationalIdPreviewUrl = null; // No image preview for PDF
+        this.cdr.markForCheck();
+      });
     }
   }
 
