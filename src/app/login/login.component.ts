@@ -46,7 +46,7 @@ export class LoginComponent {
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err.error?.message || 'Login failed. Please try again.';
+        this.errorMessage = err.error?.message || '❌ Login failed. Invalid credentials.';
         this.snackBar.open(this.errorMessage, 'Close', {
           duration: 3000,
         });
