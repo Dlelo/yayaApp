@@ -8,6 +8,7 @@ import { RegisterService } from './register.service';
 import { Router } from '@angular/router';
 import libphonenumber from 'google-libphonenumber';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 // Custom validator for password match
 export function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
@@ -138,11 +139,13 @@ export function createRegionSpecificPhoneValidator(regionCode: string) {
   templateUrl: './register.component.html',
 })
 export class RegisterHousehelpComponent {
-  private registerService = inject(RegisterService);
-  private router = inject(Router);
+  private registerService:RegisterService = inject(RegisterService);
+  private router:Router = inject(Router);
+  private snackBar:MatSnackBar = inject(MatSnackBar);
 
   hidePassword = true;
   hideConfirmPassword = true;
+  errorMessage = '';
 
   // Choose the validator based on your needs:
   // Option 1: Simple validator with default region
@@ -172,19 +175,27 @@ export class RegisterHousehelpComponent {
 
       this.registerService.register(formData as any).subscribe({
         next: (response) => {
+          this.snackBar.open('✅House help updated successfully!', 'Close', {
+            duration: 3000,
+          });
           console.log('Registration successful', response);
           this.router.navigate(['/login']); // Redirect to login page
         },
         error: (error) => {
+          this.errorMessage = error?.message;
+          if (error.status === 400) {
+            this.errorMessage  ='❌ Invalid registration data. Please check your inputs.';
+          } else if (error.status === 409) {
+            this.errorMessage = "❌Email or phone number already exists.";
+          } else {
+            this.errorMessage = " ❌Registration failed. Please try again.";
+          }
+
+          this.snackBar.open(this.errorMessage, 'Close', {
+            duration: 3000,
+          });
           console.error('Registration failed', error);
           // Handle specific error messages
-          if (error.status === 400) {
-            alert('Invalid registration data. Please check your inputs.');
-          } else if (error.status === 409) {
-            alert('Email or phone number already exists.');
-          } else {
-            alert('Registration failed. Please try again.');
-          }
         }
       });
     } else {

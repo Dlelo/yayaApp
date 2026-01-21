@@ -13,16 +13,13 @@ export class HousehelpService {
   getHouseHelps(
     page: number,
     size: number,
-    filter: any = {
-      active: true
-    }
+    active: boolean | null
   ): Observable<PageResponse<HouseHelp>> {
-
     const params = new HttpParams()
       .set('page', page)
-      .set('size', size)
+      .set('size', size);
 
-    ;
+    const filter = { active };
 
     return this.http.post<PageResponse<HouseHelp>>(
       `${this.apiUrl}/search`,
@@ -63,6 +60,17 @@ export class HousehelpService {
 
   updateHouseHelpDetails(id: number, househelp: any): Observable<any> {
     return this.http.patch(`${this.apiUrl}/${id}`, househelp);
+  }
+
+
+  setActiveStatus(id: number, active: boolean) {
+    return this.http.put<HouseHelp>(
+      `${this.apiUrl}/${id}/active`,
+      null,
+      {
+        params: { active },
+      }
+    );
   }
 
 

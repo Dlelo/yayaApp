@@ -7,6 +7,7 @@ import {AsyncPipe} from '@angular/common';
 import {Observable} from 'rxjs';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {Router} from '@angular/router';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 
 @Component({
@@ -25,6 +26,7 @@ import {Router} from '@angular/router';
 export class HouseHelpsComponent implements OnInit{
   private readonly  househelpService:HousehelpService = inject(HousehelpService);
   private readonly router = inject(Router);
+  private readonly snackBar = inject(MatSnackBar);
 
   page = 0;
   size = 20;
@@ -38,18 +40,32 @@ export class HouseHelpsComponent implements OnInit{
   loadHouseHelps(): void {
     this.houseHelpsPage$ = this.househelpService.getHouseHelps(
       this.page,
-      this.size
+      this.size,
+      null
     );
+  }
+
+  activateHouseHelp(id:number, active:boolean):void{
+    this.househelpService.setActiveStatus(id, active).subscribe({
+      next: () => {
+        this.snackBar.open('✅House help updated successfully!', 'Close', {
+          duration: 3000,
+        });
+        this.loadHouseHelps();
+      },
+      error: (err) => {
+        console.error(err);
+        this.snackBar.open('❌ Failed to update House help. Please try again.', 'Close', {
+          duration: 3000,
+        });
+      },
+    });
   }
 
   onHouseHelpPageChange(event: PageEvent): void {
     this.page = event.pageIndex;
     this.size = event.pageSize;
     this.loadHouseHelps();
-  }
-
-  activateDeactivate(userID:number|null){
-       console.log(userID);
   }
 
   editHouseHelp(userID:number|null){

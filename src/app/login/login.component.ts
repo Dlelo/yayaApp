@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { LoginService } from './login.service';
 import { MatIconModule } from '@angular/material/icon';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 
 @Component({
@@ -15,8 +16,9 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
-  private loginService = inject(LoginService);
-  private router = inject(Router);
+  private loginService:LoginService = inject(LoginService);
+  private router:Router = inject(Router);
+  private snackBar:MatSnackBar = inject(MatSnackBar);
 
   loading = false;
   errorMessage = '';
@@ -36,12 +38,18 @@ export class LoginComponent {
 
     this.loginService.login(identifier!, password!).subscribe({
       next: (res) => {
+        this.snackBar.open('✅Login successfully!', 'Close', {
+          duration: 3000,
+        });
         this.loading = false;
         this.router.navigate(['/listing']);
       },
       error: (err) => {
         this.loading = false;
         this.errorMessage = err.error?.message || 'Login failed. Please try again.';
+        this.snackBar.open(this.errorMessage, 'Close', {
+          duration: 3000,
+        });
         console.error('Login error:', err);
       }
     });
