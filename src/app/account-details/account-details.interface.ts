@@ -7,7 +7,7 @@ interface HouseHelp {
   homeLocation: string;
   languages: string[];
   levelOfEducation: string;
-  medicalReport: string;
+  medicalReport: string | null;
   nationalId: string;
   numberOfChildren: string;
   religion: string;
@@ -15,12 +15,14 @@ interface HouseHelp {
   yearsOfExperience: number;
   nationalIdDocument:string;
   user:UserDetails;
-  houseHelpType:[];
+  houseHelpType?:string[];
   age:string;
   weight:string;
   height:string;
   securityCleared:boolean;
   securityClearanceComments:string;
+  profilePictureDocument:string;
+  contactPersonsPhoneNumber:string;
 }
 
 interface HomeOwner {
@@ -34,6 +36,7 @@ interface HomeOwner {
   user:UserDetails;
   securityCleared:boolean;
   securityClearanceComments:string;
+  profilePictureDocument: string;
 
 }
 

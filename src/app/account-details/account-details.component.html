@@ -1,105 +1,382 @@
-@let userDetails = userDetails$ | async;
+@let user = userDetails$ | async;
 
-<div class="container my-4">
-  <mat-card class="shadow-sm rounded-3">
-    <div class="d-flex align-items-center mb-3">
-      <mat-icon class="me-2 text-primary">account_circle</mat-icon>
-      <h2 class="mb-0">{{userDetails?.name}} Account details</h2>
-    </div>
+<div class="account-page">
+  @if (user) {
+    <div class="account-shell">
 
-    <mat-divider></mat-divider>
-    @if(userDetails){
-      <div class="row mt-3">
-        <!-- Left Column -->
-        <div class="col-md-12">
-          <h4 class="mb-3">Personal Info</h4>
-          <p><strong>Name:</strong> {{ userDetails?.name ?? "-" }}</p>
-          <p><strong>Email:</strong> {{ userDetails?.email ?? "-"}}</p>
-          <p><strong>Phone number: </strong> {{ userDetails?.phoneNumber ?? "-" }}</p>
-
-        </div>
-      </div>
-      @if(userDetails?.roles?.includes('HOUSEHELP')){
-        @if(houseHelpDetails$ |async; as houseHelpDetails ){
-          @if(houseHelpDetails?.securityCleared){
-            <p><strong>Security:</strong><mat-icon class="step-icon green-shield">verified</mat-icon></p>
-          }
-          @if(userDetails?.roles?.includes('ADMIN') || userDetails?.roles?.includes('SECURITY')){
-            @if(houseHelpDetails?.securityClearanceComments){
-              <p><strong>Security Clearance Comments:</strong><mat-icon class="step-icon green-shield"></mat-icon>{{ houseHelpDetails.securityClearanceComments }}</p>
+      <div class="hero">
+        <div class="hero-left">
+          <div class="avatar">
+            @if(avatarUrl$ | async; as avatarUrl){
+              <img
+                [src]="avatarUrl"
+                [alt]="user?.name"
+              />
+            } @else {
+              <div class="avatar-initials">
+                <mat-icon>person</mat-icon>
+              </div>
             }
-          }
-        <p><strong>Skills: </strong>
-          @for (skills of userDetails?.houseHelp?.skills; track $index; let isLast = $last){
-        <span class="small">{{ skills }} {{ !isLast ? ', ' : '' }}</span>
-        }</p>
-          <p><strong>Languages: </strong>
-            @for (language of userDetails?.houseHelp?.languages; track $index; let isLast = $last){
-              <span class="small">{{ language }} {{ !isLast ? ', ' : '' }}</span>
-            }</p>
-        <p><strong>Years of experience:</strong> {{ userDetails?.houseHelp?.yearsOfExperience ?? '-'}}</p>
-        <p><strong>Status:</strong>
-          <span
-            class="badge"
-            [ngClass]="houseHelpDetails?.active ? 'bg-success' : 'bg-danger'">
-          {{ houseHelpDetails?.active ? 'Active' : 'Inactive' }}
-          </span>
-    </p>
-    <p><strong>ID:</strong> {{ houseHelpDetails?.nationalId ?? '-'}}</p>
-          @if(houseHelpDetails?.nationalIdDocument){
-            <p><strong>ID document:</strong> {{ 'Available'}}</p>
-          }
-        <p><strong>Good conduct: </strong> {{ houseHelpDetails?.goodConduct ?? '-'}}</p>
-        <p><strong>Medical report: </strong> {{ houseHelpDetails?.medicalReport ?? '-'}}</p>
-          <p><strong>Availability type: </strong> {{houseHelpDetails?.houseHelpType ?? '-'}}</p>
+          </div>
 
-        <p><strong>Age:</strong>  {{ houseHelpDetails?.age ?? "-" }}</p>
-        <p><strong>Height:</strong> {{ houseHelpDetails?.height ?? "-" }}</p>
-        <p><strong>Weight:</strong> {{ houseHelpDetails?.weight ?? "-" }}</p>
-        <p><strong>Number of children:</strong> {{ houseHelpDetails?.numberOfChildren ?? "-" }}</p>
-        }
-
-      }
-  @if(userDetails?.roles?.includes('HOMEOWNER'))
-  {
-    @if(homeOwnerDetails$ |async; as homeOwnerDetails ){
-      <div class="col-md-12">
-        <p><strong>Status:</strong>
-          <span
-            class="badge"
-            [ngClass]="homeOwnerDetails?.active ? 'bg-success' : 'bg-danger'">
-                                                                 {{ homeOwnerDetails?.active ? 'Active' : 'Inactive' }}
+          <div class="hero-meta">
+            <div class="hero-row">
+              <h1>{{ user?.name }}</h1>
+              <div class="badges">
+                @for(role of user?.roles; track role){
+                  <span class="chip subtle">{{ role.replace('ROLE_', '') }}</span>
+                }
+              </div>
+            </div>
+            <div class="hero-row text-muted">
+              <span class="meta">
+                <mat-icon>email</mat-icon>
+                {{ user?.email || '—' }}
               </span>
-        </p>
-        <p><strong>Number of children:</strong> {{homeOwnerDetails?.numberOfDependents ?? "-" }}</p>
-        <p><strong>House size:</strong> {{((homeOwnerDetails?.numberOfDependents) + " bedroom") }}</p>
-        <p><strong>Location:</strong> {{ homeOwnerDetails?.homeLocation ??  '-'}}</p>
-        @if(homeOwnerDetails?.securityCleared){
-        <p><strong>Security:</strong><mat-icon class="step-icon green-shield">verified</mat-icon></p>
+              <span class="meta">
+                <mat-icon>phone</mat-icon>
+                {{ user?.phoneNumber || '—' }}
+              </span>
+            </div>
+            <div class="hero-row">
+              @if (user?.roles?.includes('HOUSEHELP')) {
+                @if (houseHelpDetails$ | async; as hh) {
+                  <span class="chip" [class.success]="hh?.active" [class.muted]="!hh?.active">
+                    <span class="dot"></span>{{ hh?.active ? 'Available' : 'Unavailable' }}
+                  </span>
+                }
+              } @else if (user?.roles?.includes('HOMEOWNER')) {
+                @if (homeOwnerDetails$ | async; as ho) {
+                  <span class="chip" [class.success]="ho?.active" [class.muted]="!ho?.active">
+                    <span class="dot"></span>{{ ho?.active ? 'Active' : 'Inactive' }}
+                  </span>
+                }
+              } @else {
+                <span class="chip muted"><span class="dot"></span>{{ user?.active ? 'Active' : 'Inactive' }}</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        @if (user?.roles?.includes('ADMIN') || user?.roles?.includes('SALES')) {
+          <button mat-stroked-button color="primary" (click)="editAccount(userId || '')">
+            <mat-icon>edit</mat-icon>
+            Edit profile
+          </button>
         }
-        @if(userDetails?.roles?.includes('ADMIN') || userDetails?.roles?.includes('SECURITY')){
-          @if(homeOwnerDetails?.securityClearanceComments){
-            <p><strong>Security Clearance Comments:</strong><mat-icon class="step-icon green-shield"></mat-icon>{{ homeOwnerDetails.securityClearanceComments }}</p>
+      </div>
+
+      <!-- Househelp view -->
+      @if (user?.roles?.includes('HOUSEHELP')) {
+        @if (houseHelpDetails$ | async; as hh) {
+        <div class="grid two">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Snapshot</p>
+                <h2>Professional profile</h2>
+              </div>
+            </div>
+            <div class="pill-grid">
+              <div class="pill">
+                <p class="label">Experience</p>
+                <p class="value">{{ hh?.yearsOfExperience || 0 }} yrs</p>
+              </div>
+              <div class="pill">
+                <p class="label">Availability</p>
+                <p class="value">{{ hh?.houseHelpType?.[0]?.replace('_', ' ') || 'Not set' }}</p>
+              </div>
+              <div class="pill">
+                <p class="label">Age</p>
+                <p class="value">{{ hh?.age || '—' }}</p>
+              </div>
+              <div class="pill">
+                <p class="label">Children</p>
+                <p class="value">{{ hh?.numberOfChildren || '0' }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Contact</p>
+                <h2>Emergency contact</h2>
+              </div>
+            </div>
+            <div class="list">
+              <div class="list-row">
+                <span class="label">Contact person</span>
+                <span class="value">{{ hh?.contactPersons || 'Not provided' }}</span>
+              </div>
+              <div class="list-row">
+                <span class="label">Phone</span>
+                <span class="value">{{ hh?.contactPersonsPhoneNumber || user?.phoneNumber || 'Not provided' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">Core</p>
+              <h2>Personal details</h2>
+            </div>
+          </div>
+          <div class="info-grid">
+            <div class="info">
+              <p class="label">National ID</p>
+              <p class="value">{{ hh?.nationalId || '—' }}</p>
+            </div>
+            <div class="info">
+              <p class="label">Religion</p>
+              <p class="value">{{ hh?.religion || '—' }}</p>
+            </div>
+            <div class="info">
+              <p class="label">Education</p>
+              <p class="value">{{ hh?.levelOfEducation || '—' }}</p>
+            </div>
+            <div class="info">
+              <p class="label">Height</p>
+              <p class="value">{{ hh?.height ? hh?.height + ' cm' : '—' }}</p>
+            </div>
+            <div class="info">
+              <p class="label">Weight</p>
+              <p class="value">{{ hh?.weight ? hh?.weight + ' kg' : '—' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid two">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Capability</p>
+                <h2>Skills</h2>
+              </div>
+            </div>
+            <div class="chips">
+              @if(hh?.skills?.length){
+                @for(skill of hh?.skills; track skill){
+                  <span class="chip soft">{{ skill }}</span>
+                }
+              } @else {
+                <p class="empty">No skills listed</p>
+              }
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Communication</p>
+                <h2>Languages</h2>
+              </div>
+            </div>
+            <div class="chips">
+              @if(hh?.languages?.length){
+                @for(lang of hh?.languages; track lang){
+                  <span class="chip soft">{{ lang }}</span>
+                }
+              } @else {
+                <p class="empty">No languages listed</p>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">Location</p>
+              <h2>Residence</h2>
+            </div>
+          </div>
+          <div class="list">
+            <div class="list-row">
+              <span class="label">Current</span>
+              <span class="value">{{ hh?.currentLocation || 'Not provided' }}</span>
+            </div>
+            <div class="list-row">
+              <span class="label">Home</span>
+              <span class="value">{{ hh?.homeLocation || 'Not provided' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Clearance (Admin/Security only) -->
+        @if(user?.roles?.includes('ADMIN') || user?.roles?.includes('SECURITY')){
+          @if(hh?.securityCleared || hh?.securityClearanceComments){
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Security</p>
+                  <h2>Clearance Status</h2>
+                </div>
+              </div>
+              <div class="list">
+                @if(hh?.securityCleared){
+                  <div class="list-row">
+                    <span class="label">Status</span>
+                    <span class="value">
+                      <mat-icon class="verified-icon">verified</mat-icon>
+                      Security Cleared
+                    </span>
+                  </div>
+                }
+                @if(hh?.securityClearanceComments){
+                  <div class="list-row">
+                    <span class="label">Comments</span>
+                    <span class="value">{{ hh?.securityClearanceComments }}</span>
+                  </div>
+                }
+              </div>
+            </div>
           }
         }
 
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">Verification</p>
+              <h2>Documents</h2>
+            </div>
+          </div>
+          <div class="doc-grid">
+            <div class="doc" [class.ready]="hh?.nationalIdDocument">
+              <div>
+                <p class="label">National ID</p>
+                <p class="value">{{ hh?.nationalIdDocument ? 'Uploaded' : 'Missing' }}</p>
+              </div>
+              @if(hh?.nationalIdDocument){
+                <button mat-icon-button (click)="viewDocument(hh?.nationalIdDocument || null)">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              }
+            </div>
+            <div class="doc" [class.ready]="hh?.goodConduct">
+              <div>
+                <p class="label">Good conduct</p>
+                <p class="value">{{ hh?.goodConduct ? 'Uploaded' : 'Missing' }}</p>
+              </div>
+              @if(hh?.goodConduct){
+                <button mat-icon-button (click)="viewDocument(hh?.goodConduct || null)">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              }
+            </div>
+            <div class="doc" [class.ready]="hh?.medicalReport">
+              <div>
+                <p class="label">Medical report</p>
+                <p class="value">{{ hh?.medicalReport ? 'Uploaded' : 'Missing' }}</p>
+              </div>
+              @if(hh?.medicalReport){
+                <button mat-icon-button (click)="viewDocument(hh?.medicalReport || null)">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+        }
+      }
 
-      </div>
-    }
+      <!-- Homeowner view -->
+      @if (user?.roles?.includes('HOMEOWNER')) {
+        @if (homeOwnerDetails$ | async; as ho) {
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">Homeowner</p>
+              <h2>Property overview</h2>
+            </div>
+          </div>
+          <div class="pill-grid">
+            <div class="pill">
+              <p class="label">Type</p>
+              <p class="value">{{ ho?.houseType || '—' }}</p>
+            </div>
+            <div class="pill">
+              <p class="label">Bedrooms</p>
+              <p class="value">{{ ho?.numberOfRooms || '—' }}</p>
+            </div>
+            <div class="pill">
+              <p class="label">Dependents</p>
+              <p class="value">{{ ho?.numberOfDependents || '0' }}</p>
+            </div>
+            <div class="pill">
+              <p class="label">Location</p>
+              <p class="value">{{ ho?.homeLocation || '—' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Clearance (Admin/Security only) -->
+        @if(user?.roles?.includes('ADMIN') || user?.roles?.includes('SECURITY')){
+          @if(ho?.securityCleared || ho?.securityClearanceComments){
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Security</p>
+                  <h2>Clearance Status</h2>
+                </div>
+              </div>
+              <div class="list">
+                @if(ho?.securityCleared){
+                  <div class="list-row">
+                    <span class="label">Status</span>
+                    <span class="value">
+                      <mat-icon class="verified-icon">verified</mat-icon>
+                      Security Cleared
+                    </span>
+                  </div>
+                }
+                @if(ho?.securityClearanceComments){
+                  <div class="list-row">
+                    <span class="label">Comments</span>
+                    <span class="value">{{ ho?.securityClearanceComments }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        }
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">Verification</p>
+              <h2>Documents</h2>
+            </div>
+          </div>
+          <div class="doc-grid">
+            <div class="doc" [class.ready]="ho?.nationalIdDocument">
+              <div>
+                <p class="label">National ID</p>
+                <p class="value">{{ ho?.nationalIdDocument ? 'Uploaded' : 'Missing' }}</p>
+              </div>
+              @if(ho?.nationalIdDocument){
+                <button mat-icon-button (click)="viewDocument(ho?.nationalIdDocument || null)">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+        }
+      }
+
+      <!-- Footer message for non-admin users -->
+      @if(!user?.roles?.includes('ADMIN') && !user?.roles?.includes('SALES')){
+        <div class="card info-card">
+          <p class="info-message">
+            <mat-icon>info</mat-icon>
+            <em>You cannot update your profile for security reasons. To edit your profile details, kindly contact our customer support team on +254-118-266-951</em>
+          </p>
+        </div>
+      }
+
+    </div>
   }
-    }
-
-    <mat-divider class="my-3"></mat-divider>
-
-    @if(userDetails?.roles?.includes('ADMIN') || userDetails?.roles?.includes('SALES')){
-      <div class="d-flex justify-content-end gap-2">
-        <button mat-stroked-button color="primary" (click)="editAccount(userId)">
-          Edit Profile
-        </button>
-      </div>
-    } @else{
-      <p><em>You cannot update your profile for security reasons. To edit your profile details, kindly contact our customer support team on +254-118-266-951</em></p>
-    }
-
-  </mat-card>
 </div>

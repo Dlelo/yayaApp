@@ -86,8 +86,49 @@ export class EditAccountDetailsComponent implements OnInit {
         this.isHouseHelp = user.roles.includes('HOUSEHELP');
         this.isHomeOwner = user.roles.includes('HOMEOWNER');
         this.initializeForm(user);
+        
+        // Load existing profile picture
+        this.loadExistingProfilePicture(user);
       })
     );
+  }
+
+  private loadExistingProfilePicture(user: any): void {
+    let existingProfilePicture = null;
+    let existingNationalId = null;
+    
+    // Get existing profile picture and national ID URLs
+    if (this.isHouseHelp && user.houseHelp) {
+      existingProfilePicture = user.houseHelp.profilePictureDocument;
+      existingNationalId = user.houseHelp.nationalIdDocument;
+    } else if (this.isHomeOwner && user.homeOwner) {
+      existingProfilePicture = user.homeOwner.profilePictureDocument;
+      existingNationalId = user.homeOwner.nationalIdDocument;
+    }
+    
+    // Set preview URLs if they exist
+    this.ngZone.run(() => {
+      if (existingProfilePicture) {
+        this.profilePicturePreviewUrl = existingProfilePicture;
+      }
+      
+      if (existingNationalId) {
+        // For PDFs, just show the filename
+        this.nationalIdFileName = this.extractFilename(existingNationalId);
+        // Don't set nationalIdPreviewUrl for PDFs
+      }
+      
+      this.cdr.markForCheck();
+    });
+  }
+
+  private extractFilename(url: string): string {
+    try {
+      const parts = url.split('/');
+      return parts[parts.length - 1];
+    } catch {
+      return 'document.pdf';
+    }
   }
 
   // Profile Picture handler
