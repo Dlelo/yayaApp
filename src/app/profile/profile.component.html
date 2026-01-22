@@ -22,7 +22,9 @@
 
         <!-- Details Section -->
         <div class="profile-details mt-4">
-          <h3 class="mb-2">About</h3>
+          @if(houseHelp?.securityCleared){
+            <p><strong>Security:</strong><mat-icon class="step-icon green-shield">verified</mat-icon></p>
+          }
 
           <h5 class="mt-4 mb-2">Availability Type</h5>
           <p>

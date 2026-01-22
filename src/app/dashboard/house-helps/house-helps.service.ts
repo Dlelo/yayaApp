@@ -73,5 +73,18 @@ export class HousehelpService {
     );
   }
 
+  setSecurityCleared(
+    houseHelpId: number|undefined,
+    cleared: boolean,
+    comments?: string
+  ): Observable<any> {
+    return this.http.put(
+      `${this.apiUrl}/${houseHelpId}/security-cleared`,
+      {
+        cleared,
+        comments
+      }
+    );
+  }
 
 }

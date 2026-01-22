@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>Security verify {{ data.name }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="d-flex flex-column gap-3">
+
+    <mat-checkbox formControlName="cleared">
+      Security Cleared
+    </mat-checkbox>
+
+    <mat-form-field class="w-100">
+      <mat-label>Comments</mat-label>
+      <textarea matInput formControlName="comment" rows="4"></textarea>
+      @if(form.controls['comment'].hasError('required')){
+        <mat-error>Comment is required</mat-error>
+      }
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="save()">Save</button>
+</mat-dialog-actions>

@@ -8,6 +8,8 @@ import {Observable} from 'rxjs';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {SecurityVerifyDialogComponent} from '../security-clearance-dialog/security-clearance-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
 
 
 @Component({
@@ -27,6 +29,7 @@ export class HouseHelpsComponent implements OnInit{
   private readonly  househelpService:HousehelpService = inject(HousehelpService);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
+  private dialog: MatDialog = inject(MatDialog);
 
   page = 0;
   size = 20;
@@ -71,5 +74,36 @@ export class HouseHelpsComponent implements OnInit{
   editHouseHelp(userID:number|null){
     this.router.navigate(['/edit-account/', userID]);
   }
+
+  securityVerify(houseHelpId:number|undefined) {
+    const ref = this.dialog.open(SecurityVerifyDialogComponent, {
+      width: '450px',
+      data: {
+        houseHelpId,
+        type: 'HOUSEHELP'
+      }
+    });
+
+    ref.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+
+      this.househelpService.setSecurityCleared(houseHelpId, result.cleared, result.comments)
+        .subscribe({
+          next: (res) => {
+            this.snackBar.open('✅Security verified successfully!', 'Close', {
+              duration: 3000,
+            });
+          },
+          error: (err) => {
+            this.snackBar.open('❌ Security verification failed. Invalid credentials.', 'Close', {
+              duration: 3000,
+            });
+          }
+        });
+    });
+  }
+
 
 }

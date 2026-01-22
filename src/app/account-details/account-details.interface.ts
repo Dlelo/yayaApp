@@ -19,6 +19,8 @@ interface HouseHelp {
   age:string;
   weight:string;
   height:string;
+  securityCleared:boolean;
+  securityClearanceComments:string;
 }
 
 interface HomeOwner {
@@ -29,6 +31,9 @@ interface HomeOwner {
   numberOfRooms: string;
   numberOfDependents: string;
   nationalIdDocument: string;
+  user:UserDetails;
+  securityCleared:boolean;
+  securityClearanceComments:string;
 
 }
 

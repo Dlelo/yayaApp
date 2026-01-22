@@ -1,37 +1,80 @@
 <mat-card class="p-3 shadow-sm">
-  <h2 class="mb-3">Manage  House owners</h2>
-  <table class="table table-striped table-hover">
-    <thead class="table-light">
-    <tr>
-      <th>#</th>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Role</th>
-      <th>Status</th>
-      <th class="text-end">Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    @for(user of users; let i = $index; track $index){
+  <h2 class="mb-3">Manage Home Owners</h2>
+
+  @if (homeOwnerPage$ | async; as pageData) {
+
+    <table class="table table-striped table-hover">
+      <thead class="table-light">
       <tr>
-        <td>{{ i + 1 }}</td>
-        <td>{{ user.name }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.role }}</td>
-        <td>
-          @if(user.active){
-            <span class="badge bg-success">Active</span>
-          }
-          @if(!user.active){
-            <span class="badge bg-secondary">Inactive</span>
-          }
-         </td>
-        <td class="text-end">
-          <button mat-stroked-button color="primary" class="me-2">Edit</button>
-          <button mat-stroked-button color="warn">Delete</button>
-        </td>
+        <th>#</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone number</th>
+        <th>Status</th>
+        <th class="text-end">Actions</th>
       </tr>
-    }
-    </tbody>
-  </table>
+      </thead>
+
+      <tbody>
+        @for (homeOwner of pageData.content; let i = $index; track homeOwner.id) {
+          <tr>
+            <td>{{ i + 1 + (pageData.number * pageData.size) }}</td>
+
+            <td>{{ homeOwner.user?.name }}</td>
+
+            <td>{{ homeOwner.user?.email || '—' }}</td>
+
+            <td>{{ homeOwner.user?.phoneNumber || '—' }}</td>
+
+            <td>
+              @if (homeOwner?.active) {
+                <span class="badge bg-success">Active</span>
+              } @else {
+                <span class="badge bg-secondary">Inactive</span>
+              }
+            </td>
+
+            <td class="text-end">
+              <button
+                mat-stroked-button
+                color="primary"
+                class="me-2"
+                (click)="editHomeOwner(homeOwner.id)">
+                Edit
+              </button>
+
+              <button
+                mat-stroked-button
+                color="warn"
+                (click)="activateHouseHelp(homeOwner?.id, !homeOwner?.active )">
+                @if (homeOwner?.active) {
+                  <span>Deactivate</span>
+                } @else {
+                  <span>Activate</span>
+                }
+              </button>
+
+              <button
+                mat-stroked-button
+                color="primary"
+                class="me-2"
+                (click)="securityVerify(homeOwner?.id)">
+                Security verify
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <mat-paginator
+      [length]="pageData.totalElements"
+      [pageSize]="pageData.size"
+      [pageIndex]="pageData.number"
+      [pageSizeOptions]="[10, 20, 50]"
+      (page)="onHomeOwnerPageChange($event)">
+    </mat-paginator>
+
+  }
 </mat-card>

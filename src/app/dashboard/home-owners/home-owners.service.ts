@@ -35,5 +35,49 @@ export class HomeOwnerService {
     return this.http.patch(`${this.apiUrl}/${id}`, homeOwner);
   }
 
+  setActiveStatus(id: number|undefined, active: boolean) {
+    return this.http.put<HouseHelp>(
+      `${this.apiUrl}/${id}/active`,
+      null,
+      {
+        params: { active },
+      }
+    );
+  }
+
+
+  getHomeOwners(
+    page: number,
+    size: number,
+    active: boolean | null
+  ): Observable<PageResponse<HomeOwner>> {
+    const params = new HttpParams()
+      .set('page', page)
+      .set('size', size);
+
+    const filter = { active };
+
+    return this.http.post<PageResponse<HomeOwner>>(
+      `${this.apiUrl}/search`,
+      filter,
+      { params }
+    );
+  }
+
+  setSecurityCleared(
+    homeOwnerId: number|undefined,
+    cleared: boolean,
+    comments?: string
+  ): Observable<any> {
+    return this.http.put(
+      `${this.apiUrl}/${homeOwnerId}/security-cleared`,
+      {
+        cleared,
+        comments
+      }
+    );
+  }
+
+
 
 }

@@ -21,6 +21,14 @@
       </div>
       @if(userDetails?.roles?.includes('HOUSEHELP')){
         @if(houseHelpDetails$ |async; as houseHelpDetails ){
+          @if(houseHelpDetails?.securityCleared){
+            <p><strong>Security:</strong><mat-icon class="step-icon green-shield">verified</mat-icon></p>
+          }
+          @if(userDetails?.roles?.includes('ADMIN') || userDetails?.roles?.includes('SECURITY')){
+            @if(houseHelpDetails?.securityClearanceComments){
+              <p><strong>Security Clearance Comments:</strong><mat-icon class="step-icon green-shield"></mat-icon>{{ houseHelpDetails.securityClearanceComments }}</p>
+            }
+          }
         <p><strong>Skills: </strong>
           @for (skills of userDetails?.houseHelp?.skills; track $index; let isLast = $last){
         <span class="small">{{ skills }} {{ !isLast ? ', ' : '' }}</span>
@@ -66,6 +74,15 @@
         <p><strong>Number of children:</strong> {{homeOwnerDetails?.numberOfDependents ?? "-" }}</p>
         <p><strong>House size:</strong> {{((homeOwnerDetails?.numberOfDependents) + " bedroom") }}</p>
         <p><strong>Location:</strong> {{ homeOwnerDetails?.homeLocation ??  '-'}}</p>
+        @if(homeOwnerDetails?.securityCleared){
+        <p><strong>Security:</strong><mat-icon class="step-icon green-shield">verified</mat-icon></p>
+        }
+        @if(userDetails?.roles?.includes('ADMIN') || userDetails?.roles?.includes('SECURITY')){
+          @if(homeOwnerDetails?.securityClearanceComments){
+            <p><strong>Security Clearance Comments:</strong><mat-icon class="step-icon green-shield"></mat-icon>{{ homeOwnerDetails.securityClearanceComments }}</p>
+          }
+        }
+
 
       </div>
     }
