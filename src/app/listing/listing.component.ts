@@ -1,12 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HousehelpService } from '../dashboard/house-helps/house-helps.service';
-import { Observable } from 'rxjs';
-import {MatPaginator, PageEvent} from '@angular/material/paginator';
-import {FormsModule} from '@angular/forms';
-import {MatCard, MatCardActions, MatCardContent} from '@angular/material/card';
-import {AsyncPipe} from '@angular/common';
-import {MatButton} from '@angular/material/button';
+import { Observable, of } from 'rxjs';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { FormsModule } from '@angular/forms';
+import { MatCard, MatCardActions, MatCardContent } from '@angular/material/card';
+import { AsyncPipe, NgClass, SlicePipe } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   standalone: true,
@@ -18,10 +19,13 @@ import {MatButton} from '@angular/material/button';
     FormsModule,
     MatCard,
     AsyncPipe,
+    NgClass,
+    SlicePipe,
     MatCardContent,
     MatCardActions,
     MatButton,
-    MatPaginator
+    MatPaginator,
+    MatIcon
   ]
 })
 export class ListingsComponent implements OnInit {
@@ -31,9 +35,9 @@ export class ListingsComponent implements OnInit {
 
   houseHelps$!: Observable<any>;
 
-  page:number = 0;
-  size:number = 20;
-  type:string = 'ALL';
+  page: number = 0;
+  size: number = 20;
+  type: string = 'ALL';
 
   filters: any = {
     active: true,
@@ -53,7 +57,7 @@ export class ListingsComponent implements OnInit {
     });
   }
 
-  load(type:string) {
+  load(type: string) {
     this.houseHelps$ = this.househelpService.getAll(
       type,
       this.page,
@@ -83,5 +87,44 @@ export class ListingsComponent implements OnInit {
 
   seeDetails(id: number) {
     this.router.navigate(['/profile', id]);
+  }
+
+  /**
+   * Get CSS class for availability badge based on type
+   */
+  getAvailabilityClass(houseHelpType: string): string {
+    if (!houseHelpType) return '';
+    
+    switch (houseHelpType.toUpperCase()) {
+      case 'DAYBURG':
+        return 'dayburg';
+      case 'LIVE_IN':
+        return 'live-in';
+      case 'EMERGENCY':
+        return 'emergency';
+      default:
+        return '';
+    }
+  }
+
+  /**
+   * Format availability type for display
+   * Converts "LIVE_IN" -> "Live In", "DAYBURG" -> "Dayburg"
+   */
+  formatAvailability(houseHelpType: string): string {
+    if (!houseHelpType) return 'Not specified';
+    
+    return houseHelpType.replace('_', ' ').toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+
+  /**
+   * Get profile picture URL
+   * Returns the CDN URL directly since files are public
+   */
+  getProfilePictureUrl(houseHelp: any): string | null {
+    return houseHelp?.profilePictureDocument || null;
   }
 }

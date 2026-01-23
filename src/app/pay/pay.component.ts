@@ -4,6 +4,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../auth/auth.service';
 
 import { Component, OnInit } from '@angular/core';
@@ -31,6 +32,7 @@ import { MatIcon } from '@angular/material/icon';
     MatButtonModule,
     MatSelectModule,
     MatProgressSpinnerModule,
+    MatDividerModule,
     MatIcon,
   ],
 })
@@ -39,12 +41,22 @@ export class PayComponent implements OnInit {
   payForm: FormGroup;
   houseHelpName: string = '';
   houseHelpId: string = '';
+  houseHelpLocation: string = '';
   isProcessing: boolean = false;
   isManualPayment: boolean = false; //remove after mpesa automation
   paybillNumber: number = environment.paybillNumber;
   accountNumber: number = environment.accountNumber;
 
   user = localStorage.getItem('user');
+
+  // Pricing constants
+  private readonly PLAN_PRICES = {
+    'emergency': 500,
+    'day-burg': 2500,
+    'live-in': 2500
+  };
+  
+  private readonly OUTSIDE_NAIROBI_SURCHARGE = 1500;
 
   constructor(
     private fb: FormBuilder,
@@ -55,7 +67,8 @@ export class PayComponent implements OnInit {
 
   ) {
     this.payForm = this.fb.group({
-      plan: ['basic', Validators.required],
+      plan: ['day-burg', Validators.required],
+      location: ['nairobi', Validators.required],
       phone: ['', [
         Validators.required,
         Validators.pattern(/^(\+254|254|0)[17]\d{8}$/)
@@ -66,17 +79,75 @@ export class PayComponent implements OnInit {
   ngOnInit() {
     this.houseHelpName = this.route.snapshot.queryParams['name'] || 'House Help';
     this.houseHelpId = this.route.snapshot.queryParams['id'] || '';
-    console.log(this.houseHelpName, this.houseHelpId);
+    this.houseHelpLocation = this.route.snapshot.queryParams['location'] || '';
+
+    console.log('Query Params:', this.route.snapshot.queryParams);
+    console.log('House Help Name:', this.houseHelpName);
+    console.log('House Help ID:', this.houseHelpId);
+    console.log('House Help Location:', this.houseHelpLocation);
+
+    // Auto-detect if house help is outside Nairobi
+    this.autoDetectLocation();
+    
+    console.log(this.houseHelpName, this.houseHelpId, this.houseHelpLocation);
+  }
+
+  /**
+   * Auto-detect if house help location is outside Nairobi
+   */
+  private autoDetectLocation() {
+    if (this.houseHelpLocation) {
+      const location = this.houseHelpLocation.toLowerCase().trim();
+      const isNairobi = location.includes('nairobi');
+      
+      this.payForm.patchValue({
+        location: isNairobi ? 'nairobi' : 'outside-nairobi'
+      });
+    }
+  }
+
+  /**
+   * Check if service location is outside Nairobi
+   */
+  isOutsideNairobi(): boolean {
+    return this.payForm.get('location')?.value === 'outside-nairobi';
+  }
+
+  /**
+   * Called when location selection changes
+   */
+  onLocationChange(): void {
+    // Update the UI - getTotalAmount() will automatically recalculate
+  }
+
+  /**
+   * Get base plan amount (without surcharge)
+   */
+  getBasePlanAmount(): number {
+    const plan = this.payForm.get('plan')?.value;
+    return this.PLAN_PRICES[plan as keyof typeof this.PLAN_PRICES] || 0;
+  }
+
+  /**
+   * Get total amount including location surcharge
+   */
+  getTotalAmount(): number {
+    const baseAmount = this.getBasePlanAmount();
+    const surcharge = this.isOutsideNairobi() ? this.OUTSIDE_NAIROBI_SURCHARGE : 0;
+    return baseAmount + surcharge;
+  }
+
+  /**
+   * Legacy method - use getTotalAmount() instead
+   * Kept for backward compatibility
+   */
+  getAmount() {
+    return this.getTotalAmount();
   }
 
   goToSuccess() {
     this.router.navigate(['/listings']);
   }
-
-  getAmount() {
-    return this.payForm.value.plan === 'emergency' ? 500 : 2500;
-  }
-
 
   pay() {
     if (this.payForm.invalid || this.isProcessing || this.isManualPayment) return;
@@ -84,7 +155,7 @@ export class PayComponent implements OnInit {
     // this.isProcessing = true;
     this.isManualPayment = true;
 
-    const amount = this.payForm.value.plan === 'emergency' ? 500 : 2500;
+    const totalAmount = this.getTotalAmount();
 
     let phone = this.payForm.value.phone;
     if (phone.startsWith('0')) {
@@ -97,13 +168,18 @@ export class PayComponent implements OnInit {
     const user = storedUser ? JSON.parse(storedUser) : null;
     const email = user?.email;
 
-
     const paymentRequest = {
       phoneNumber: phone,
-      amount: amount,
+      amount: totalAmount, // Now includes surcharge if applicable
       email: email,
       accountReference: `HIRE-${this.houseHelpId}`,
-      transactionDesc: `Subscription for ${this.houseHelpName}`
+      transactionDesc: `Subscription for ${this.houseHelpName}`,
+      // Additional metadata
+      plan: this.payForm.value.plan,
+      location: this.payForm.value.location,
+      baseAmount: this.getBasePlanAmount(),
+      surcharge: this.isOutsideNairobi() ? this.OUTSIDE_NAIROBI_SURCHARGE : 0,
+      isOutsideNairobi: this.isOutsideNairobi()
     };
 
     // TODO bring this back once MPESA goes live
@@ -123,8 +199,6 @@ export class PayComponent implements OnInit {
         // );
         // Start checking payment status
         // this.checkPaymentStatus(response?.CheckoutRequestID); 
-      
-
       },
       error: (error) => {
         this.isProcessing = false;
@@ -186,4 +260,6 @@ export class PayComponent implements OnInit {
       }
     }, 1000);
   }
+
+  
 }

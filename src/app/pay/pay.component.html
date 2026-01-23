@@ -1,9 +1,6 @@
 <div class="container my-4">
   <mat-card class="p-4 shadow-sm">
     <h2 class="mb-3 text-center">Complete Payment to Hire</h2>
-<!--    <p class="lead text-center">-->
-<!--      To complete hiring, please pay first.-->
-<!--    </p>-->
 
     @if (isProcessing) {
       <div class="text-center my-4">
@@ -13,7 +10,6 @@
     }
     @else if (isManualPayment) {
 
-      
       <div>
         <mat-card class="instructions-card mb-4">
           <mat-card-content>
@@ -47,7 +43,7 @@
               </li>
               <li>
                 <mat-icon class="step-icon">looks_6</mat-icon>
-                <span>Enter Amount: <strong>KES {{ getAmount() | number }}</strong></span>
+                <span>Enter Amount: <strong>KES {{ getTotalAmount() | number }}</strong></span>
               </li>
               <li>
                 <mat-icon class="step-icon">check_circle</mat-icon>
@@ -92,6 +88,67 @@
             </mat-form-field>
           </div>
 
+          <!-- Location Selection -->
+          <!-- <div class="col-12">
+            <mat-card class="location-info-card">
+            <mat-card-content>
+              <mat-icon>place</mat-icon>
+              <div>
+                <small>Service Location</small>
+                <strong>{{ isOutsideNairobi() ? 'Outside Nairobi' : 'Nairobi' }}</strong>
+                <p class="small">Auto-detected from house help's location</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+          </div> -->
+
+          <!-- Location Surcharge Alert -->
+          @if(isOutsideNairobi()){
+            <div class="col-12">
+              <mat-card class="location-surcharge-card">
+                <mat-card-content class="d-flex align-items-center gap-3">
+                  <mat-icon class="text-warning">info</mat-icon>
+                  <div>
+                    <strong>Outside Nairobi Surcharge</strong>
+                    <p class="mb-0 text-muted small">
+                      An additional KES 1,500 transport fee applies for hires outside Nairobi.
+                    </p>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          }
+
+          <!-- Amount Breakdown -->
+          @if(payForm.get('plan')?.value){
+            <div class="col-12">
+              <mat-card class="amount-breakdown-card">
+                <mat-card-content>
+                  <h6 class="mb-3 fw-bold">Payment Summary</h6>
+                  
+                  <div class="breakdown-row">
+                    <span>Service Fee:</span>
+                    <span class="fw-bold">KES {{ getBasePlanAmount() | number }}</span>
+                  </div>
+                  
+                  @if(isOutsideNairobi()){
+                    <div class="breakdown-row">
+                      <span>Transport Fee (Outside Nairobi):</span>
+                      <span class="fw-bold text-warning">+ KES 1,500</span>
+                    </div>
+                  }
+                  
+                  <mat-divider class="my-2"></mat-divider>
+                  
+                  <div class="breakdown-row total">
+                    <span>Total Amount:</span>
+                    <span class="fw-bold text-primary fs-5">KES {{ getTotalAmount() | number }}</span>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          }
+
           <!-- Mpesa Number -->
           <div class="col-12">
             <mat-form-field appearance="outline" class="w-100">
@@ -115,7 +172,7 @@
               type="submit"
               [disabled]="payForm.invalid || isProcessing"
             >
-              Pay & Proceed
+              Pay KES {{ getTotalAmount() | number }} & Proceed
             </button>
           </div>
         </div>

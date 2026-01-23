@@ -78,8 +78,21 @@
 
 
         </div>
+        @if(houseHelpDetails$ | async; as houseHelp) {
+          <div class="profile-actions text-center mt-4">
+            <button
+              mat-raised-button
+              color="primary"
+              class="px-4"
+              (click)="navigateToPay('/pay')"
+            >
+              <mat-icon class="me-2">person_add</mat-icon>
+              Hire {{ houseHelp?.user?.name ?? "" }}
+            </button>
+          </div>}
 
-        <div class="profile-actions text-center mt-4">
+        <!-- <div class="profile-actions text-center mt-4">
+  
           <button
             mat-raised-button
             color="primary"
@@ -88,7 +101,10 @@
           >
             Hire {{ houseHelp?.user?.name ?? "" }}
           </button>
-        </div>
+        </div> -->
+
+        
+      
       </mat-card>
     </div>
   }
