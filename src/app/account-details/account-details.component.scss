@@ -260,3 +260,40 @@ $success: #16a34a;
 .green-shield {
   color: #1a3c34;
 }
+
+.verified-icon {
+  color: var(--profile-success);
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+
+.info-card {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 1px solid #fbbf24;
+}
+
+.info-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin: 0;
+  color: #92400e;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  
+  mat-icon {
+    color: #f59e0b;
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  
+  em {
+    font-style: normal;
+  }
+}

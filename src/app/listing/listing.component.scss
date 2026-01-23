@@ -1,84 +1,265 @@
-.page-title {
+// House Help Cards Styling
+
+.househelp-card {
+  border-radius: 16px !important;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid #e5e7eb;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15) !important;
+  }
+}
+
+// Profile Header Section
+.profile-header {
+  position: relative;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 1.5rem 1rem 3.5rem 1rem;
   text-align: center;
-  margin: 2rem 0;
-  font-size: 2rem;
-  font-weight: 600;
-  color: #333;
 }
 
-.listings-page {
-  padding: 2rem;
-
-  .listings-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2rem;
-  }
-
-  .listing-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 1.5rem;
-    border-radius: 16px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s ease-in-out;
-
-    &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
-    }
-
-    .avatar-wrapper {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 1rem;
-
-      img {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 3px solid #f9a825;
-      }
-    }
-
-    .name {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin: 0.5rem 0 0.2rem;
-      color: #222;
-    }
-
-    .role {
-      font-size: 0.95rem;
-      color: #777;
-      margin-bottom: 0.5rem;
-    }
-
-    .rating {
-      margin: 0.5rem 0;
-      font-size: 1.1rem;
-      color: #f9a825;
-    }
-
-    .description {
-      font-size: 0.9rem;
-      color: #555;
-      margin: 0.5rem 0 1rem;
-    }
-
-    button {
-      margin-top: auto;
-      font-weight: 500;
-      padding: 0.5rem 1.2rem;
-    }
-  }
+.profile-pic {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  border: 4px solid white;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background: white;
 }
 
-.paginator-wrapper {
+.profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-placeholder {
+  width: 100%;
+  height: 100%;
   display: flex;
+  align-items: center;
   justify-content: center;
-  margin: 2rem 0;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #9ca3af;
+  }
+}
+
+// Availability Badge
+.availability-badge {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.375rem 0.875rem;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+  
+  &.dayburg {
+    color: #2563eb;
+    background: #dbeafe;
+    border: 1px solid #93c5fd;
+  }
+  
+  &.live-in {
+    color: #059669;
+    background: #d1fae5;
+    border: 1px solid #6ee7b7;
+  }
+  
+  &.emergency {
+    color: #dc2626;
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+  }
+}
+
+// Card Body
+.card-body {
+  padding: 1.25rem !important;
+}
+
+.name {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Rating
+.rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125rem;
+  margin-bottom: 1rem;
+  
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    
+    &.star {
+      color: #fbbf24;
+    }
+    
+    &.star-outline {
+      color: #d1d5db;
+    }
+  }
+  
+  .rating-text {
+    margin-left: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6b7280;
+  }
+}
+
+// Info Items
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  color: #4b5563;
+  
+  .info-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #9ca3af;
+  }
+  
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+// Skills Section
+.skills-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.skills-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.skills-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.skill-tag {
+  display: inline-block;
+  padding: 0.25rem 0.625rem;
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  
+  &.more {
+    background: #f3f4f6;
+    color: #6b7280;
+    border-color: #e5e7eb;
+  }
+}
+
+// Card Actions
+.card-actions {
+  padding: 0 1.25rem 1.25rem !important;
+  margin: 0 !important;
+}
+
+.view-profile-btn {
+  width: 100%;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 576px) {
+  .profile-header {
+    padding: 1rem 0.75rem 3rem 0.75rem;
+  }
+  
+  .profile-pic {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .name {
+    font-size: 1rem;
+  }
+}
+
+// Empty State (optional)
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6b7280;
+  
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #d1d5db;
+    margin-bottom: 1rem;
+  }
+  
+  h3 {
+    color: #374151;
+    margin-bottom: 0.5rem;
+  }
+  
+  p {
+    color: #9ca3af;
+  }
 }

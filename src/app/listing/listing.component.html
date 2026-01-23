@@ -1,115 +1,139 @@
 <div class="container mt-4">
   <h2 class="mb-4 text-center">Available Househelps</h2>
 
+  <!-- FILTERS -->
+  <mat-card class="mb-4 p-3 shadow-sm">
+    <div class="row g-3">
 
-    <!-- FILTERS -->
-    <mat-card class="mb-4 p-3 shadow-sm">
-      <div class="row g-3">
-
-        <!-- Experience -->
-        <div class="col-md-3">
-          <input
-            type="number"
-            class="form-control"
-            placeholder="Min Experience (years)"
-            [(ngModel)]="filters.experience"
-          />
-        </div>
-
-        <!-- Location -->
-        <div class="col-md-3">
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Location"
-            [(ngModel)]="filters.location"
-          />
-        </div>
-
-<!--        &lt;!&ndash; Language &ndash;&gt;-->
-<!--        <div class="col-md-3">-->
-<!--          <input-->
-<!--            type="text"-->
-<!--            class="form-control"-->
-<!--            placeholder="Language"-->
-<!--            [(ngModel)]="filters?.languages"-->
-<!--          />-->
-<!--        </div>-->
-
-        <!-- Availability -->
-        <div class="col-md-3">
-          <select
-            class="form-select"
-            [(ngModel)]="filters.houseHelpType"
-          >
-            <option [ngValue]="null">All Types</option>
-            <option value="DAYBURG">Dayburg</option>
-            <option value="LIVE_IN">Live-in</option>
-            <option value="EMERGENCY">Emergency</option>
-          </select>
-        </div>
-
-<!--        &lt;!&ndash; Salary Min &ndash;&gt;-->
-<!--        <div class="col-md-3">-->
-<!--          <input-->
-<!--            type="number"-->
-<!--            class="form-control"-->
-<!--            placeholder="Min Salary"-->
-<!--            [(ngModel)]="filters.minExpectedSalary"-->
-<!--          />-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; Salary Max &ndash;&gt;-->
-<!--        <div class="col-md-3">-->
-<!--          <input-->
-<!--            type="number"-->
-<!--            class="form-control"-->
-<!--            placeholder="Max Salary"-->
-<!--            [(ngModel)]="filters.maxExpectedSalary"-->
-<!--          />-->
-<!--        </div>-->
-
-        <!-- Actions -->
-        <div class="col-md-6 d-flex gap-2">
-          <button mat-raised-button color="primary" (click)="applyFilters()">
-            Apply Filters
-          </button>
-
-          <button mat-button color="warn" (click)="clearFilters()">
-            Clear
-          </button>
-        </div>
-
+      <!-- Experience -->
+      <div class="col-md-3">
+        <input
+          type="number"
+          class="form-control"
+          placeholder="Min Experience (years)"
+          [(ngModel)]="filters.experience"
+        />
       </div>
-    </mat-card>
 
+      <!-- Location -->
+      <div class="col-md-3">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Location"
+          [(ngModel)]="filters.location"
+        />
+      </div>
 
-    <div class="row g-4">
+      <!-- Availability -->
+      <div class="col-md-3">
+        <select
+          class="form-select"
+          [(ngModel)]="filters.houseHelpType"
+        >
+          <option [ngValue]="null">All Types</option>
+          <option value="DAYBURG">Dayburg</option>
+          <option value="LIVE_IN">Live-in</option>
+          <option value="EMERGENCY">Emergency</option>
+        </select>
+      </div>
+
+      <!-- Actions -->
+      <div class="col-md-3 d-flex gap-2">
+        <button mat-raised-button color="primary" (click)="applyFilters()">
+          Apply Filters
+        </button>
+
+        <button mat-button color="warn" (click)="clearFilters()">
+          Clear
+        </button>
+      </div>
+
+    </div>
+  </mat-card>
+
+  <!-- House Help Cards -->
+  <div class="row g-4">
     @for (houseHelp of (houseHelps$ | async)?.data; track houseHelp.id) {
       <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <mat-card class="h-100 text-center p-3">
-          <mat-card-content>
-            <h5 class="fw-bold">{{ houseHelp.user?.name }}</h5>
+        <mat-card class="househelp-card h-100">
+          
+          <!-- Profile Picture Section -->
+          <div class="profile-header">
+            <div class="profile-pic">
+              @if(houseHelp.profilePictureDocument){
+                <img 
+                  [src]="houseHelp.profilePictureDocument" 
+                  [alt]="houseHelp.user?.name"
+                  class="profile-image"
+                />
+              } @else {
+                <div class="profile-placeholder">
+                  <mat-icon>person</mat-icon>
+                </div>
+              }
+            </div>
+            
+            <!-- Availability Badge -->
+            <div class="availability-badge" [ngClass]="getAvailabilityClass(houseHelp.houseHelpType)">
+              <mat-icon>schedule</mat-icon>
+              {{ formatAvailability(houseHelp.houseHelpType) }}
+            </div>
+          </div>
 
-            <div class="rating mb-2">⭐⭐⭐⭐☆</div>
+          <mat-card-content class="card-body">
+            <!-- Name and Rating -->
+            <h5 class="name">{{ houseHelp.user?.name }}</h5>
+            
+            <div class="rating mb-2">
+              <mat-icon class="star">star</mat-icon>
+              <mat-icon class="star">star</mat-icon>
+              <mat-icon class="star">star</mat-icon>
+              <mat-icon class="star">star</mat-icon>
+              <mat-icon class="star-outline">star_outline</mat-icon>
+              <span class="rating-text">4.0</span>
+            </div>
 
-            @for (skills of houseHelp.skills; track $index; let isLast = $last){
-              <span class="small">{{ skills }} {{ !isLast ? ', ' : '' }}</span>
+            <!-- Experience -->
+            @if(houseHelp.yearsOfExperience){
+              <div class="info-item">
+                <mat-icon class="info-icon">work_history</mat-icon>
+                <span>{{ houseHelp.yearsOfExperience }} years exp.</span>
+              </div>
             }
-            <p>
-              <span class="badge bg-success">
-                {{ houseHelp?.houseHelpType }}
-              </span>
-            </p>
 
+            <!-- Location -->
+            @if(houseHelp.currentLocation){
+              <div class="info-item">
+                <mat-icon class="info-icon">location_on</mat-icon>
+                <span>{{ houseHelp.currentLocation }}</span>
+              </div>
+            }
+
+            <!-- Skills -->
+            @if(houseHelp.skills && houseHelp.skills.length > 0){
+              <div class="skills-section">
+                <div class="skills-label">Skills</div>
+                <div class="skills-tags">
+                  @for (skill of houseHelp.skills | slice:0:3; track $index) {
+                    <span class="skill-tag">{{ skill }}</span>
+                  }
+                  @if(houseHelp.skills.length > 3){
+                    <span class="skill-tag more">+{{ houseHelp.skills.length - 3 }}</span>
+                  }
+                </div>
+              </div>
+            }
           </mat-card-content>
 
-          <mat-card-actions class="d-flex justify-content-center">
+          <mat-card-actions class="card-actions">
             <button
               mat-raised-button
               color="primary"
+              class="view-profile-btn"
               (click)="seeDetails(houseHelp.id)"
             >
+              <mat-icon>visibility</mat-icon>
               View Profile
             </button>
           </mat-card-actions>
