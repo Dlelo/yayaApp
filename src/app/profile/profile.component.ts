@@ -1,6 +1,5 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {MatCard} from '@angular/material/card';
-import {MatDivider} from '@angular/material/divider';
 import {MatIconModule} from '@angular/material/icon';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatButton} from '@angular/material/button';
@@ -9,6 +8,8 @@ import {LoginService} from '../login/login.service';
 import {AccountDetailsService} from '../account-details/account-details.service';
 import {catchError, Observable, of, shareReplay, switchMap, take} from 'rxjs';
 import {AsyncPipe} from '@angular/common';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInput} from '@angular/material/input';
 
 @Component({
   selector: 'app-profile',
@@ -17,9 +18,10 @@ import {AsyncPipe} from '@angular/common';
   imports: [
     MatIconModule,
     MatCard,
-    MatDivider,
     MatButton,
-    AsyncPipe
+    AsyncPipe,
+    MatFormFieldModule,
+    MatInput
   ],
   styleUrls: ['./profile.component.scss']
 })

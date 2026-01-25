@@ -235,3 +235,140 @@ mat-icon.red-shield {
   }
 }
 
+.reviews-section {
+  margin: 4rem auto;
+  max-width: 1000px;
+  text-align: center;
+}
+
+/* SECTION TITLE (reuses previous styles) */
+.section-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 2.5rem;
+
+  .underline {
+    display: block;
+    width: 70px;
+    height: 4px;
+    background-color: #ffb300;
+    margin: 0.5rem auto 0;
+    border-radius: 2px;
+  }
+}
+
+/* REVIEW CARD */
+.review-card {
+  padding: 2.5rem 3rem;
+  border-radius: 6px;
+  margin-bottom: 2.5rem;
+}
+
+/* BACKGROUND VARIANTS */
+.light-blue {
+  background-color: #f0fafc;
+}
+
+.light-yellow {
+  background-color: #fff6e3;
+}
+
+/* STARS */
+.stars {
+  font-size: 2rem;
+  color: #ffc107;
+  letter-spacing: 4px;
+  margin-bottom: 0.5rem;
+}
+
+/* RATING TEXT */
+.rating-text {
+  color: #444;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+/* REVIEW TEXT */
+.review-text {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #555;
+  max-width: 800px;
+  margin: 0 auto 2rem;
+}
+
+/* AUTHOR */
+.review-author {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .review-card {
+    padding: 1.8rem 1.5rem;
+  }
+
+  .stars {
+    font-size: 1.6rem;
+  }
+}
+
+.add-review-section {
+  margin: 4rem auto 2rem;
+  max-width: 700px;
+  text-align: left;
+}
+
+.add-review-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+}
+
+.review-form {
+  background: #fafafa;
+  padding: 2rem;
+  border-radius: 12px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+/* RATING INPUT */
+.rating-input {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.star-input {
+  display: flex;
+  gap: 4px;
+
+  mat-icon {
+    font-size: 28px;
+    color: #ffc107;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+}
+
+/* SUBMIT */
+.submit-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+
