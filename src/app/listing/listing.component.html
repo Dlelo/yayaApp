@@ -60,19 +60,19 @@
 
           <!-- Profile Picture Section -->
           <div class="profile-header">
-<!--            <div class="profile-pic">-->
-<!--              @if(houseHelp.profilePictureDocument){-->
-<!--                <img-->
-<!--                  [src]="houseHelp.profilePictureDocument"-->
-<!--                  [alt]="houseHelp.user?.name"-->
-<!--                  class="profile-image"-->
-<!--                />-->
-<!--              } @else {-->
-<!--                <div class="profile-placeholder">-->
-<!--                  <mat-icon>person</mat-icon>-->
-<!--                </div>-->
-<!--              }-->
-<!--            </div>-->
+            <div class="profile-pic">
+              @if(houseHelp.profilePictureDocument){
+                <img
+                  [src]="houseHelp.profilePictureDocument"
+                  [alt]="houseHelp.user?.name"
+                  class="profile-image"
+                />
+              } @else {
+                <div class="profile-placeholder">
+                  <mat-icon>person</mat-icon>
+                </div>
+              }
+            </div>
 
             <!-- Availability Badge -->
             <div class="availability-badge" [ngClass]="getAvailabilityClass(houseHelp.houseHelpType)">
