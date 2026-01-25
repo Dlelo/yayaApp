@@ -1,111 +1,211 @@
-@if(houseHelpDetails$ | async; as houseHelp){
-    <div class="container my-4 profile-page">
-      <mat-card class="p-4 shadow-sm profile-card">
-        <!-- Header Section -->
-        <div class="row align-items-center mb-3 profile-header">
-          <div class="col-md-3 text-center">
-            <img
-              [src]="'/househelp-banner.png'"
-              alt="{{ houseHelp?.user?.name }}"
-              class="rounded-circle img-fluid profile-photo mb-3 mb-md-0"
-            />
-          </div>
-          <div class="col-md-9 profile-info">
-            <h2 class="mb-1">{{ houseHelp?.user?.name }}</h2>
-            <div class="rating text-warning fs-5">⭐⭐⭐⭐☆</div>
-            <p class="location mt-2 text-secondary">
-              <mat-icon inline>location_on</mat-icon> {{ houseHelp?.currentLocation ?? "-"}}
-            </p>
-          </div>
-        </div>
-        <mat-divider></mat-divider>
+@if (houseHelpDetails$ | async; as houseHelp) {
+  <div class="profile-wrapper">
 
-        <!-- Details Section -->
-        <div class="profile-details mt-4">
+    <!-- LEFT COLUMN -->
+    <mat-card class="left-card">
+      <div class="image-wrapper">
+        <img
+          [src]="'/househelp-banner.png'"
+          alt="{{ houseHelp?.user?.name }}"
+        />
+        <span class="badge-new">New</span>
+      </div>
+
+      <h2 class="name">{{ houseHelp?.user?.name }}</h2>
+      <p class="role">Nanny / Maid</p>
+
+
+      <div class="meta">
+        <p><strong>Current location: </strong> <span>{{ houseHelp?.currentLocation ?? '-' }}</span></p>
+      </div>
+
+      <div class="meta">
+        <p><strong>Weight: </strong> <span> {{ houseHelp?.weight ?? '-' }}kg</span></p>
+
+      </div>
+
+      <div class="meta">
+        <p><strong>Height: </strong> <span> {{ houseHelp?.height ?? '-' }} cm</span></p>
+
+      </div>
+
+      <div class="meta">
+
+        <p><strong>Religion: </strong> <span> {{ houseHelp?.religion ?? "-" }}</span></p>
+
+      </div>
+
+      <div class="meta">
+
+        <p><strong>Number of children: </strong> <span> {{ houseHelp?.numberOfChildren ?? "-" }} children/child</span></p>
+
+      </div>
+
+      <div class="meta">
+
+        <p><strong>Level of education: </strong> <span> {{ houseHelp?.levelOfEducation ?? "-" }}</span></p>
+
+      </div>
+
+      <div class="meta">
+        <p><strong>Security Verified: </strong>
           @if(houseHelp?.securityCleared){
-            <p><strong>Security:</strong><mat-icon class="step-icon green-shield">verified</mat-icon></p>
+           Yes <mat-icon class="step-icon green-shield">verified</mat-icon>
+          } @else {
+            No <mat-icon class="step-icon red-shield">shield_off</mat-icon>
           }
 
-          <h5 class="mt-4 mb-2">Availability Type</h5>
-          <p>
-              <span class="badge bg-success">
-                {{ houseHelp?.houseHelpType }}
-              </span>
-          </p>
+        </p>
 
-          <h5 class="mt-4 mb-2">Number of children</h5>
-          <p>{{ houseHelp?.numberOfChildren ?? "-" }} children</p>
+      </div>
 
+      <button
+        mat-raised-button
+        color="secondary"
+        class="connect-btn"
+        (click)="navigateToPay('/pay')"
+      >
+        Click to hire
+      </button>
 
-          <h5 class="mt-4 mb-2">Level of education</h5>
-          <p>{{ houseHelp?.levelOfEducation ?? "-" }}</p>
+    </mat-card>
 
-          <h5 class="mt-4 mb-2">Age</h5>
-          <p>{{ houseHelp?.age ?? "-" }} years</p>
+    <!-- RIGHT COLUMN -->
+    <div class="right-content">
 
-          <h5 class="mt-4 mb-2">Languages</h5>
-          <ul class="list-unstyled row">
-            @for (languages of houseHelp?.languages; track $index) {
-              <li class="col-md-6 mb-2">
-                <span class="text-success">✔</span> {{ languages }}
-              </li>
-            }
-          </ul>
+      <!-- INFO GRID -->
+      <div class="info-grid">
+        <div class="info-card">
+          <span class="label">Age</span>
+          <strong>{{ houseHelp?.age ?? '-' }}</strong>
+        </div>
 
-          <h5 class="mt-4 mb-2">Religion</h5>
-          <p>{{ houseHelp?.religion ?? "-" }}</p>
-
-
-          <h5 class="mt-4 mb-2">Home location</h5>
-          <p>{{ houseHelp?.homeLocation ?? "-" }}</p>
-
-
-
-          <h5 class="mt-4 mb-2">Skills</h5>
-          <ul class="list-unstyled row">
+        <div class="info-card">
+          <span class="label">Skills</span>
+          <ul class="row">
             @for (skill of houseHelp.skills; track $index) {
               <li class="col-md-6 mb-2">
                 <span class="text-success">✔</span> {{ skill }}
               </li>
             }
           </ul>
-
-          <h5 class="mt-4 mb-2">Experience</h5>
-          <p>{{ houseHelp?.yearsOfExperience ?? "-" }} years of experience</p>
-
-          <h5 class="mt-4 mb-2">Weight</h5>
-          <p>{{ houseHelp?.weight ?? "-" }} kg</p>
-
-
         </div>
-        @if(houseHelpDetails$ | async; as houseHelp) {
-          <div class="profile-actions text-center mt-4">
-            <button
-              mat-raised-button
-              color="primary"
-              class="px-4"
-              (click)="navigateToPay('/pay')"
-            >
-              <mat-icon class="me-2">person_add</mat-icon>
-              Hire {{ houseHelp?.user?.name ?? "" }}
-            </button>
-          </div>}
 
-        <!-- <div class="profile-actions text-center mt-4">
-  
-          <button
-            mat-raised-button
-            color="primary"
-            class="px-4"
-            (click)="navigate('/pay')"
-          >
-            Hire {{ houseHelp?.user?.name ?? "" }}
-          </button>
-        </div> -->
+        <div class="info-card">
+          <span class="label">Salary range</span>
+          <strong>{{ houseHelp?.salaryRange ?? '-' }}</strong>
+        </div>
 
-        
-      
+        <div class="info-card">
+          <span class="label">Job Type</span>
+          <strong>{{ houseHelp?.houseHelpType }}</strong>
+        </div>
+
+        <div class="info-card">
+          <span class="label">Experience</span>
+          <strong>{{ houseHelp?.yearsOfExperience }}+ years</strong>
+        </div>
+
+        <div class="info-card">
+          <span class="label">Availability</span>
+          <strong>{{ houseHelp?.availabilityDate ?? '-' }}</strong>
+        </div>
+      </div>
+
+      <!-- ABOUT -->
+      <mat-card class="about-card">
+        <h3>About</h3>
+        <p>
+          {{ houseHelp?.about ?? 'No description provided.' }}
+        </p>
       </mat-card>
-    </div>
-  }
 
+<!--      <section class="capabilities-section">-->
+
+<!--        &lt;!&ndash; CAN BABYSIT &ndash;&gt;-->
+<!--        <h2 class="section-title">-->
+<!--          Can Babysit-->
+<!--          <span class="underline"></span>-->
+<!--        </h2>-->
+
+<!--        <h3 class="sub-title">Children</h3>-->
+
+<!--        <div class="three-column-list">-->
+<!--          <ul>-->
+<!--            <li>0 – 5 months old</li>-->
+<!--            <li>6 – 11 months old</li>-->
+<!--            <li>1 year old</li>-->
+<!--          </ul>-->
+
+<!--          <ul>-->
+<!--            <li>2 years old</li>-->
+<!--            <li>3 years old</li>-->
+<!--            <li>4 – 6 years old</li>-->
+<!--          </ul>-->
+
+<!--          <ul>-->
+<!--            <li>7+ years old</li>-->
+<!--          </ul>-->
+<!--        </div>-->
+
+<!--        <p class="children-count">-->
+<!--          Will care for up to: <strong>👶 3 Children</strong>-->
+<!--        </p>-->
+
+<!--        &lt;!&ndash; SKILLS & SERVICES &ndash;&gt;-->
+<!--        <h2 class="section-title">-->
+<!--          Skills &amp; Services-->
+<!--          <span class="underline"></span>-->
+<!--        </h2>-->
+
+<!--        &lt;!&ndash; LANGUAGES &ndash;&gt;-->
+<!--        <h3 class="sub-title">Languages</h3>-->
+<!--        <div class="three-column-list">-->
+<!--          <ul>-->
+<!--            <li>Japanese</li>-->
+<!--          </ul>-->
+<!--          <ul>-->
+<!--            <li>English</li>-->
+<!--          </ul>-->
+<!--          <ul>-->
+<!--            <li>French</li>-->
+<!--          </ul>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; SERVICES &ndash;&gt;-->
+<!--        <h3 class="sub-title">Services</h3>-->
+<!--        <div class="three-column-list">-->
+<!--          <ul>-->
+<!--            <li>Online lessons</li>-->
+<!--            <li>Pick up children</li>-->
+<!--            <li>Care for sick children</li>-->
+<!--            <li>Mother's helper after childbirth</li>-->
+<!--            <li>Light housekeeping</li>-->
+<!--          </ul>-->
+
+<!--          <ul>-->
+<!--            <li>Cooking / Meal preparation</li>-->
+<!--            <li>Care with foreign language</li>-->
+<!--            <li>Homework help</li>-->
+<!--            <li>Events</li>-->
+<!--            <li>Overnight</li>-->
+<!--          </ul>-->
+
+<!--          <ul>-->
+<!--            <li>Travel</li>-->
+<!--            <li>Pet care</li>-->
+<!--            <li>Toilet training</li>-->
+<!--          </ul>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; CERTIFICATES &ndash;&gt;-->
+<!--        <h3 class="sub-title">Certificates</h3>-->
+<!--        <ul class="centered-list">-->
+<!--          <li>Not Completed Government Approved Babysitter Training</li>-->
+<!--        </ul>-->
+
+<!--      </section>-->
+
+    </div>
+  </div>
+}
