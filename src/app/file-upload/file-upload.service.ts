@@ -47,6 +47,7 @@ export class FileUploadService {
 uploadHouseHelpProfilePicture(houseHelpId: number, file: File): Observable<HttpEvent<any>> {
   const formData = new FormData();
   formData.append('file', file);
+  console.log("gets here")
 
   return this.http.post(
     `${environment.apiUrl}/househelp/${houseHelpId}/profile-picture`,
