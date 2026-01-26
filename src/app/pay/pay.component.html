@@ -103,7 +103,7 @@
           </div> -->
 
           <!-- Location Surcharge Alert -->
-          @if(isOutsideNairobi()){
+          @if(!this.houseHelpIsInNairobi){
             <div class="col-12">
               <mat-card class="location-surcharge-card">
                 <mat-card-content class="d-flex align-items-center gap-3">
@@ -130,13 +130,12 @@
                     <span>Service Fee:</span>
                     <span class="fw-bold">KES {{ getBasePlanAmount() | number }}</span>
                   </div>
-                  
-                  @if(isOutsideNairobi()){
-                    <div class="breakdown-row">
-                      <span>Transport Fee (Outside Nairobi):</span>
-                      <span class="fw-bold text-warning">+ KES 1,500</span>
-                    </div>
-                  }
+
+                  <div class="breakdown-row">
+                    <span>Transport Fee from {{this.houseHelpLocation}}, {{this.houseHelpCurrentCounty}}:</span>
+                    <span class="fw-bold text-warning">+ KES {{ this.houseHelpCountySurcharge | number }}</span>
+                  </div>
+
                   
                   <mat-divider class="my-2"></mat-divider>
                   

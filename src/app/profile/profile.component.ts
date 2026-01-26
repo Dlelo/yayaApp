@@ -81,7 +81,10 @@ export class ProfileComponent implements OnInit {
             id: houseHelp.id,
             name: houseHelp.user?.name || 'House Help',
             location: houseHelp.currentLocation || houseHelp.homeLocation || '',
-            houseHelpType: houseHelp.houseHelpType || 'day-burg'
+            houseHelpType: houseHelp.houseHelpType || 'day-burg',
+            isInNairobi: houseHelp.isInNairobi || false,
+            countySurcharge: houseHelp.countySurcharge || 0,
+            currentCounty: houseHelp.currentCounty || ''
           }
         });
       });
