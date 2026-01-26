@@ -42,6 +42,9 @@ export class PayComponent implements OnInit {
   houseHelpName: string = '';
   houseHelpId: string = '';
   houseHelpLocation: string = '';
+  houseHelpCurrentCounty: string = '';
+  houseHelpIsInNairobi: boolean = false;
+  houseHelpCountySurcharge: number = 0;
   isProcessing: boolean = false;
   isManualPayment: boolean = false; //remove after mpesa automation
   paybillNumber: number = environment.paybillNumber;
@@ -80,6 +83,9 @@ export class PayComponent implements OnInit {
     this.houseHelpName = this.route.snapshot.queryParams['name'] || 'House Help';
     this.houseHelpId = this.route.snapshot.queryParams['id'] || '';
     this.houseHelpLocation = this.route.snapshot.queryParams['location'] || '';
+    this.houseHelpIsInNairobi = this.route.snapshot.queryParams['isInNairobi'] || '';
+    this.houseHelpCountySurcharge = this.route.snapshot.queryParams['countySurcharge'] || 0;
+    this.houseHelpCurrentCounty = this.route.snapshot.queryParams['currentCounty'] || '';
 
     console.log('Query Params:', this.route.snapshot.queryParams);
     console.log('House Help Name:', this.houseHelpName);
@@ -109,9 +115,9 @@ export class PayComponent implements OnInit {
   /**
    * Check if service location is outside Nairobi
    */
-  isOutsideNairobi(): boolean {
-    return this.payForm.get('location')?.value === 'outside-nairobi';
-  }
+  // isOutsideNairobi(): boolean {
+  //   return this.payForm.get('location')?.value === 'outside-nairobi';
+  // }
 
   /**
    * Called when location selection changes
@@ -133,8 +139,10 @@ export class PayComponent implements OnInit {
    */
   getTotalAmount(): number {
     const baseAmount = this.getBasePlanAmount();
-    const surcharge = this.isOutsideNairobi() ? this.OUTSIDE_NAIROBI_SURCHARGE : 0;
-    return baseAmount + surcharge;
+    const surcharge = this.houseHelpCountySurcharge;
+    console.log('Base Amount:', baseAmount);
+    console.log('Surcharge:', surcharge);
+    return baseAmount + Number(surcharge);
   }
 
   /**
@@ -178,8 +186,8 @@ export class PayComponent implements OnInit {
       plan: this.payForm.value.plan,
       location: this.payForm.value.location,
       baseAmount: this.getBasePlanAmount(),
-      surcharge: this.isOutsideNairobi() ? this.OUTSIDE_NAIROBI_SURCHARGE : 0,
-      isOutsideNairobi: this.isOutsideNairobi()
+      surcharge: this.houseHelpCountySurcharge,
+      isOutsideNairobi: !this.houseHelpIsInNairobi
     };
 
     // TODO bring this back once MPESA goes live

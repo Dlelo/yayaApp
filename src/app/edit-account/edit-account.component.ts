@@ -98,6 +98,7 @@ export class EditAccountDetailsComponent implements OnInit {
     let existingNationalId = null;
     
     // Get existing profile picture and national ID URLs
+    console.log(user)
     if (this.isHouseHelp && user.houseHelp) {
       existingProfilePicture = user.houseHelp.profilePictureDocument;
       existingNationalId = user.houseHelp.nationalIdDocument;
@@ -226,6 +227,33 @@ export class EditAccountDetailsComponent implements OnInit {
           }
         });
     }
+    if (this.isHouseHelp) {
+      this.fileUploadService.uploadHouseHelpProfilePicture(userId, this.profilePictureFile)
+        .subscribe({
+          next: (event: HttpEvent<any>) => {
+            if (event.type === 1 && event.total) {
+              this.profileUploadProgress = Math.round((event.loaded / event.total) * 100);
+            }
+
+            if (event.type === 4) { // response
+              const url = event.body;
+
+              // Save URL into the form
+              this.form.get('houseHelp')?.patchValue({
+                profilePicture: url
+              });
+
+              this.profileUploadProgress = 0;
+              this.snackBar.open('✅ Profile picture uploaded successfully!', 'Close', { duration: 3000 });
+            }
+          },
+          error: (err) => {
+            console.error(err);
+            this.profileUploadProgress = 0;
+            this.snackBar.open('❌ Failed to upload profile picture', 'Close', { duration: 3000 });
+          }
+        });
+    }
   }
 
   uploadNationalId(houseHelpId: number) {
@@ -310,6 +338,8 @@ export class EditAccountDetailsComponent implements OnInit {
           weight: [user.houseHelp?.weight || ''],
           religion: [user.houseHelp?.religion || ''],
           levelOfEducation: [user.houseHelp?.levelOfEducation || ''],
+          currentCounty: [user.houseHelp?.currentCounty || ''],
+          homeCounty: [user.houseHelp?.homeCounty || ''],
           currentLocation: [user.houseHelp?.currentLocation || ''],
           homeLocation: [user.houseHelp?.homeLocation || ''],
           contactPersons: [user.houseHelp?.contactPersons || ''],
