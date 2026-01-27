@@ -83,41 +83,10 @@ export class PayComponent implements OnInit {
     this.houseHelpName = this.route.snapshot.queryParams['name'] || 'House Help';
     this.houseHelpId = this.route.snapshot.queryParams['id'] || '';
     this.houseHelpLocation = this.route.snapshot.queryParams['location'] || '';
-    this.houseHelpIsInNairobi = this.route.snapshot.queryParams['isInNairobi'] || '';
+    this.houseHelpIsInNairobi = this.route.snapshot.queryParams['inNairobi'] === 'true';
     this.houseHelpCountySurcharge = this.route.snapshot.queryParams['countySurcharge'] || 0;
     this.houseHelpCurrentCounty = this.route.snapshot.queryParams['currentCounty'] || '';
-
-    console.log('Query Params:', this.route.snapshot.queryParams);
-    console.log('House Help Name:', this.houseHelpName);
-    console.log('House Help ID:', this.houseHelpId);
-    console.log('House Help Location:', this.houseHelpLocation);
-
-    // Auto-detect if house help is outside Nairobi
-    this.autoDetectLocation();
-    
-    console.log(this.houseHelpName, this.houseHelpId, this.houseHelpLocation);
   }
-
-  /**
-   * Auto-detect if house help location is outside Nairobi
-   */
-  private autoDetectLocation() {
-    if (this.houseHelpLocation) {
-      const location = this.houseHelpLocation.toLowerCase().trim();
-      const isNairobi = location.includes('nairobi');
-      
-      this.payForm.patchValue({
-        location: isNairobi ? 'nairobi' : 'outside-nairobi'
-      });
-    }
-  }
-
-  /**
-   * Check if service location is outside Nairobi
-   */
-  // isOutsideNairobi(): boolean {
-  //   return this.payForm.get('location')?.value === 'outside-nairobi';
-  // }
 
   /**
    * Called when location selection changes
@@ -140,8 +109,6 @@ export class PayComponent implements OnInit {
   getTotalAmount(): number {
     const baseAmount = this.getBasePlanAmount();
     const surcharge = this.houseHelpCountySurcharge;
-    console.log('Base Amount:', baseAmount);
-    console.log('Surcharge:', surcharge);
     return baseAmount + Number(surcharge);
   }
 

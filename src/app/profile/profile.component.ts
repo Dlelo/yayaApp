@@ -82,7 +82,7 @@ export class ProfileComponent implements OnInit {
             name: houseHelp.user?.name || 'House Help',
             location: houseHelp.currentLocation || houseHelp.homeLocation || '',
             houseHelpType: houseHelp.houseHelpType || 'day-burg',
-            isInNairobi: houseHelp.isInNairobi || false,
+            inNairobi: houseHelp.inNairobi || false,
             countySurcharge: houseHelp.countySurcharge || 0,
             currentCounty: houseHelp.currentCounty || ''
           }

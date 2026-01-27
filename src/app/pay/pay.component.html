@@ -88,22 +88,9 @@
             </mat-form-field>
           </div>
 
-          <!-- Location Selection -->
-          <!-- <div class="col-12">
-            <mat-card class="location-info-card">
-            <mat-card-content>
-              <mat-icon>place</mat-icon>
-              <div>
-                <small>Service Location</small>
-                <strong>{{ isOutsideNairobi() ? 'Outside Nairobi' : 'Nairobi' }}</strong>
-                <p class="small">Auto-detected from house help's location</p>
-              </div>
-            </mat-card-content>
-          </mat-card>
-          </div> -->
 
           <!-- Location Surcharge Alert -->
-          @if(!this.houseHelpIsInNairobi){
+          @if(!houseHelpIsInNairobi){
             <div class="col-12">
               <mat-card class="location-surcharge-card">
                 <mat-card-content class="d-flex align-items-center gap-3">
@@ -111,7 +98,7 @@
                   <div>
                     <strong>Outside Nairobi Surcharge</strong>
                     <p class="mb-0 text-muted small">
-                      An additional KES 1,500 transport fee applies for hires outside Nairobi.
+                      An additional KES {{houseHelpCountySurcharge}} transport fee applies for hires from {{houseHelpCurrentCounty}} county.
                     </p>
                   </div>
                 </mat-card-content>
@@ -128,18 +115,19 @@
                   
                   <div class="breakdown-row">
                     <span>Service Fee:</span>
-                    <span class="fw-bold">KES {{ getBasePlanAmount() | number }}</span>
+                    <span class="fw-bold"> KES {{ getBasePlanAmount() | number }}</span>
                   </div>
 
+                  @if(!houseHelpIsInNairobi){
                   <div class="breakdown-row">
-                    <span>Transport Fee from {{this.houseHelpLocation}}, {{this.houseHelpCurrentCounty}}:</span>
-                    <span class="fw-bold text-warning">+ KES {{ this.houseHelpCountySurcharge | number }}</span>
+                    <span>Transport Fee from {{houseHelpLocation}}, {{houseHelpCurrentCounty}}:</span>
+                    <span class="fw-bold text-warning"> + KES {{ houseHelpCountySurcharge | number }}</span>
                   </div>
+                }
 
-                  
-                  <mat-divider class="my-2"></mat-divider>
-                  
-                  <div class="breakdown-row total">
+                <mat-divider class="my-2"></mat-divider>
+
+                <div class="breakdown-row total">
                     <span>Total Amount:</span>
                     <span class="fw-bold text-primary fs-5">KES {{ getTotalAmount() | number }}</span>
                   </div>
