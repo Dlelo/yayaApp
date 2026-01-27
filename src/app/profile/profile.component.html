@@ -4,15 +4,21 @@
     <!-- LEFT COLUMN -->
     <mat-card class="left-card">
       <div class="image-wrapper">
-        <img
-          [src]="'/househelp-banner.png'"
-          alt="{{ houseHelp?.user?.name }}"
-        />
-        <span class="badge-new">New</span>
+        @if(houseHelp.profilePictureDocument){
+          <img
+            [src]="houseHelp.profilePictureDocument"
+            [alt]="houseHelp.user?.name"
+            class="profile-image"
+          />
+        } @else {
+          <div class="profile-placeholder">
+            <mat-icon>person</mat-icon>
+          </div>
+        }
+<!--        <span class="badge-new">New</span>-->
       </div>
 
       <h2 class="name">{{ houseHelp?.user?.name }}</h2>
-      <p class="role">Nanny / Maid</p>
 
 
       <div class="meta">
