@@ -20,18 +20,15 @@
 
       <h2 class="name">{{ houseHelp?.user?.name }}</h2>
 
-
       <div class="meta">
-        <p><strong>Current location: </strong> <span>{{ houseHelp?.currentLocation ?? '-' }}</span></p>
-      </div>
+        <p><strong>Security Verified: </strong>
+          @if(houseHelp?.securityCleared){
+            Yes <mat-icon class="step-icon green-shield">verified</mat-icon>
+          } @else {
+            No <mat-icon class="step-icon red-shield">shield_off</mat-icon>
+          }
 
-      <div class="meta">
-        <p><strong>Weight: </strong> <span> {{ houseHelp?.weight ?? '-' }}kg</span></p>
-
-      </div>
-
-      <div class="meta">
-        <p><strong>Height: </strong> <span> {{ houseHelp?.height ?? '-' }} cm</span></p>
+        </p>
 
       </div>
 
@@ -42,26 +39,12 @@
       </div>
 
       <div class="meta">
-
-        <p><strong>Number of children: </strong> <span> {{ houseHelp?.numberOfChildren ?? "-" }} children/child</span></p>
-
-      </div>
-
-      <div class="meta">
-
-        <p><strong>Level of education: </strong> <span> {{ houseHelp?.levelOfEducation ?? "-" }}</span></p>
+        <p><strong>Weight: </strong> <span> {{ houseHelp?.weight ?? '-' }}kg</span></p>
 
       </div>
 
       <div class="meta">
-        <p><strong>Security Verified: </strong>
-          @if(houseHelp?.securityCleared){
-           Yes <mat-icon class="step-icon green-shield">verified</mat-icon>
-          } @else {
-            No <mat-icon class="step-icon red-shield">shield_off</mat-icon>
-          }
-
-        </p>
+        <p><strong>Height: </strong> <span> {{ houseHelp?.height ?? '-' }} cm</span></p>
 
       </div>
 
@@ -87,19 +70,13 @@
         </div>
 
         <div class="info-card">
-          <span class="label">Skills</span>
-          <ul class="row">
-            @for (skill of houseHelp.skills; track $index) {
-              <li class="col-md-6 mb-2">
-                <span class="text-success">✔</span> {{ skill }}
-              </li>
-            }
-          </ul>
+          <span class="label">Experience</span>
+          <strong>{{ houseHelp?.yearsOfExperience }}+ years</strong>
         </div>
 
         <div class="info-card">
-          <span class="label">Salary range</span>
-          <strong>{{ houseHelp?.salaryRange ?? '-' }}</strong>
+          <span class="label">Level of education: </span>
+          <strong>{{ houseHelp?.levelOfEducation ?? "-" }}</strong>
         </div>
 
         <div class="info-card">
@@ -108,25 +85,114 @@
         </div>
 
         <div class="info-card">
-          <span class="label">Experience</span>
-          <strong>{{ houseHelp?.yearsOfExperience }}+ years</strong>
+          <span class="label">Salary Range:</span>
+          <strong>   {{ houseHelp.preferences.minSalary ? (houseHelp.preferences.minSalary + ' KSh') : '-' }}
+            - {{ houseHelp.preferences.maxSalary ? (houseHelp.preferences.maxSalary + ' KSh') : '-' }}
+          </strong>
         </div>
 
         <div class="info-card">
-          <span class="label">Availability</span>
-          <strong>{{ houseHelp?.availabilityDate ?? '-' }}</strong>
+          <span class="label">Number of children:</span>
+          <strong>{{ houseHelp?.numberOfChildren ?? "-" }} (children/child)</strong>
         </div>
+
+        <div class="info-card">
+          <span class="label">Current location:</span>
+          <strong>{{ houseHelp?.currentLocation ?? '-' }}</strong>
+        </div>
+
+        <div class="info-card">
+          <span class="label">Home location:</span>
+          <strong>{{ houseHelp?.homeLocation ?? '-' }}</strong>
+        </div>
+
+        <div class="info-card">
+          <span class="label">Available</span>
+          <strong>{{ houseHelp?.availability ?? '-' }}</strong>
+        </div>
+
       </div>
 
       <!-- ABOUT -->
       <mat-card class="about-card">
         <h3>About</h3>
         <p>
-          {{ houseHelp?.about ?? 'No description provided.' }}
+          {{ houseHelp?.experienceSummary ?? 'No description provided.' }}
         </p>
       </mat-card>
 
-<!--      <section class="capabilities-section">-->
+      <!-- HOUSEHELP PREFERENCES -->
+
+      <mat-card class="about-card">
+        <h3>Skills</h3>
+        @for (skill of houseHelp.skills; track $index) {
+          <li class="col-md-6 mb-2">
+            <span class="text-success">✔</span> {{ skill }}
+          </li>
+        }
+      </mat-card>
+
+        @if(houseHelp.preferences){
+          <mat-card class="about-card mt-4">
+            <h3>Preferences</h3>
+
+            <div class="row g-3">
+
+              <div class="col-md-6">
+                <p><strong>Preferred Counties / Locations:</strong>
+                  <span *ngFor="let loc of houseHelp.preferences.preferredLocation; let last = last">
+              {{ loc }}<span *ngIf="!last">, </span>
+            </span>
+                  <span *ngIf="!houseHelp.preferences.preferredLocation?.length">-</span>
+                </p>
+              </div>
+
+              <div class="col-md-6">
+                <p><strong>Preferred Age Ranges of Children:</strong>
+                  <span *ngFor="let age of houseHelp.preferences.preferredChildAgeRanges; let last = last">
+              {{ age }}<span *ngIf="!last">, </span>
+            </span>
+                  <span *ngIf="!houseHelp.preferences.preferredChildAgeRanges?.length">-</span>
+                </p>
+              </div>
+
+              <div class="col-md-12">
+                <p><strong>Preferred Skills:</strong>
+                  <span *ngFor="let skill of houseHelp.preferences.preferredSkills; let last = last">
+              {{ skill }}<span *ngIf="!last">, </span>
+            </span>
+                  <span *ngIf="!houseHelp.preferences.preferredSkills?.length">-</span>
+                </p>
+              </div>
+
+              <div class="col-md-12">
+                <p><strong>Preferred Languages:</strong>
+                  <span *ngFor="let lang of houseHelp.preferences.preferredLanguages; let last = last">
+              {{ lang }}<span *ngIf="!last">, </span>
+            </span>
+                  <span *ngIf="!houseHelp.preferences.preferredLanguages?.length">-</span>
+                </p>
+              </div>
+
+              <div class="col-md-6">
+                <p><strong>Preferred Services / Tasks:</strong>
+                  <span *ngFor="let service of houseHelp.preferences.preferredServices; let last = last">
+              {{ service }}<span *ngIf="!last">, </span>
+            </span>
+                  <span *ngIf="!houseHelp.preferences.preferredServices?.length">-</span>
+                </p>
+              </div>
+
+              <div class="col-md-6">
+                <p><strong>Okay with Pets:</strong> {{ houseHelp.preferences.okayWithPets ? 'Yes' : 'No' }}</p>
+              </div>
+
+            </div>
+          </mat-card>
+        }
+
+
+      <!--      <section class="capabilities-section">-->
 
 <!--        &lt;!&ndash; CAN BABYSIT &ndash;&gt;-->
 <!--        <h2 class="section-title">-->
