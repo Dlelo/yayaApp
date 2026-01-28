@@ -59,22 +59,21 @@
         <mat-card class="househelp-card h-100">
 
           <!-- Profile Picture Section -->
-          <div class="profile-header">
-            <div class="profile-pic">
-              @if(houseHelp.profilePictureDocument){
-                <img
-                  [src]="houseHelp.profilePictureDocument"
-                  [alt]="houseHelp.user?.name"
-                  class="profile-image"
-                />
-              } @else {
-                <div class="profile-placeholder">
-                  <mat-icon>person</mat-icon>
-                </div>
-              }
-            </div>
+          <div class="profile-header cover">
 
-            <!-- Availability Badge -->
+            @if (houseHelp.profilePictureDocument) {
+              <img
+                [src]="houseHelp.profilePictureDocument"
+                [alt]="houseHelp.user?.name"
+                class="cover-image"
+              />
+            } @else {
+              <div class="cover-placeholder">
+                <mat-icon class="placeholder-icon">person</mat-icon>
+              </div>
+            }
+
+          <!-- Availability Badge -->
             <div class="availability-badge" [ngClass]="getAvailabilityClass(houseHelp.houseHelpType)">
               <mat-icon>schedule</mat-icon>
               {{ formatAvailability(houseHelp.houseHelpType) }}
