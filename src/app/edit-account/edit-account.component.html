@@ -418,8 +418,19 @@
                 <!-- Preferred Child Age Ranges (comma separated for simplicity) -->
                 <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Preferred Child Age Ranges (comma separated)</mat-label>
-                    <input matInput formControlName="preferredChildAgeRanges"/>
+                    <mat-label>Preferred Age Ranges of Children</mat-label>
+
+                    <mat-select
+                      formControlName="preferredChildAgeRanges"
+                      multiple
+                    >
+                      <mat-option
+                        *ngFor="let option of childAgeRangeOptions"
+                        [value]="option.value"
+                      >
+                        {{ option.label }}
+                      </mat-option>
+                    </mat-select>
                   </mat-form-field>
                 </div>
 

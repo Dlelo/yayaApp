@@ -27,8 +27,8 @@
           } @else {
             No <mat-icon class="step-icon red-shield">shield_off</mat-icon>
           }
-
         </p>
+
 
       </div>
 
@@ -138,7 +138,7 @@
 
             <div class="row g-3">
 
-              <div class="col-md-6">
+              <div class="col-md-12">
                 <p><strong>Preferred Counties / Locations:</strong>
                   <span *ngFor="let loc of houseHelp.preferences.preferredLocation; let last = last">
               {{ loc }}<span *ngIf="!last">, </span>
@@ -147,7 +147,13 @@
                 </p>
               </div>
 
-              <div class="col-md-6">
+              <div class="col-md-12">
+                <p><strong>Preferred household religion:</strong>
+                  <span> {{houseHelp.preferences.preferredReligion}}</span>
+                </p>
+              </div>
+
+              <div class="col-md-12">
                 <p><strong>Preferred Age Ranges of Children:</strong>
                   <span *ngFor="let age of houseHelp.preferences.preferredChildAgeRanges; let last = last">
               {{ age }}<span *ngIf="!last">, </span>
@@ -174,7 +180,7 @@
                 </p>
               </div>
 
-              <div class="col-md-6">
+              <div class="col-md-12">
                 <p><strong>Preferred Services / Tasks:</strong>
                   <span *ngFor="let service of houseHelp.preferences.preferredServices; let last = last">
               {{ service }}<span *ngIf="!last">, </span>
@@ -183,8 +189,16 @@
                 </p>
               </div>
 
-              <div class="col-md-6">
-                <p><strong>Okay with Pets:</strong> {{ houseHelp.preferences?.okayWithPets  }}</p>
+              <div class="col-md-12">
+                <p><strong>Okay with Pets:</strong>
+                  @if(houseHelp.preferences?.okayWithPets === true){
+                    Yes <mat-icon class="step-icon green-check">check_circle</mat-icon>
+                  } @else if(houseHelp.preferences?.okayWithPets === false){
+                    No <mat-icon class="step-icon red-cross">cancel</mat-icon>
+                  } @else {
+                    -
+                  }
+                </p>
               </div>
 
             </div>

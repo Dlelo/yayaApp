@@ -22,6 +22,7 @@ import { HomeOwnerService } from '../dashboard/home-owners/home-owners.service';
 import { FileUploadService } from '../file-upload/file-upload.service';
 import { HttpEvent } from '@angular/common/http';
 import {MatCheckbox} from '@angular/material/checkbox';
+import {CHILD_AGE_RANGE_OPTIONS, ChildAgeRange} from './child-age-range.enum';
 
 @Component({
   selector: 'app-edit-profile',
@@ -71,6 +72,8 @@ export class EditAccountDetailsComponent implements OnInit, AfterViewInit {
   form!: FormGroup;
   isHouseHelp = false;
   isHomeOwner = false;
+
+  childAgeRangeOptions = CHILD_AGE_RANGE_OPTIONS;
 
   goodConductFileName: string | null = null;
   goodConductPreviewUrl: string | null = null;
@@ -167,19 +170,6 @@ export class EditAccountDetailsComponent implements OnInit, AfterViewInit {
     return value.split(',').map(v => v.trim()).filter(Boolean);
   }
 
-  // addChip(event: any, target: 'skills' | 'languages'): void {
-  //   const value = (event.value || '').trim();
-  //   if (!value) return;
-  //   this[target].push(value);
-  //   this.form.get(`houseHelp.${target}`)?.setValue(this[target]);
-  //   event.chipInput!.clear();
-  // }
-  //
-  // removeChip(value: string, target: 'skills' | 'languages'): void {
-  //   this[target] = this[target].filter(v => v !== value);
-  //   this.form.get(`houseHelp.${target}`)?.setValue(this[target]);
-  // }
-
   addChip(event: any, target: 'skills' | 'languages' | 'preferredSkills' | 'preferredLanguages', group: 'houseHelp' | 'homeOwner' = 'houseHelp'): void {
     const value = (event.value || '').trim();
     if (!value) return;
@@ -261,7 +251,7 @@ export class EditAccountDetailsComponent implements OnInit, AfterViewInit {
             preferredLocation: [user.houseHelp?.preferences?.preferredLocation || ''],
             preferredSkills: [this.normalizeList(user.houseHelp?.preferences?.preferredSkills)],
             preferredLanguages: [this.normalizeList(user.houseHelp?.preferences?.preferredLanguages)],
-            preferredChildAgeRanges: [user.houseHelp?.preferences?.preferredChildAgeRanges || []],
+            preferredChildAgeRanges: [user.houseHelp?.preferences?.preferredChildAgeRanges as ChildAgeRange[] || [] as ChildAgeRange[]],
             preferredMaxChildren: [user.houseHelp?.preferences?.preferredMaxChildren || null],
             preferredServices: [user.houseHelp?.preferences?.preferredServices || []],
             preferredReligion: [user.houseHelp?.preferences?.preferredReligion || ''],
@@ -356,18 +346,6 @@ export class EditAccountDetailsComponent implements OnInit, AfterViewInit {
         ).map((s: string) => s.trim()).filter((s: string) => s.length > 0);
       }
     });
-
-    // if (formValue.houseHelp?.skills) {
-    //    const skills = Array.isArray(formValue.houseHelp.skills)
-    //      ? formValue.houseHelp.skills
-    //      : typeof formValue.houseHelp.skills === 'string'
-    //        ? formValue.houseHelp.skills.split(',')
-    //        : [];
-    //
-    //   formValue.houseHelp.skills = skills
-    //      .map((s: string) => s.trim())
-    //      .filter((s: string) => s.length > 0);
-    //  }
 
      if (formValue.houseHelp?.languages) {
        const languages = Array.isArray(formValue.houseHelp.languages)
