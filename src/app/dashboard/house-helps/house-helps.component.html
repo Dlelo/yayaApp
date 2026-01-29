@@ -1,80 +1,139 @@
-<mat-card class="p-3 shadow-sm">
-  <h2 class="mb-3">Manage House Helps</h2>
+<mat-card class="house-helps-container">
+  <div class="card-header">
+    <h2 class="title">Manage House Helps</h2>
+  </div>
 
   @if (houseHelpsPage$ | async; as pageData) {
+    <div class="table-container">
+      <table class="custom-table">
+        <thead>
+        <tr>
+          <th class="col-number">#</th>
+          <th class="col-name">Name</th>
+          <th class="col-email">Email</th>
+          <th class="col-phone">Phone Number</th>
+          <th class="col-status">Status</th>
+          <th class="col-hiring">Hiring Status</th>
+          <th class="col-actions">Actions</th>
+        </tr>
+        </thead>
 
-    <table class="table table-striped table-hover">
-      <thead class="table-light">
-      <tr>
-        <th>#</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Phone number</th>
-        <th>Status</th>
-        <th class="text-end">Actions</th>
-      </tr>
-      </thead>
-
-      <tbody>
+        <tbody>
         @for (houseHelp of pageData.content; let i = $index; track houseHelp.id) {
-          <tr>
-            <td>{{ i + 1 + (pageData.number * pageData.size) }}</td>
+          <tr class="table-row">
+            <td class="col-number">
+              <span class="index-badge">{{ i + 1 + (pageData.number * pageData.size) }}</span>
+            </td>
 
-            <td>{{ houseHelp.user?.name }}</td>
+            <td class="col-name">
+              <div class="user-info">
+                <span class="name">{{ houseHelp.user?.name }}</span>
+              </div>
+            </td>
 
-            <td>{{ houseHelp.user?.email || '—' }}</td>
+            <td class="col-email">
+              <span class="email">{{ houseHelp.user?.email || '—' }}</span>
+            </td>
 
-            <td>{{ houseHelp.user?.phoneNumber || '—' }}</td>
+            <td class="col-phone">
+              <span class="phone">{{ houseHelp.user?.phoneNumber || '—' }}</span>
+            </td>
 
-            <td>
+            <td class="col-status">
               @if (houseHelp?.active) {
-                <span class="badge bg-success">Active</span>
+                <span class="status-badge active">Active</span>
               } @else {
-                <span class="badge bg-secondary">Inactive</span>
+                <span class="status-badge inactive">Inactive</span>
               }
             </td>
 
-            <td class="text-end">
-              <button
-                mat-stroked-button
-                color="primary"
-                class="me-2"
-                (click)="editHouseHelp(houseHelp.user.id)">
-                Edit
-              </button>
-
-              <button
-                mat-stroked-button
-                color="warn"
-                (click)="activateHouseHelp(houseHelp.id, !houseHelp?.active )">
-                @if (houseHelp?.active) {
-                  <span>Deactivate</span>
-                } @else {
-                  <span>Activate</span>
+            <td class="col-hiring">
+              @switch (houseHelp?.hiringStatus) {
+                @case ('HIRED') {
+                  <span class="hiring-badge hired">Hired</span>
                 }
-              </button>
+                @case ('AVAILABLE') {
+                  <span class="hiring-badge available">Available</span>
+                }
+                @case ('UNAVAILABLE') {
+                  <span class="hiring-badge unavailable">Unavailable</span>
+                }
+                @case ('ON_LEAVE') {
+                  <span class="hiring-badge on-leave">On Leave</span>
+                }
+                @default {
+                  <span class="hiring-badge unknown">—</span>
+                }
+              }
+            </td>
 
-              <button
-                mat-stroked-button
-                color="primary"
-                class="me-2"
-                (click)="securityVerify(houseHelp?.id)">
-                Security verify
-              </button>
+            <td class="col-actions">
+              <div class="action-buttons">
+                <button
+                  mat-stroked-button
+                  color="primary"
+                  class="action-btn"
+                  (click)="editHouseHelp(houseHelp.user.id)">
+                  <mat-icon>edit</mat-icon>
+                  <span>Edit</span>
+                </button>
+
+                <button
+                  mat-stroked-button
+                  color="accent"
+                  class="action-btn"
+                  (click)="securityVerify(houseHelp?.id)">
+                  <mat-icon>verified_user</mat-icon>
+                  <span>Security</span>
+                </button>
+
+                <button
+                  mat-stroked-button
+                  [color]="houseHelp?.hiringStatus === 'HIRED' ? 'accent' : 'primary'"
+                  class="action-btn hiring-btn"
+                  (click)="markAsHired(houseHelp.id, houseHelp.hiringStatus)">
+                  <mat-icon>
+                    {{ houseHelp?.hiringStatus === 'HIRED' ? 'person_remove' : 'person_add' }}
+                  </mat-icon>
+                  @if (houseHelp?.hiringStatus === 'HIRED') {
+                    <span>Mark Available</span>
+                  } @else {
+                    <span>Mark Hired</span>
+                  }
+                </button>
+
+                <button
+                  mat-stroked-button
+                  color="warn"
+                  class="action-btn"
+                  (click)="activateHouseHelp(houseHelp.id, !houseHelp?.active)">
+                  <mat-icon>
+                    {{ houseHelp?.active ? 'block' : 'check_circle' }}
+                  </mat-icon>
+                  @if (houseHelp?.active) {
+                    <span>Deactivate</span>
+                  } @else {
+                    <span>Activate</span>
+                  }
+                </button>
+              </div>
             </td>
           </tr>
         }
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
 
     <!-- Pagination -->
-    <mat-paginator
-      [length]="pageData.totalElements"
-      [pageSize]="pageData.size"
-      [pageIndex]="pageData.number"
-      [pageSizeOptions]="[10, 20, 50]"
-      (page)="onHouseHelpPageChange($event)">
-    </mat-paginator>
-
+    <div class="pagination-wrapper">
+      <mat-paginator
+        [length]="pageData.totalElements"
+        [pageSize]="pageData.size"
+        [pageIndex]="pageData.number"
+        [pageSizeOptions]="[10, 20, 50, 100]"
+        (page)="onHouseHelpPageChange($event)"
+        showFirstLastButtons>
+      </mat-paginator>
+    </div>
   }
 </mat-card>

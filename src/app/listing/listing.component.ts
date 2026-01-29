@@ -47,12 +47,14 @@ export class ListingsComponent implements OnInit {
     maxExpectedSalary: null,
     location: null,
     languages: null,
+    hiringStatus: null,
   };
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.type = (params.get('type') || 'all').toUpperCase();
       this.filters.houseHelpType = this.type === 'ALL' ? null : this.type;
+      this.filters.hiringStatus = "AVAILABLE";
       this.load(this.type);
     });
   }

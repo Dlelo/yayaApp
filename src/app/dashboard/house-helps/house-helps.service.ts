@@ -9,7 +9,6 @@ export class HousehelpService {
 
   constructor(private http: HttpClient) {}
 
-
   getHouseHelps(
     page: number,
     size: number,
@@ -28,9 +27,8 @@ export class HousehelpService {
     );
   }
 
-
   getAll(
-    type?:string,
+    type?: string,
     page: number = 0,
     size: number = 20,
     filter: any = {
@@ -49,7 +47,7 @@ export class HousehelpService {
       map(res => ({
         data: res.content ?? res,
         length: res.totalElements ?? res.length ?? 0,
-        pages:res.pageable ?? 0
+        pages: res.pageable ?? 0
       }))
     );
   }
@@ -62,7 +60,6 @@ export class HousehelpService {
     return this.http.patch(`${this.apiUrl}/${id}`, househelp);
   }
 
-
   setActiveStatus(id: number, active: boolean) {
     return this.http.put<HouseHelp>(
       `${this.apiUrl}/${id}/active`,
@@ -74,7 +71,7 @@ export class HousehelpService {
   }
 
   setSecurityCleared(
-    houseHelpId: number|undefined,
+    houseHelpId: number | undefined,
     cleared: boolean,
     comments?: string
   ): Observable<any> {
@@ -87,4 +84,11 @@ export class HousehelpService {
     );
   }
 
+
+  updateHiringStatus(houseHelpId: number, hiringStatus: string): Observable<any> {
+    return this.http.patch(
+      `${this.apiUrl}/${houseHelpId}`,
+      { hiringStatus }
+    );
+  }
 }

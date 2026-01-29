@@ -23,6 +23,7 @@ interface HouseHelp {
   securityClearanceComments:string;
   profilePictureDocument:string;
   contactPersonsPhoneNumber:string;
+  hiringStatus: string;
 }
 
 interface HomeOwner {
