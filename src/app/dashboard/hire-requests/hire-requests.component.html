@@ -1,40 +1,208 @@
-<mat-card class="p-3 shadow-sm">
-  <h2 class="mb-3">Hire Requests</h2>
+<mat-card class="hire-requests-container">
 
-  @if (hireRequestsPage$ | async; as pageData) {
-  <table class="table table-striped table-hover">
-    <thead class="table-light">
-    <tr>
-      <th>#</th>
-      <th>Home Owner</th>
-      <th>Househelp</th>
-      <th>Date Requested</th>
-      <th class="text-end">Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-      @for(req of pageData.content; track req.id; let i = $index ) {
-        <tr>
-          <td>{{ i + 1 + (pageData.number * pageData.size)}}</td>
-          <td>{{ req.owner.name }}</td>
-          <td>{{ req.househelp.name }}</td>
-          <td>{{ req.date | date }}</td>
-          <td class="text-end">
-            <button mat-stroked-button color="accent" class="me-2">View</button>
-            <button mat-stroked-button color="warn">Cancel</button>
-          </td>
-        </tr>
+  <!-- Header -->
+  <div class="card-header">
+    <div class="header-left">
+      <h2 class="title">Hire Requests</h2>
+      <span class="subtitle">Manage and track all hire requests</span>
+    </div>
+
+    <!-- Filters -->
+    <div class="header-filters">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Status</mat-label>
+        <mat-select
+          [(ngModel)]="selectedStatus"
+          (ngModelChange)="onFilterChange()">
+          @for (option of statusOptions; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Payment</mat-label>
+        <mat-select
+          [(ngModel)]="selectedPayment"
+          (ngModelChange)="onFilterChange()">
+          @for (option of paymentOptions; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  @if (hasError) {
+    <div class="state-container error-state">
+      <mat-icon class="state-icon">error_outline</mat-icon>
+      <h3>Something went wrong</h3>
+      <p>We couldn't load the hire requests. Please try again.</p>
+      <button mat-stroked-button color="warn" (click)="loadHireRequests()">
+        <mat-icon>refresh</mat-icon>
+        Retry
+      </button>
+    </div>
+  }
+
+  <!-- Loading & Data State -->
+  @if (!hasError) {
+    @if (hireRequestsPage$ | async; as pageData) {
+
+      <!-- Empty State -->
+      @if (pageData.content.length === 0) {
+        <div class="state-container empty-state">
+          <mat-icon class="state-icon">inbox</mat-icon>
+          <h3>No hire requests found</h3>
+          <p>
+            @if (selectedStatus || selectedPayment) {
+              No requests match the selected filters. Try adjusting them.
+            } @else {
+              There are no hire requests at the moment.
+            }
+          </p>
+          @if (selectedStatus || selectedPayment) {
+            <button mat-stroked-button color="primary" (click)="selectedStatus = ''; selectedPayment = ''; onFilterChange()">
+              <mat-icon>filter_alt_off</mat-icon>
+              Clear Filters
+            </button>
+          }
+        </div>
       }
-    </tbody>
-  </table>
 
-  <mat-paginator
-      [length]="pageData.totalElements"
-      [pageSize]="pageData.size"
-      [pageIndex]="pageData.number"
-      [pageSizeOptions]="[10, 20, 50]"
-      (page)="onPageChange($event)">
-    </mat-paginator>
+      <!-- Table -->
+      @if (pageData.content.length > 0) {
+        <div class="table-container">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th class="col-number">#</th>
+                <th class="col-owner">Home Owner</th>
+                <th class="col-househelp">House Help</th>
+                <th class="col-date">Date Requested</th>
+                <th class="col-start">Start Date</th>
+                <th class="col-payment">Payment</th>
+                <th class="col-status">Status</th>
+                <th class="col-actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (req of pageData.content; track req.id; let i = $index) {
+                <tr class="table-row">
+
+                  <!-- Number -->
+                  <td class="col-number">
+                    <span class="index-badge">
+                      {{ i + 1 + (pageData.number * pageData.size) }}
+                    </span>
+                  </td>
+
+                  <!-- Home Owner -->
+                  <td class="col-owner">
+                    <span class="user-name">{{ req.homeOwner.name || '—' }}</span>
+                  </td>
+
+                  <!-- House Help -->
+                  <td class="col-househelp">
+                    <span class="user-name">{{ req.houseHelp.name || '—' }}</span>
+                  </td>
+
+                  <!-- Date Requested -->
+                  <td class="col-date">
+                    <span class="date-text">{{ req.createdAt | date: 'dd MMM yyyy' }}</span>
+                    <span class="time-text">{{ req.createdAt | date: 'HH:mm' }}</span>
+                  </td>
+
+                  <!-- Start Date -->
+                  <td class="col-start">
+                    <span class="date-text">{{ req.startDate | date: 'dd MMM yyyy' }}</span>
+                  </td>
+
+                  <!-- Payment Status -->
+                  <td class="col-payment">
+                    @if (req.paid) {
+                      <span class="payment-badge paid">
+                        <mat-icon>check_circle</mat-icon> Paid
+                      </span>
+                    } @else {
+                      <span class="payment-badge unpaid">
+                        <mat-icon>pending</mat-icon> Unpaid
+                      </span>
+                    }
+                  </td>
+
+                  <!-- Request Status -->
+                  <td class="col-status">
+                    @switch (req.status) {
+                      @case ('PENDING') {
+                        <span class="status-badge pending">Pending</span>
+                      }
+                      @case ('ACCEPTED') {
+                        <span class="status-badge accepted">Accepted</span>
+                      }
+                      @case ('REJECTED') {
+                        <span class="status-badge rejected">Rejected</span>
+                      }
+                      @default {
+                        <span class="status-badge unknown">—</span>
+                      }
+                    }
+                  </td>
+
+<!-- Actions -->
+<td class="col-actions">
+  <div class="action-buttons">
+    <button
+      mat-stroked-button
+      color="primary"
+      class="action-btn"
+      (click)="viewRequest(req.id)">
+      <mat-icon>visibility</mat-icon>
+      <span>View</span>
+    </button>
+
+    @if (req.status === 'PENDING') {
+      <button
+        mat-stroked-button
+        color="accent"
+        class="action-btn"
+        (click)="updateStatus(req.id, 'ACCEPTED')">
+        <mat-icon>check_circle</mat-icon>
+        <span>Accept</span>
+      </button>
+
+      <button
+        mat-stroked-button
+        color="warn"
+        class="action-btn"
+        (click)="updateStatus(req.id, 'REJECTED')">
+        <mat-icon>cancel</mat-icon>
+        <span>Reject</span>
+      </button>
+    }
+  </div>
+</td>
+
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-wrapper">
+          <mat-paginator
+            [length]="pageData.totalElements"
+            [pageSize]="pageData.size"
+            [pageIndex]="pageData.number"
+            [pageSizeOptions]="[10, 20, 50]"
+            (page)="onPageChange($event)"
+            showFirstLastButtons>
+          </mat-paginator>
+        </div>
+      }
+    }
   }
 
 </mat-card>
