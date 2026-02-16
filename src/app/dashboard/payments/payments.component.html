@@ -1,182 +1,251 @@
-<div class="container my-4">
-  <mat-card class="payments-card">
-    <mat-card-header>
-      <mat-card-title>
-        <h2>
-          <mat-icon class="align-middle me-2">payment</mat-icon>
-          Payment History
-        </h2>
-      </mat-card-title>
-    </mat-card-header>
+<div class="container-fluid px-4 my-4">
+  <mat-card class="payments-container">
 
-    <mat-card-content>
-      
+    <!-- Header -->
+    <div class="card-header">
+      <div class="header-left">
+        <h2 class="title">Payments</h2>
+        <span class="subtitle">Track and manage all payment transactions</span>
+      </div>
 
-      <!-- Error State -->
-      @if (error) {
-        <div class="alert alert-danger" role="alert">
-          <mat-icon class="align-middle me-2">error</mat-icon>
-          {{ error }}
-          <button mat-button color="primary" (click)="loadPayments()" class="ms-3">
-            <mat-icon>refresh</mat-icon>
-            Retry
+      <!-- Filters inside the header, matching hire requests dropdowns -->
+      <div class="header-filters">
+        <select class="header-select" [(ngModel)]="selectedStatus" (change)="onStatusChange()">
+          <option [ngValue]="null">All Statuses</option>
+          <option value="SUCCESS">Success</option>
+          <option value="PENDING">Pending</option>
+          <option value="FAILED">Failed</option>
+        </select>
+
+        <select class="header-select" [(ngModel)]="selectedProvider" (change)="applyFilters()">
+          <option [ngValue]="null">All Providers</option>
+          <option value="M-PESA">M-PESA</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <div class="search-box">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search by transaction ID or user..."
+          [(ngModel)]="searchQuery"
+          (input)="onSearchChange()"
+        />
+        @if (searchQuery) {
+          <button class="clear-btn" (click)="clearSearch()">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
+
+      @if (searchQuery || selectedStatus || selectedProvider) {
+        <div class="active-filters">
+          <span class="results-count">
+            {{ filteredPayments.length }} result{{ filteredPayments.length !== 1 ? 's' : '' }}
+          </span>
+          <button class="clear-all-btn" (click)="clearAllFilters()">
+            <mat-icon>filter_list_off</mat-icon> Clear filters
           </button>
         </div>
       }
+    </div>
 
-      <!-- Loading State -->
-      @else if (loading) {
-        <div class="text-center py-5">
-          <mat-spinner diameter="50" class="mx-auto mb-3"></mat-spinner>
-          <p class="text-muted">Loading payments...</p>
-        </div>
-      }
+    <!-- Error State -->
+    @if (error) {
+      <div class="state-container error-state">
+        <mat-icon class="state-icon">error_outline</mat-icon>
+        <h3>Something went wrong</h3>
+        <p>We couldn't load the payments. Please try again.</p>
+        <button mat-stroked-button color="warn" (click)="loadPayments()">
+          <mat-icon>refresh</mat-icon> Retry
+        </button>
+      </div>
+    }
+
+    <!-- Loading State -->
+    @if (!error && loading) {
+      <div class="state-container loading-state">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Loading payments...</p>
+      </div>
+    }
+
+    <!-- Data State -->
+    @if (!error && !loading) {
 
       <!-- Empty State -->
-      @else if (payments.length === 0) {
-        <div class="empty-state text-center py-5">
-          <mat-icon class="empty-icon">receipt_long</mat-icon>
-          <h4>No Payments Found</h4>
-          <p class="text-muted">You haven't made any payments yet.</p>
+      @if (filteredPayments.length === 0) {
+        <div class="state-container empty-state">
+          <mat-icon class="state-icon">
+            {{ payments.length === 0 ? 'receipt_long' : 'search_off' }}
+          </mat-icon>
+          <h3>{{ payments.length === 0 ? 'No payments found' : 'No matching payments' }}</h3>
+          <p>{{ payments.length === 0
+            ? 'There are no payment records at the moment.'
+            : 'Try adjusting your search or filters.' }}
+          </p>
+          @if (payments.length > 0) {
+            <button mat-stroked-button (click)="clearAllFilters()">Clear filters</button>
+          }
         </div>
       }
 
-      <!-- Payments Table -->
-      @else {
-        <div class="table-responsive">
-          <table mat-table [dataSource]="payments" class="w-100">
-            
-            <!-- Transaction ID Column -->
-            <ng-container matColumnDef="transactionId">
-              <th mat-header-cell *matHeaderCellDef>Transaction ID</th>
-              <td mat-cell *matCellDef="let payment">
-                <span class="transaction-id">{{ payment.transactionId }}</span>
-              </td>
-            </ng-container>
+      <!-- Table -->
+      @if (filteredPayments.length > 0) {
+        <div class="table-container">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Transaction ID</th>
+                <th>User</th>
+                <th>Amount</th>
+                <th>Provider</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (payment of paginatedPayments; track payment.id; let i = $index) {
+                <tr class="table-row">
 
-            <!-- User Column -->
-            <ng-container matColumnDef="user">
-              <th mat-header-cell *matHeaderCellDef>User</th>
-              <td mat-cell *matCellDef="let payment">
-                {{ payment.userName }}
-              </td>
-            </ng-container>
+                  <!-- Number -->
+                  <td>
+                    <span class="index-badge">
+                      {{ i + 1 + (currentPage * pageSize) }}
+                    </span>
+                  </td>
 
-            <!-- Amount Column -->
-            <ng-container matColumnDef="amount">
-              <th mat-header-cell *matHeaderCellDef>Amount</th>
-              <td mat-cell *matCellDef="let payment">
-                <strong class="amount">KES {{ payment.amount | number:'1.2-2' }}</strong>
-              </td>
-            </ng-container>
+                  <!-- Transaction ID -->
+                  <td>
+                    <span class="transaction-id">{{ payment.transactionId }}</span>
+                  </td>
 
-            <!-- Provider Column -->
-            <ng-container matColumnDef="provider">
-              <th mat-header-cell *matHeaderCellDef>Provider</th>
-              <td mat-cell *matCellDef="let payment">
-                <span class="provider-badge">
-                  <mat-icon class="provider-icon">phone_android</mat-icon>
-                  {{ payment.provider }}
-                </span>
-              </td>
-            </ng-container>
+                  <!-- User -->
+                  <td>
+                    <span class="user-name">
+                      {{ payment.user?.firstName }} {{ payment.user?.lastName }}
+                    </span>
+                  </td>
 
-            <!-- Status Column -->
-            <ng-container matColumnDef="status">
-              <th mat-header-cell *matHeaderCellDef>Status</th>
-              <td mat-cell *matCellDef="let payment">
-                <span [class]="'status-badge status-' + payment.status.toLowerCase()">
-                  <mat-icon class="status-icon">{{ getStatusIcon(payment.status) }}</mat-icon>
-                  {{ payment.status }}
-                </span>
-              </td>
-            </ng-container>
+                  <!-- Amount -->
+                  <td>
+                    <strong>KES {{ payment.amount | number:'1.2-2' }}</strong>
+                  </td>
 
-            <!-- Date Column -->
-            <ng-container matColumnDef="createdAt">
-              <th mat-header-cell *matHeaderCellDef>Date</th>
-              <td mat-cell *matCellDef="let payment">
-                <span class="date">{{ payment.createdAt | date:'medium' }}</span>
-              </td>
-            </ng-container>
+                  <!-- Provider -->
+                  <td>
+                    <span class="provider-badge">
+                      <mat-icon>phone_android</mat-icon>
+                      {{ payment.provider }}
+                    </span>
+                  </td>
 
-            <!-- Actions Column -->
-            <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef>Actions</th>
-              <td mat-cell *matCellDef="let payment">
-                <button 
-                  mat-icon-button 
-                  [matMenuTriggerFor]="menu"
-                  matTooltip="More options"
-                >
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-                <mat-menu #menu="matMenu">
-                  <button mat-menu-item (click)="viewDetails(payment)">
-                    <mat-icon>visibility</mat-icon>
-                    <span>View Details</span>
-                  </button>
-                  <button mat-menu-item (click)="verifyPayment(payment)">
-                    <mat-icon>check_circle</mat-icon>
-                    <span>Verify Payment</span>
-                  </button>
-                  <button mat-menu-item (click)="downloadReceipt(payment)">
-                    <mat-icon>download</mat-icon>
-                    <span>Download Receipt</span>
-                  </button>
-                </mat-menu>
-              </td>
-            </ng-container>
+                  <!-- Status -->
+                  <td>
+                    @switch (payment.status) {
+                      @case ('SUCCESS') {
+                        <span class="status-badge status-success">
+                          <mat-icon>check_circle</mat-icon> Success
+                        </span>
+                      }
+                      @case ('PENDING') {
+                        <span class="status-badge status-pending">
+                          <mat-icon>schedule</mat-icon> Pending
+                        </span>
+                      }
+                      @case ('FAILED') {
+                        <span class="status-badge status-failed">
+                          <mat-icon>cancel</mat-icon> Failed
+                        </span>
+                      }
+                      @default {
+                        <span class="status-badge">—</span>
+                      }
+                    }
+                  </td>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                  <!-- Date -->
+                  <td>
+                    <span class="date-text">{{ payment.createdAt | date:'dd MMM yyyy' }}</span>
+                    <span class="time-text">{{ payment.createdAt | date:'HH:mm' }}</span>
+                  </td>
+
+                  <!-- Actions -->
+                  <td class="col-actions">
+                    <div class="action-buttons">
+                      <button mat-stroked-button color="primary" class="action-btn" (click)="viewDetails(payment)">
+                        <mat-icon>visibility</mat-icon>
+                        <span>View</span>
+                      </button>
+                      <button mat-stroked-button color="accent" class="action-btn" (click)="verifyPayment(payment)">
+                        <mat-icon>check_circle</mat-icon>
+                        <span>Verify</span>
+                      </button>
+                      <button mat-stroked-button color="warn" class="action-btn" (click)="downloadReceipt(payment)">
+                        <mat-icon>download</mat-icon>
+                        <span>Receipt</span>
+                      </button>
+                    </div>
+                  </td>
+
+                </tr>
+              }
+            </tbody>
           </table>
         </div>
 
         <!-- Pagination -->
-        <mat-paginator
-          [length]="totalElements"
-          [pageSize]="pageSize"
-          [pageSizeOptions]="[5, 10, 20, 50]"
-          [pageIndex]="currentPage"
-          (page)="onPageChange($event)"
-          showFirstLastButtons
-        >
-        </mat-paginator>
+        <div class="pagination-wrapper">
+          <mat-paginator
+            [length]="filteredPayments.length"
+            [pageSize]="pageSize"
+            [pageIndex]="currentPage"
+            [pageSizeOptions]="[10, 20, 50]"
+            (page)="onPageChange($event)"
+            showFirstLastButtons>
+          </mat-paginator>
+        </div>
       }
-    </mat-card-content>
+    }
+
   </mat-card>
 </div>
 
-<!-- Payment Details Dialog (Optional) -->
+<!-- Payment Details Dialog -->
 <ng-template #paymentDetailsDialog>
   <h2 mat-dialog-title>Payment Details</h2>
   <mat-dialog-content>
     @if (selectedPayment) {
       <div class="payment-details">
         <div class="detail-row">
-          <span class="label">Transaction ID:</span>
-          <span class="value">{{ selectedPayment.transactionId }}</span>
+          <span class="label">Transaction ID</span>
+          <span class="value transaction-id">{{ selectedPayment.transactionId }}</span>
         </div>
         <div class="detail-row">
-          <span class="label">Amount:</span>
+          <span class="label">User</span>
+          <span class="value">{{ selectedPayment.user?.firstName }} {{ selectedPayment.user?.lastName }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Amount</span>
           <span class="value">KES {{ selectedPayment.amount | number:'1.2-2' }}</span>
         </div>
         <div class="detail-row">
-          <span class="label">Provider:</span>
+          <span class="label">Provider</span>
           <span class="value">{{ selectedPayment.provider }}</span>
         </div>
         <div class="detail-row">
-          <span class="label">Status:</span>
+          <span class="label">Status</span>
           <span class="value">{{ selectedPayment.status }}</span>
         </div>
         <div class="detail-row">
-          <span class="label">Date:</span>
+          <span class="label">Date</span>
           <span class="value">{{ selectedPayment.createdAt | date:'full' }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">User:</span>
-          <span class="value">{{ selectedPayment.user?.firstName }} {{ selectedPayment.user?.lastName }}</span>
         </div>
       </div>
     }
