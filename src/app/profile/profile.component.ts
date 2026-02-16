@@ -9,7 +9,6 @@ import {AccountDetailsService} from '../account-details/account-details.service'
 import {catchError, Observable, of, shareReplay, switchMap, take} from 'rxjs';
 import {AsyncPipe} from '@angular/common';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInput} from '@angular/material/input';
 
 @Component({
   selector: 'app-profile',
@@ -21,7 +20,6 @@ import {MatInput} from '@angular/material/input';
     MatButton,
     AsyncPipe,
     MatFormFieldModule,
-    MatInput
   ],
   styleUrls: ['./profile.component.scss']
 })
