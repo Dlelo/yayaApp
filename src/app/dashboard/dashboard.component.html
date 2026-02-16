@@ -1,39 +1,87 @@
 <mat-sidenav-container class="dashboard-container">
-  <mat-sidenav
-    #sidenav
-    [mode]="sidenavMode"
-    [opened]="sidenavOpened"
-    class="sidenav"
-  >
-    <div class="p-3">
-      <h3 class="mb-4">
-        <a [routerLink]="['/dashboard']" >
-          Admin Panel
-        </a>
-      </h3>
 
-      <mat-nav-list>
-        @for (link of allowedNavLinks(); track link.path) {
-          <a class="mb-2" mat-list-item [routerLink]="link.path" routerLinkActive="active-link">
-            <mat-icon class="me-2">{{ link.icon }}</mat-icon>
-            <span>{{ link.label }}</span>
-          </a>
-        }
-      </mat-nav-list>
+  <!-- Sidebar -->
+  <mat-sidenav #sidenav [mode]="sidenavMode" [opened]="sidenavOpened" class="sidenav">
+
+    <!-- Logo / Brand -->
+    <div class="sidenav-brand">
+      <a [routerLink]="['/dashboard']" class="brand-link">
+        <div class="brand-icon">
+          <mat-icon>home_work</mat-icon>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">YayaConnectApp</span>
+          <span class="brand-sub">Admin Panel</span>
+        </div>
+      </a>
     </div>
+
+    <!-- Nav -->
+    <nav class="sidenav-nav">
+  <span class="nav-section-label">Main Menu</span>
+  @for (link of allowedNavLinks(); track link.path) {
+    <a class="nav-item"
+       [routerLink]="link.path"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{ exact: false }">
+      <span class="nav-icon">
+        <mat-icon>{{ link.icon }}</mat-icon>
+      </span>
+      <span class="nav-label">{{ link.label }}</span>
+    </a>
+  }
+</nav>
+
+    <!-- Sidebar Footer -->
+    <div class="sidenav-footer">
+      <div class="footer-divider"></div>
+      <div class="user-card">
+        <div class="user-avatar">
+          <mat-icon>admin_panel_settings</mat-icon>
+        </div>
+        <div class="user-info">
+          <span class="user-name">Administrator</span>
+          <span class="user-role">Super Admin</span>
+        </div>
+      </div>
+    </div>
+
   </mat-sidenav>
 
-  <mat-sidenav-content>
-    <mat-toolbar color="primary">
-      <button mat-icon-button (click)="sidenav.toggle()" class="d-md-none">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <span>Dashboard</span>
-    </mat-toolbar>
+  <!-- Main Content -->
+  <mat-sidenav-content class="main-content">
 
-    <div class="p-4">
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" (click)="sidenav.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <div class="breadcrumb">
+          <span class="breadcrumb-root">Dashboard</span>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <button class="topbar-btn" matTooltip="Notifications">
+          <mat-icon>notifications_none</mat-icon>
+          <span class="notif-dot"></span>
+        </button>
+        <button class="topbar-btn" matTooltip="Settings">
+          <mat-icon>settings</mat-icon>
+        </button>
+        <div class="topbar-divider"></div>
+        <div class="topbar-avatar">
+          <mat-icon>person</mat-icon>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="page-content">
       <router-outlet></router-outlet>
-    </div>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+    </main>
 
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

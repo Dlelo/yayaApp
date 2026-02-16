@@ -1,12 +1,14 @@
-import {Component, inject, computed, OnInit} from '@angular/core';
+import { Component, inject, computed, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatSidenav, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
-import {MatListItem, MatListModule, MatNavList} from '@angular/material/list';
+import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { LoginService } from '../login/login.service';
-import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
-import {MatToolbar} from '@angular/material/toolbar';
-import {MatIconButton} from '@angular/material/button';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton } from '@angular/material/button';
+
 
 @Component({
   selector: 'app-dashboard',
@@ -21,6 +23,7 @@ import {MatIconButton} from '@angular/material/button';
     MatSidenavContainer,
     MatSidenav,
     MatSidenavContent,
+    MatTooltipModule,
     MatToolbar,
     MatIconButton,
   ]
