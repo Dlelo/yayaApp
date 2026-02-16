@@ -16,6 +16,7 @@ import {LoginService} from '../../login/login.service';
 @Component({
   selector: 'users',
   templateUrl: './users.component.html',
+  styleUrls: ['./users.component.scss'],
   imports: [
     MatCard,
     MatIconModule,
