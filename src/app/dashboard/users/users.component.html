@@ -1,71 +1,122 @@
-<mat-card class="p-3 shadow-sm">
-  <h2 class="mb-3">Manage Users</h2>
+<mat-card class="users-container">
+
+  <!-- Header -->
+  <div class="card-header">
+    <h2 class="title">Manage Users</h2>
+  </div>
 
   @if (usersPage$ | async; as pageData) {
 
-    <table class="table table-striped table-hover">
-      <thead class="table-light">
-      <tr>
-        <th>#</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Roles</th>
-        <th class="text-end">Actions</th>
-      </tr>
-      </thead>
+    <!-- Empty State -->
+    @if (pageData.content.length === 0) {
+      <div class="state-container empty-state">
+        <mat-icon class="state-icon">people_outline</mat-icon>
+        <h3>No Users Found</h3>
+        <p>There are no users registered on the platform yet.</p>
+      </div>
+    }
 
-      <tbody>
-        @for (user of pageData.content; let i = $index; track user.id) {
-          <tr>
-            <td>{{ i + 1 + (pageData.number * pageData.size) }}</td>
-            <td>{{ user.name }}</td>
-            <td>{{ user.email || '—' }}</td>
+    <!-- Table -->
+    @if (pageData.content.length > 0) {
+      <div class="table-container">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th class="col-number">#</th>
+              <th class="col-name">Name</th>
+              <th class="col-email">Email</th>
+              <th class="col-phone">Phone</th>
+              <th class="col-roles">Roles</th>
+              <th class="col-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of pageData.content; let i = $index; track user.id) {
+              <tr class="table-row">
 
-            <td>
-              @for (role of user.roles; let isLast = $last; track $index) {
-                <span class="small">
-                  {{ role?.name }}{{ !isLast ? ', ' : '' }}
-                </span>
-              }
-            </td>
+                <!-- Number -->
+                <td class="col-number">
+                  <span class="index-badge">
+                    {{ i + 1 + (pageData.number * pageData.size) }}
+                  </span>
+                </td>
 
-            <td class="text-end">
-              @if(roles()?.includes('ROLE_ADMIN') || roles()?.includes('ROLE_SALES')){
-                <button
-                  mat-stroked-button
-                  color="primary"
-                  class="me-2"
-                  (click)="openEditUserDialog(user)">
-                  Update Role
-                </button>
-              }
-              <button
-                mat-stroked-button
-                color="primary"
-                (click)="openUserAccountDetails(user.id)">
-                Edit
-              </button>
+                <!-- Name -->
+                <td class="col-name">
+                  <span class="name">{{ user.name || '—' }}</span>
+                </td>
 
-              <button
-                mat-stroked-button
-                color="primary"
-                (click)="openViewUserDetails(user.id)">
-                View
-              </button>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+                <!-- Email -->
+                <td class="col-email">
+                  <span class="email">{{ user.email || '—' }}</span>
+                </td>
 
-    <!-- Pagination -->
-    <mat-paginator
-      [length]="pageData.totalElements"
-      [pageSize]="pageData.size"
-      [pageIndex]="pageData.number"
-      [pageSizeOptions]="[10, 20, 50]"
-      (page)="onPageChange($event)">
-    </mat-paginator>
+                <!-- Phone -->
+                <td class="col-phone">
+                  <span class="phone">{{ user.phoneNumber || '—' }}</span>
+                </td>
 
+                <!-- Roles -->
+                <td class="col-roles">
+                  <div class="roles-list">
+                    @for (role of user.roles; track $index) {
+                      <span class="role-badge">{{ role?.name }}</span>
+                    }
+                  </div>
+                </td>
+
+                <!-- Actions -->
+                <td class="col-actions">
+                  <div class="action-buttons">
+                    <button
+                      mat-stroked-button
+                      color="primary"
+                      class="action-btn"
+                      (click)="openViewUserDetails(user.id)">
+                      <mat-icon>visibility</mat-icon>
+                      <span>View</span>
+                    </button>
+
+                    <button
+                      mat-stroked-button
+                      color="accent"
+                      class="action-btn"
+                      (click)="openUserAccountDetails(user.id)">
+                      <mat-icon>edit</mat-icon>
+                      <span>Edit</span>
+                    </button>
+
+                    @if (roles()?.includes('ROLE_ADMIN') || roles()?.includes('ROLE_SALES')) {
+                      <button
+                        mat-stroked-button
+                        color="warn"
+                        class="action-btn"
+                        (click)="openEditUserDialog(user)">
+                        <mat-icon>manage_accounts</mat-icon>
+                        <span>Roles</span>
+                      </button>
+                    }
+                  </div>
+                </td>
+
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-wrapper">
+        <mat-paginator
+          [length]="pageData.totalElements"
+          [pageSize]="pageData.size"
+          [pageIndex]="pageData.number"
+          [pageSizeOptions]="[10, 20, 50]"
+          (page)="onPageChange($event)"
+          showFirstLastButtons>
+        </mat-paginator>
+      </div>
+    }
   }
+
 </mat-card>
