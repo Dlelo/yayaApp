@@ -84,15 +84,21 @@ export class PaymentsComponent implements OnInit {
   }
 
   verifyPayment(payment: Payment): void {
+    const prev = payment.status;
     payment.status = PaymentStatus.SUCCESS;
-    this.paymentService.verifyPayment(payment).subscribe({
-      next: () => {
-        this.loadPayments(this.currentPage, this.pageSize);
-      },
+    this.cdr.detectChanges();
+    this.paymentService.verifyPayment(payment.id).subscribe({
+      next: () => this.loadPayments(this.currentPage, this.pageSize),
       error: () => {
-        payment.status = PaymentStatus.PENDING;
+        payment.status = prev;
         this.cdr.detectChanges();
       }
+    });
+  }
+
+  archivePayment(payment: Payment): void {
+    this.paymentService.archivePayment(payment.id).subscribe({
+      next: () => this.loadPayments(this.currentPage, this.pageSize)
     });
   }
 }

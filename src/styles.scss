@@ -280,6 +280,18 @@ $dash-orange: #e27220;
   }
 }
 
+/* ===== Dashboard Filters ===== */
+.dash-filters {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+
+  .filter-field {
+    width: 180px;
+  }
+}
+
 /* ===== Reports Stats Grid ===== */
 .stats-grid {
   display: grid;
@@ -335,12 +347,40 @@ $dash-orange: #e27220;
   margin-top: 0.25rem;
 }
 
-.shimmer-text {
-  display: block;
-  height: 1.75rem;
-  width: 60px;
-  border-radius: 6px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.2s infinite;
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
+
+%shimmer-base {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 6px;
+}
+
+.shimmer-text {
+  @extend %shimmer-base;
+  display: block;
+  height: 14px;
+  width: 80px;
+}
+
+/* Table shimmer rows */
+.shimmer-row td .shimmer-cell {
+  @extend %shimmer-base;
+  height: 14px;
+  border-radius: 6px;
+  display: block;
+
+  &--wide  { width: 140px; }
+  &--sm    { width: 60px; }
+  &--md    { width: 100px; }
+  &--avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+}
+
+.shimmer-row:hover { background: transparent !important; }

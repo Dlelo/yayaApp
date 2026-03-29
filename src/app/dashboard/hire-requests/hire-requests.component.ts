@@ -2,10 +2,10 @@ import { Component, inject, OnInit } from '@angular/core';
 import { MatCard } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
-import { AsyncPipe, DatePipe } from '@angular/common';
+import { AsyncPipe, DatePipe, TitleCasePipe } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Observable, catchError, of, BehaviorSubject, switchMap } from 'rxjs';
+import { Observable, catchError, of, shareReplay } from 'rxjs';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
@@ -23,6 +23,7 @@ import { HireRequestsService } from './hire-requests.service';
     MatDialogModule,
     MatButton,
     DatePipe,
+    TitleCasePipe,
     AsyncPipe,
     MatPaginatorModule,
     MatSelectModule,
@@ -39,8 +40,9 @@ export class HireRequestsComponent implements OnInit {
 
   page = 0;
   size = 20;
-  isLoading = false;
+  isLoading = true;
   hasError = false;
+  shimmerRows = [1,2,3,4,5];
 
   // Filters
   selectedStatus: string = '';
@@ -77,21 +79,11 @@ export class HireRequestsComponent implements OnInit {
       .getHireRequests(this.page, this.size, filter)
       .pipe(
         catchError(err => {
-          console.log(this.hasError);
-          console.log(err);
-          console.error('Error loading hire requests:', err);
           this.hasError = true;
           this.isLoading = false;
-          return of({ 
-            content: [], 
-            totalElements: 0, 
-            totalPages: 0, 
-            number: 0, 
-            size: 0,
-            first: true,
-            last: true 
-          });
-        })
+          return of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true });
+        }),
+        shareReplay(1)
       );
 
     this.hireRequestsPage$.subscribe(() => {

@@ -24,6 +24,7 @@ export interface Payment {
   provider: string;
   status: PaymentStatus;
   createdAt: string;
+  archived: boolean;
 }
 
 export enum PaymentStatus {
@@ -69,9 +70,12 @@ export class PaymentService {
     return this.http.get<PaymentPage>(this.apiUrl, { params });
   }
 
-  verifyPayment(payment: Payment): Observable<any> {
-    const baseUri = environment.apiUrl.replace(/\/api$/, '');
-    return this.http.post(`${baseUri}/mpesa/manual-callback`, payment);
+  verifyPayment(id: number): Observable<Payment> {
+    return this.http.put<Payment>(`${this.apiUrl}/${id}/verify`, null);
+  }
+
+  archivePayment(id: number): Observable<Payment> {
+    return this.http.put<Payment>(`${this.apiUrl}/${id}/archive`, null);
   }
 
   /**

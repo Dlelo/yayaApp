@@ -4,7 +4,8 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatButton} from '@angular/material/button';
 import {Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
+import {tap, catchError} from 'rxjs/operators';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {HomeOwnerService} from './home-owners.service';
 import {AsyncPipe} from '@angular/common';
@@ -33,6 +34,8 @@ export class HomeOwnersComponent implements OnInit {
 
   page = 0;
   size = 20;
+  loading = true;
+  shimmerRows = [1,2,3,4,5];
 
   homeOwnerPage$!: Observable<PageResponse<HomeOwner>>;
 
@@ -41,11 +44,11 @@ export class HomeOwnersComponent implements OnInit {
   }
 
   loadHomeOwners(): void {
-    this.homeOwnerPage$ = this.homeOwnerService.getHomeOwners(
-      this.page,
-      this.size,
-      true
-    );
+    this.loading = true;
+    this.homeOwnerPage$ = this.homeOwnerService.getHomeOwners(this.page, this.size, true).pipe(
+      tap(() => this.loading = false),
+      catchError(() => { this.loading = false; return of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true }); })
+    ) as any;
   }
 
   activateHouseHelp(id:number|undefined, active:boolean):void{

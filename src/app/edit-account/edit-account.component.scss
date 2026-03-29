@@ -222,3 +222,25 @@ mat-progress-bar {
     gap: 0.25rem;
   }
 }
+
+.map-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.25rem;
+}
+
+.map-hint {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0 0 0.5rem;
+}
+
+.location-map {
+  height: 380px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}

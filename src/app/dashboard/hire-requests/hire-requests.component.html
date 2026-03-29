@@ -6,8 +6,63 @@
     </div>
   </div>
 
-  @if (hireRequestsPage$ | async; as pageData) {
-    <div class="dash-card">
+  <!-- Filters -->
+  <div class="dash-filters">
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Status</mat-label>
+      <mat-select [(ngModel)]="selectedStatus" (ngModelChange)="onFilterChange()">
+        @for (opt of statusOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Payment</mat-label>
+      <mat-select [(ngModel)]="selectedPayment" (ngModelChange)="onFilterChange()">
+        @for (opt of paymentOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="dash-card">
+    @if (isLoading) {
+      <div class="table-meta">
+        <span class="shimmer-text" style="width:130px"></span>
+      </div>
+      <div class="table-wrap">
+        <table class="dash-table">
+          <thead>
+            <tr><th>#</th><th>Home Owner</th><th>House Help</th><th>Status</th><th>Paid</th><th>Date</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            @for (s of shimmerRows; track s) {
+              <tr class="shimmer-row">
+                <td><span class="shimmer-cell shimmer-cell--sm"></span></td>
+                <td>
+                  <div class="user-cell">
+                    <span class="shimmer-cell shimmer-cell--avatar"></span>
+                    <span class="shimmer-cell shimmer-cell--wide"></span>
+                  </div>
+                </td>
+                <td>
+                  <div class="user-cell">
+                    <span class="shimmer-cell shimmer-cell--avatar"></span>
+                    <span class="shimmer-cell shimmer-cell--wide"></span>
+                  </div>
+                </td>
+                <td><span class="shimmer-cell shimmer-cell--sm"></span></td>
+                <td><span class="shimmer-cell shimmer-cell--sm"></span></td>
+                <td><span class="shimmer-cell shimmer-cell--md"></span></td>
+                <td><span class="shimmer-cell shimmer-cell--wide"></span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else if (hireRequestsPage$ | async; as pageData) {
       <div class="table-meta">
         <span class="table-count">{{ pageData.totalElements }} total requests</span>
       </div>
@@ -19,6 +74,8 @@
               <th>#</th>
               <th>Home Owner</th>
               <th>House Help</th>
+              <th>Status</th>
+              <th>Paid</th>
               <th>Date Requested</th>
               <th>Actions</th>
             </tr>
@@ -39,15 +96,35 @@
                     <span>{{ req.houseHelp?.name || '—' }}</span>
                   </div>
                 </td>
+                <td>
+                  @if (req.status === 'ACCEPTED') {
+                    <span class="status-badge status-badge--active">Accepted</span>
+                  } @else if (req.status === 'REJECTED') {
+                    <span class="status-badge status-badge--inactive">Rejected</span>
+                  } @else {
+                    <span class="status-badge status-badge--pending">Pending</span>
+                  }
+                </td>
+                <td>
+                  @if (req.paid) {
+                    <span class="status-badge status-badge--active">Paid</span>
+                  } @else {
+                    <span class="status-badge status-badge--inactive">Unpaid</span>
+                  }
+                </td>
                 <td class="text-muted">{{ req.createdAt | date:'mediumDate' }}</td>
                 <td>
                   <div class="action-btns">
-                    <button mat-stroked-button class="btn-action">
-                      <mat-icon>visibility</mat-icon> View
-                    </button>
-                    <button mat-stroked-button class="btn-action btn-danger">
-                      <mat-icon>cancel</mat-icon> Cancel
-                    </button>
+                    @if (req.status === 'PENDING') {
+                      <button mat-stroked-button class="btn-action btn-verify" (click)="updateStatus(req.id, 'ACCEPTED')">
+                        <mat-icon>check_circle</mat-icon> Accept
+                      </button>
+                      <button mat-stroked-button class="btn-action btn-danger" (click)="updateStatus(req.id, 'REJECTED')">
+                        <mat-icon>cancel</mat-icon> Reject
+                      </button>
+                    } @else {
+                      <span class="text-muted" style="font-size:0.8rem">{{ req.status | titlecase }}</span>
+                    }
                   </div>
                 </td>
               </tr>
@@ -63,6 +140,6 @@
         [pageSizeOptions]="[10, 20, 50]"
         (page)="onPageChange($event)">
       </mat-paginator>
-    </div>
-  }
+    }
+  </div>
 </div>

@@ -43,4 +43,8 @@ export class AgentService {
   assignHouseHelp(agentId: number, househelpId: number): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${agentId}/househelps/${househelpId}`, null);
   }
+
+  updateAgent(id: number, data: Partial<Agent>): Observable<Agent> {
+    return this.http.patch<Agent>(`${this.apiUrl}/${id}`, data);
+  }
 }

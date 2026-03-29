@@ -6,8 +6,35 @@
     </div>
   </div>
 
-  @if (usersPage$ | async; as pageData) {
-    <div class="dash-card">
+  <div class="dash-card">
+    @if (loading) {
+      <div class="table-meta">
+        <span class="shimmer-text" style="width:100px"></span>
+      </div>
+      <div class="table-wrap">
+        <table class="dash-table">
+          <thead>
+            <tr><th>#</th><th>Name</th><th>Email</th><th>Roles</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            @for (s of shimmerRows; track s) {
+              <tr class="shimmer-row">
+                <td><span class="shimmer-cell shimmer-cell--sm"></span></td>
+                <td>
+                  <div class="user-cell">
+                    <span class="shimmer-cell shimmer-cell--avatar"></span>
+                    <span class="shimmer-cell shimmer-cell--wide"></span>
+                  </div>
+                </td>
+                <td><span class="shimmer-cell shimmer-cell--wide"></span></td>
+                <td><span class="shimmer-cell shimmer-cell--md"></span></td>
+                <td><span class="shimmer-cell shimmer-cell--wide"></span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else if (usersPage$ | async; as pageData) {
       <div class="table-meta">
         <span class="table-count">{{ pageData.totalElements }} users</span>
       </div>
@@ -69,6 +96,6 @@
         [pageSizeOptions]="[10, 20, 50]"
         (page)="onPageChange($event)">
       </mat-paginator>
-    </div>
-  }
+    }
+  </div>
 </div>

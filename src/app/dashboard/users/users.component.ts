@@ -7,7 +7,8 @@ import {UsersService} from './users.service';
 import {EditUserDialogComponent} from './edit-user-dialog/edit-user-dialog.component';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {Router} from '@angular/router';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
+import {tap, catchError} from 'rxjs/operators';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {LoginService} from '../../login/login.service';
 
@@ -38,6 +39,8 @@ export class UsersComponent implements OnInit{
 
   page = 0;
   size = 20;
+  loading = true;
+  shimmerRows = [1,2,3,4,5];
 
   usersPage$!: Observable<PageResponse<User>>;
 
@@ -83,6 +86,10 @@ export class UsersComponent implements OnInit{
   }
 
   loadUsers(): void {
-    this.usersPage$ = this.usersService.getUsers(this.page, this.size);
+    this.loading = true;
+    this.usersPage$ = this.usersService.getUsers(this.page, this.size).pipe(
+      tap(() => this.loading = false),
+      catchError(() => { this.loading = false; return of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true }); })
+    ) as any;
   }
 }

@@ -28,10 +28,7 @@ export class HireRequestsService {
     return this.http.get<PageResponse<HireRequest>>(this.apiUrl, { params });
   }
 
-  updateStatus(id: number, status: string): Observable<HireRequest> {
-    return this.http.patch<HireRequest>(
-      `${this.apiUrl}/${id}/status`,
-      { status }
-    );
+  updateStatus(id: number, status: string): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/status`, status);
   }
 }

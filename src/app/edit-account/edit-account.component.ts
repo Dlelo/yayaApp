@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectorRef, NgZone, AfterViewInit, PLATFORM_ID } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef, NgZone, PLATFORM_ID } from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
@@ -12,7 +12,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatChipGrid, MatChipRow, MatChipInput } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Observable, take, tap } from 'rxjs';
+import { Observable, take, tap, shareReplay } from 'rxjs';
 
 import { LoginService } from '../login/login.service';
 import { AccountDetailsService } from '../account-details/account-details.service';
@@ -46,7 +46,7 @@ import {CHILD_AGE_RANGE_OPTIONS, ChildAgeRange} from './child-age-range.enum';
   ],
   providers: [HousehelpService, HomeOwnerService],
 })
-export class EditAccountDetailsComponent implements OnInit, AfterViewInit {
+export class EditAccountDetailsComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly activatesRoute = inject(ActivatedRoute);
@@ -110,13 +110,16 @@ export class EditAccountDetailsComponent implements OnInit, AfterViewInit {
           this.isHomeOwner = user.roles.includes('HOMEOWNER');
           this.initializeForm(user);
           this.loadExistingProfilePicture(user);
-        })
+        }),
+        shareReplay(1)
       );
-  }
 
-  async ngAfterViewInit() {
-    if (!isPlatformBrowser(this.platformId)) return;
-    await this.initializeMap();
+    // Subscribe so tap runs and then schedule map init after DOM updates
+    this.userDetails$.subscribe(() => {
+      if (isPlatformBrowser(this.platformId)) {
+        setTimeout(() => this.initializeMap(), 50);
+      }
+    });
   }
 
   private async initializeMap() {

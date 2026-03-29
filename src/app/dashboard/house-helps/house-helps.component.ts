@@ -1,15 +1,20 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit, ViewChild, TemplateRef} from '@angular/core';
 import {MatCard} from '@angular/material/card';
 import {MatIconModule} from '@angular/material/icon';
-import {MatButton} from '@angular/material/button';
+import {MatButtonModule} from '@angular/material/button';
+import {MatSelectModule} from '@angular/material/select';
 import {HousehelpService} from './house-helps.service';
 import {AsyncPipe} from '@angular/common';
 import {Observable} from 'rxjs';
+import {tap, catchError} from 'rxjs/operators';
+import {of} from 'rxjs';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {SecurityVerifyDialogComponent} from '../security-clearance-dialog/security-clearance-dialog.component';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {AgentService, Agent} from '../agents/agent.service';
+import {FormsModule} from '@angular/forms';
 
 
 @Component({
@@ -19,74 +24,97 @@ import {MatDialog} from '@angular/material/dialog';
   imports: [
     MatCard,
     MatIconModule,
-    MatButton,
+    MatButtonModule,
+    MatSelectModule,
+    MatDialogModule,
+    FormsModule,
     AsyncPipe,
     MatPaginatorModule,
   ],
-  providers: [HousehelpService],
+  providers: [HousehelpService, AgentService],
   standalone: true
 })
-export class HouseHelpsComponent implements OnInit{
+export class HouseHelpsComponent implements OnInit {
+  @ViewChild('assignAgentDialog') assignAgentDialog!: TemplateRef<any>;
+
   private readonly househelpService: HousehelpService = inject(HousehelpService);
+  private readonly agentService: AgentService = inject(AgentService);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
   private dialog: MatDialog = inject(MatDialog);
 
   page = 0;
   size = 20;
+  loading = true;
+  shimmerRows = [1,2,3,4,5];
 
   houseHelpsPage$!: Observable<PageResponse<HouseHelp>>;
 
+  agents: Agent[] = [];
+  selectedAgentId: number | null = null;
+  pendingHouseHelpId: number | null = null;
+
   ngOnInit(): void {
     this.loadHouseHelps();
+    this.loadAgents();
   }
 
   loadHouseHelps(): void {
-    this.houseHelpsPage$ = this.househelpService.getHouseHelps(
-      this.page,
-      this.size,
-      null
-    );
+    this.loading = true;
+    this.houseHelpsPage$ = this.househelpService.getHouseHelps(this.page, this.size, null).pipe(
+      tap(() => this.loading = false),
+      catchError(err => { this.loading = false; return of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true }); })
+    ) as any;
   }
 
+  loadAgents(): void {
+    this.agentService.getAgents(0, 100).subscribe({
+      next: (page) => this.agents = page.content,
+      error: () => {}
+    });
+  }
+
+  openAssignAgentDialog(houseHelpId: number): void {
+    this.pendingHouseHelpId = houseHelpId;
+    this.selectedAgentId = null;
+    this.dialog.open(this.assignAgentDialog, { width: '400px' });
+  }
+
+  confirmAssignAgent(): void {
+    if (!this.pendingHouseHelpId || !this.selectedAgentId) return;
+    this.agentService.assignHouseHelp(this.selectedAgentId, this.pendingHouseHelpId).subscribe({
+      next: () => {
+        this.snackBar.open('Agent assigned successfully!', 'Close', { duration: 3000 });
+        this.dialog.closeAll();
+        this.loadHouseHelps();
+      },
+      error: () => {
+        this.snackBar.open('Failed to assign agent.', 'Close', { duration: 3000 });
+      }
+    });
+  }
 
   activateHouseHelp(id: number, active: boolean): void {
     this.househelpService.setActiveStatus(id, active).subscribe({
       next: () => {
-        this.snackBar.open('✅ House help updated successfully!', 'Close', {
-          duration: 3000,
-        });
+        this.snackBar.open('House help updated successfully!', 'Close', { duration: 3000 });
         this.loadHouseHelps();
       },
-      error: (err) => {
-        console.error(err);
-        this.snackBar.open('❌ Failed to update House help. Please try again.', 'Close', {
-          duration: 3000,
-        });
+      error: () => {
+        this.snackBar.open('Failed to update house help.', 'Close', { duration: 3000 });
       },
     });
   }
 
   markAsHired(houseHelpId: number, currentStatus: string): void {
-    console.log(`Current status: ${currentStatus}`);
     const newStatus = currentStatus === 'HIRED' ? 'AVAILABLE' : 'HIRED';
-    
     this.househelpService.updateHiringStatus(houseHelpId, newStatus).subscribe({
       next: () => {
-        this.snackBar.open(
-          `✅ House help marked as ${newStatus.toLowerCase()}!`,
-          'Close',
-          { duration: 3000 }
-        );
+        this.snackBar.open(`House help marked as ${newStatus.toLowerCase()}!`, 'Close', { duration: 3000 });
         this.loadHouseHelps();
       },
-      error: (error: any) => {
-        console.error('Error updating hiring status:', error);
-        this.snackBar.open(
-          '❌ Failed to update hiring status. Please try again.',
-          'Close',
-          { duration: 3000 }
-        );
+      error: () => {
+        this.snackBar.open('Failed to update hiring status.', 'Close', { duration: 3000 });
       }
     });
   }
@@ -104,31 +132,20 @@ export class HouseHelpsComponent implements OnInit{
   securityVerify(houseHelpId: number | undefined) {
     const ref = this.dialog.open(SecurityVerifyDialogComponent, {
       width: '450px',
-      data: {
-        houseHelpId,
-        type: 'HOUSEHELP'
-      }
+      data: { houseHelpId, type: 'HOUSEHELP' }
     });
 
     ref.afterClosed().subscribe(result => {
-      if (!result) {
-        return;
-      }
-
-      this.househelpService.setSecurityCleared(houseHelpId, result.cleared, result.comments)
-        .subscribe({
-          next: (res) => {
-            this.snackBar.open('✅ Security verified successfully!', 'Close', {
-              duration: 3000,
-            });
-            this.loadHouseHelps();
-          },
-          error: (err) => {
-            this.snackBar.open('❌ Security verification failed. Invalid credentials.', 'Close', {
-              duration: 3000,
-            });
-          }
-        });
+      if (!result) return;
+      this.househelpService.setSecurityCleared(houseHelpId, result.cleared, result.comments).subscribe({
+        next: () => {
+          this.snackBar.open('Security verified successfully!', 'Close', { duration: 3000 });
+          this.loadHouseHelps();
+        },
+        error: () => {
+          this.snackBar.open('Security verification failed.', 'Close', { duration: 3000 });
+        }
+      });
     });
   }
 }

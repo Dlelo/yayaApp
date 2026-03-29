@@ -6,8 +6,36 @@
     </div>
   </div>
 
-  @if (houseHelpsPage$ | async; as pageData) {
-    <div class="dash-card">
+  <div class="dash-card">
+    @if (loading) {
+      <div class="table-meta">
+        <span class="shimmer-text" style="width:130px"></span>
+      </div>
+      <div class="table-wrap">
+        <table class="dash-table">
+          <thead>
+            <tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            @for (s of shimmerRows; track s) {
+              <tr class="shimmer-row">
+                <td><span class="shimmer-cell shimmer-cell--sm"></span></td>
+                <td>
+                  <div class="user-cell">
+                    <span class="shimmer-cell shimmer-cell--avatar"></span>
+                    <span class="shimmer-cell shimmer-cell--wide"></span>
+                  </div>
+                </td>
+                <td><span class="shimmer-cell shimmer-cell--wide"></span></td>
+                <td><span class="shimmer-cell shimmer-cell--md"></span></td>
+                <td><span class="shimmer-cell shimmer-cell--sm"></span></td>
+                <td><span class="shimmer-cell shimmer-cell--wide"></span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else if (houseHelpsPage$ | async; as pageData) {
       <div class="table-meta">
         <span class="table-count">{{ pageData.totalElements }} total</span>
       </div>
@@ -51,6 +79,9 @@
                     <button mat-stroked-button class="btn-action btn-verify" (click)="securityVerify(houseHelp?.id)">
                       <mat-icon>verified_user</mat-icon> Verify
                     </button>
+                    <button mat-stroked-button class="btn-action" (click)="openAssignAgentDialog(houseHelp.id)">
+                      <mat-icon>person_pin</mat-icon> Agent
+                    </button>
                     <button
                       mat-stroked-button
                       [class]="houseHelp?.active ? 'btn-action btn-danger' : 'btn-action btn-success'"
@@ -76,6 +107,29 @@
         [pageSizeOptions]="[10, 20, 50]"
         (page)="onHouseHelpPageChange($event)">
       </mat-paginator>
-    </div>
-  }
+    }
+  </div>
 </div>
+
+<!-- Assign Agent Dialog -->
+<ng-template #assignAgentDialog>
+  <h2 mat-dialog-title style="font-weight:700;color:#1a3c34">Assign Agent</h2>
+  <mat-dialog-content style="min-width:320px;padding-top:8px">
+    <mat-form-field appearance="outline" style="width:100%">
+      <mat-label>Select Agent</mat-label>
+      <mat-select [(ngModel)]="selectedAgentId">
+        @for (agent of agents; track agent.id) {
+          <mat-option [value]="agent.id">
+            {{ agent.fullName || agent.user?.name }} — {{ agent.phoneNumber }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button mat-dialog-close>Cancel</button>
+    <button mat-flat-button color="primary" [disabled]="!selectedAgentId" (click)="confirmAssignAgent()">
+      Assign
+    </button>
+  </mat-dialog-actions>
+</ng-template>

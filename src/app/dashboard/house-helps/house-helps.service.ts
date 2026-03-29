@@ -96,4 +96,8 @@ export class HousehelpService {
     );
   }
 
+  updateHiringStatus(id: number, hiringStatus: string): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${id}`, { hiringStatus });
+  }
+
 }

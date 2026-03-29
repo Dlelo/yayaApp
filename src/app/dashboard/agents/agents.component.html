@@ -6,8 +6,36 @@
     </div>
   </div>
 
-  @if (agentsPage$ | async; as pageData) {
-    <div class="dash-card">
+  <div class="dash-card">
+    @if (loading) {
+      <div class="table-meta">
+        <span class="shimmer-text" style="width:110px"></span>
+      </div>
+      <div class="table-wrap">
+        <table class="dash-table">
+          <thead>
+            <tr><th>#</th><th>Agent</th><th>Phone</th><th>Location</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            @for (s of shimmerRows; track s) {
+              <tr class="shimmer-row">
+                <td><span class="shimmer-cell shimmer-cell--sm"></span></td>
+                <td>
+                  <div class="user-cell">
+                    <span class="shimmer-cell shimmer-cell--avatar"></span>
+                    <span class="shimmer-cell shimmer-cell--wide"></span>
+                  </div>
+                </td>
+                <td><span class="shimmer-cell shimmer-cell--md"></span></td>
+                <td><span class="shimmer-cell shimmer-cell--wide"></span></td>
+                <td><span class="shimmer-cell shimmer-cell--sm"></span></td>
+                <td><span class="shimmer-cell shimmer-cell--wide"></span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else if (agentsPage$ | async; as pageData) {
       <div class="table-meta">
         <span class="table-count">{{ pageData.totalElements }} total agents</span>
       </div>
@@ -30,17 +58,17 @@
                 <td class="row-num">{{ i + 1 + (pageData.number * pageData.size) }}</td>
                 <td>
                   <div class="user-cell">
-                    <div class="user-avatar user-avatar--cyan">{{ getInitial(agent.fullName || agent.user?.name) }}</div>
+                    <div class="user-avatar user-avatar--cyan">{{ getInitial(agent.agentProfile?.fullName || agent.name) }}</div>
                     <div>
-                      <div>{{ agent.fullName || agent.user?.name }}</div>
-                      <div class="text-muted" style="font-size:0.78rem">{{ agent.email || agent.user?.email }}</div>
+                      <div>{{ agent.agentProfile?.fullName || agent.name }}</div>
+                      <div class="text-muted" style="font-size:0.78rem">{{ agent.email }}</div>
                     </div>
                   </div>
                 </td>
-                <td class="text-muted">{{ agent.phoneNumber }}</td>
-                <td class="text-muted">{{ agent.locationOfOperation || '—' }}</td>
+                <td class="text-muted">{{ agent.agentProfile?.phoneNumber || agent.phoneNumber }}</td>
+                <td class="text-muted">{{ agent.agentProfile?.locationOfOperation || '—' }}</td>
                 <td>
-                  @if (agent.verified) {
+                  @if (agent.agentProfile?.verified) {
                     <span class="status-badge status-badge--active">Verified</span>
                   } @else {
                     <span class="status-badge status-badge--inactive">Unverified</span>
@@ -48,13 +76,13 @@
                 </td>
                 <td>
                   <div class="action-btns">
-                    @if (!agent.verified) {
-                      <button mat-stroked-button class="btn-action btn-verify" (click)="verifyAgent(agent.id)">
+                    @if (agent.agentProfile && !agent.agentProfile.verified) {
+                      <button mat-stroked-button class="btn-action btn-verify" (click)="verifyAgent(agent.agentProfile.id)">
                         <mat-icon>verified</mat-icon> Verify
                       </button>
                     }
-                    <button mat-stroked-button class="btn-action">
-                      <mat-icon>visibility</mat-icon> View
+                    <button mat-stroked-button class="btn-action" (click)="openEditDialog(agent)">
+                      <mat-icon>edit</mat-icon> Edit
                     </button>
                   </div>
                 </td>
@@ -71,6 +99,47 @@
         [pageSizeOptions]="[10, 20, 50]"
         (page)="onPageChange($event)">
       </mat-paginator>
-    </div>
-  }
+    }
+  </div>
 </div>
+
+<!-- Edit Agent Dialog -->
+<ng-template #editAgentDialog>
+  <h2 mat-dialog-title style="font-weight:700;color:#1a3c34">Edit Agent</h2>
+  <mat-dialog-content style="min-width:460px;padding-top:8px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <mat-form-field appearance="outline">
+        <mat-label>Full Name</mat-label>
+        <input matInput [(ngModel)]="editingAgent.fullName" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Phone Number</mat-label>
+        <input matInput [(ngModel)]="editingAgent.phoneNumber" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput [(ngModel)]="editingAgent.email" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>National ID</mat-label>
+        <input matInput [(ngModel)]="editingAgent.nationalId" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Location of Operation</mat-label>
+        <input matInput [(ngModel)]="editingAgent.locationOfOperation" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Home Location</mat-label>
+        <input matInput [(ngModel)]="editingAgent.homeLocation" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" style="grid-column:span 2">
+        <mat-label>House Number</mat-label>
+        <input matInput [(ngModel)]="editingAgent.houseNumber" />
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button mat-dialog-close>Cancel</button>
+    <button mat-flat-button color="primary" (click)="saveAgent()">Save</button>
+  </mat-dialog-actions>
+</ng-template>

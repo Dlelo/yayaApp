@@ -2,37 +2,223 @@
 
   <div class="page-header">
     <h1 class="page-title">Dashboard Overview</h1>
-    <p class="page-subtitle">Platform statistics and activity</p>
+    <p class="page-subtitle">Real-time business insights for yayaConnect</p>
   </div>
 
-  <!-- Stats Grid -->
-  <div class="stats-grid">
-    @for (stat of stats; track stat.key) {
-      <div class="stat-card stat-card--{{ stat.color }}">
-        <div class="stat-icon-wrap">
-          <mat-icon>{{ stat.icon }}</mat-icon>
-        </div>
-        <div class="stat-body">
-          @if (loading()) {
-            <div class="stat-skeleton"></div>
-          } @else {
-            <span class="stat-value">{{ getStatValue(stat.key) | number }}</span>
-          }
-          <span class="stat-label">{{ stat.label }}</span>
-          <span class="stat-desc">{{ stat.description }}</span>
+  <!-- ─── KPI Cards ─── -->
+  <div class="kpi-grid">
+
+    <!-- Total Users -->
+    <div class="kpi-card kpi-card--blue">
+      <div class="kpi-icon-wrap">
+        <mat-icon>group</mat-icon>
+      </div>
+      <div class="kpi-body">
+        @if (loading()) {
+          <span class="shimmer-text" style="width:70px;height:2rem"></span>
+        } @else {
+          <span class="kpi-value">{{ stats()?.totalUsers | number }}</span>
+        }
+        <span class="kpi-label">Total Users</span>
+        @if (!loading() && stats()) {
+          <div class="kpi-trend">
+            <mat-icon class="trend-up">trending_up</mat-icon>
+            <span>+{{ stats()!.usersThisWeek }} this week</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- House Helps -->
+    <div class="kpi-card kpi-card--cyan">
+      <div class="kpi-icon-wrap">
+        <mat-icon>cleaning_services</mat-icon>
+      </div>
+      <div class="kpi-body">
+        @if (loading()) {
+          <span class="shimmer-text" style="width:70px;height:2rem"></span>
+        } @else {
+          <span class="kpi-value">{{ stats()?.totalHouseHelps | number }}</span>
+        }
+        <span class="kpi-label">House Helps</span>
+        <span class="kpi-sub">Registered domestic staff</span>
+      </div>
+    </div>
+
+    <!-- Home Owners -->
+    <div class="kpi-card kpi-card--green">
+      <div class="kpi-icon-wrap">
+        <mat-icon>house</mat-icon>
+      </div>
+      <div class="kpi-body">
+        @if (loading()) {
+          <span class="shimmer-text" style="width:70px;height:2rem"></span>
+        } @else {
+          <span class="kpi-value">{{ stats()?.totalHomeOwners | number }}</span>
+        }
+        <span class="kpi-label">Home Owners</span>
+        <span class="kpi-sub">Families on the platform</span>
+      </div>
+    </div>
+
+    <!-- Agents -->
+    <div class="kpi-card kpi-card--orange">
+      <div class="kpi-icon-wrap">
+        <mat-icon>support_agent</mat-icon>
+      </div>
+      <div class="kpi-body">
+        @if (loading()) {
+          <span class="shimmer-text" style="width:70px;height:2rem"></span>
+        } @else {
+          <span class="kpi-value">{{ stats()?.totalAgents | number }}</span>
+        }
+        <span class="kpi-label">Agents</span>
+        <span class="kpi-sub">Verified platform agents</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─── Revenue & Hire Requests ─── -->
+  <div class="insights-grid">
+
+    <!-- Revenue Card -->
+    <div class="insight-card">
+      <div class="insight-header">
+        <div class="insight-title-wrap">
+          <mat-icon class="insight-icon insight-icon--green">payments</mat-icon>
+          <span class="insight-title">Revenue</span>
         </div>
       </div>
-    }
+      @if (loading()) {
+        <div class="insight-shimmer">
+          <span class="shimmer-text" style="width:150px;height:2.5rem;margin-bottom:1rem"></span>
+          <span class="shimmer-text" style="width:200px;height:12px;margin-bottom:0.5rem"></span>
+          <span class="shimmer-text" style="width:180px;height:12px"></span>
+        </div>
+      } @else if (stats()) {
+        <div class="revenue-main">
+          <span class="revenue-total">KES {{ stats()!.totalRevenue | number:'1.0-0' }}</span>
+          <span class="revenue-label">Total collected</span>
+        </div>
+        <div class="revenue-breakdown">
+          <div class="revenue-row">
+            <span class="rev-period">This week</span>
+            <span class="rev-amount">KES {{ stats()!.revenueThisWeek | number:'1.0-0' }}</span>
+          </div>
+          <div class="revenue-row">
+            <span class="rev-period">This month</span>
+            <span class="rev-amount">KES {{ stats()!.revenueThisMonth | number:'1.0-0' }}</span>
+          </div>
+        </div>
+        <div class="payment-status-row">
+          <div class="pay-stat pay-stat--success">
+            <mat-icon>check_circle</mat-icon>
+            <span>{{ stats()!.successfulPayments | number }} successful</span>
+          </div>
+          <div class="pay-stat pay-stat--pending">
+            <mat-icon>schedule</mat-icon>
+            <span>{{ stats()!.pendingPayments | number }} pending</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Hire Requests Card -->
+    <div class="insight-card">
+      <div class="insight-header">
+        <div class="insight-title-wrap">
+          <mat-icon class="insight-icon insight-icon--orange">assignment</mat-icon>
+          <span class="insight-title">Hire Requests</span>
+        </div>
+      </div>
+      @if (loading()) {
+        <div class="insight-shimmer">
+          <span class="shimmer-text" style="width:100px;height:2.5rem;margin-bottom:1rem"></span>
+          <span class="shimmer-text" style="width:100%;height:12px;margin-bottom:0.5rem"></span>
+          <span class="shimmer-text" style="width:80%;height:8px"></span>
+        </div>
+      } @else if (stats()) {
+        <div class="hire-total">
+          <span class="hire-count">{{ stats()!.totalHireRequests | number }}</span>
+          <span class="hire-label">Total requests</span>
+        </div>
+        <div class="hire-progress-wrap">
+          <div class="hire-bar">
+            <div class="hire-bar__fill" [style.width.%]="hiresAcceptedRate"></div>
+          </div>
+          <span class="hire-rate">{{ hiresAcceptedRate }}% acceptance rate</span>
+        </div>
+        <div class="hire-breakdown">
+          <div class="hire-stat hire-stat--pending">
+            <span class="hire-stat-count">{{ stats()!.pendingHireRequests }}</span>
+            <span class="hire-stat-label">Pending</span>
+          </div>
+          <div class="hire-stat hire-stat--accepted">
+            <span class="hire-stat-count">{{ stats()!.acceptedHireRequests }}</span>
+            <span class="hire-stat-label">Accepted</span>
+          </div>
+          <div class="hire-stat hire-stat-rejected">
+            <span class="hire-stat-count">{{ stats()!.totalHireRequests - stats()!.pendingHireRequests - stats()!.acceptedHireRequests }}</span>
+            <span class="hire-stat-label">Rejected</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- User Growth Card -->
+    <div class="insight-card">
+      <div class="insight-header">
+        <div class="insight-title-wrap">
+          <mat-icon class="insight-icon insight-icon--blue">person_add</mat-icon>
+          <span class="insight-title">User Growth</span>
+        </div>
+      </div>
+      @if (loading()) {
+        <div class="insight-shimmer">
+          <span class="shimmer-text" style="width:120px;height:2rem;margin-bottom:1rem"></span>
+          <span class="shimmer-text" style="width:180px;height:12px;margin-bottom:0.5rem"></span>
+          <span class="shimmer-text" style="width:160px;height:12px"></span>
+        </div>
+      } @else if (stats()) {
+        <div class="growth-rows">
+          <div class="growth-row">
+            <div class="growth-period">
+              <mat-icon>calendar_today</mat-icon>
+              <span>This week</span>
+            </div>
+            <span class="growth-count">+{{ stats()!.usersThisWeek }}</span>
+          </div>
+          <div class="growth-divider"></div>
+          <div class="growth-row">
+            <div class="growth-period">
+              <mat-icon>date_range</mat-icon>
+              <span>This month</span>
+            </div>
+            <span class="growth-count">+{{ stats()!.usersThisMonth }}</span>
+          </div>
+          <div class="growth-divider"></div>
+          <div class="growth-row">
+            <div class="growth-period">
+              <mat-icon>group</mat-icon>
+              <span>Total</span>
+            </div>
+            <span class="growth-count">{{ stats()!.totalUsers | number }}</span>
+          </div>
+        </div>
+      }
+    </div>
+
   </div>
 
-  <!-- Quick Links -->
+  <!-- ─── Quick Actions ─── -->
   <div class="section-header">
     <h2>Quick Actions</h2>
   </div>
 
   <div class="quick-actions">
     <a routerLink="../houseHelps" class="quick-card">
-      <mat-icon>manage_accounts</mat-icon>
+      <mat-icon>cleaning_services</mat-icon>
       <span>Manage House Helps</span>
     </a>
     <a routerLink="../homeOwners" class="quick-card">
@@ -41,7 +227,15 @@
     </a>
     <a routerLink="../requests" class="quick-card">
       <mat-icon>assignment</mat-icon>
-      <span>View Hire Requests</span>
+      <span>Hire Requests</span>
+    </a>
+    <a routerLink="../payments" class="quick-card">
+      <mat-icon>payments</mat-icon>
+      <span>Payments</span>
+    </a>
+    <a routerLink="../agents" class="quick-card">
+      <mat-icon>support_agent</mat-icon>
+      <span>Agents</span>
     </a>
     <a routerLink="../users" class="quick-card">
       <mat-icon>admin_panel_settings</mat-icon>
