@@ -145,6 +145,12 @@ $orange: #e27220;
   width: 100%;
 }
 
+.two-col-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
 .password-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -208,6 +214,7 @@ $orange: #e27220;
 
 /* RESPONSIVE */
 @media (max-width: 900px) {
+  .two-col-row,
   .password-row {
     grid-template-columns: 1fr;
   }

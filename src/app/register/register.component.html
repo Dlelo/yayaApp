@@ -36,49 +36,68 @@
 
       <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
 
-        <mat-form-field appearance="outline" class="full-field">
-          <mat-label>Full Name</mat-label>
-          <mat-icon matPrefix>badge</mat-icon>
-          <input matInput formControlName="name" placeholder="Your full name" />
-          @if(form.controls.name.hasError('required') && form.controls.name.touched){
-            <mat-error>Full name is required</mat-error>
-          }
-        </mat-form-field>
+        <!-- Name row -->
+        <div class="two-col-row">
+          <mat-form-field appearance="outline" class="full-field">
+            <mat-label>First Name</mat-label>
+            <mat-icon matPrefix>person</mat-icon>
+            <input matInput formControlName="firstName" placeholder="John" autocomplete="given-name" />
+            @if (form.controls.firstName.hasError('required') && form.controls.firstName.touched) {
+              <mat-error>First name is required</mat-error>
+            }
+            @if (form.controls.firstName.hasError('minlength') && form.controls.firstName.touched) {
+              <mat-error>At least 2 characters</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-field">
+            <mat-label>Last Name</mat-label>
+            <mat-icon matPrefix>person_outline</mat-icon>
+            <input matInput formControlName="lastName" placeholder="Doe" autocomplete="family-name" />
+            @if (form.controls.lastName.hasError('required') && form.controls.lastName.touched) {
+              <mat-error>Last name is required</mat-error>
+            }
+            @if (form.controls.lastName.hasError('minlength') && form.controls.lastName.touched) {
+              <mat-error>At least 2 characters</mat-error>
+            }
+          </mat-form-field>
+        </div>
 
         <mat-form-field appearance="outline" class="full-field">
           <mat-label>Email Address</mat-label>
           <mat-icon matPrefix>email</mat-icon>
-          <input matInput formControlName="email" type="email" placeholder="you@example.com" />
-          @if(form.controls.email.hasError('email') && form.controls.email.touched){
-            <mat-error>Please enter a valid email</mat-error>
+          <input matInput formControlName="email" type="email" placeholder="you@example.com" autocomplete="email" />
+          @if (form.controls.email.hasError('email') && form.controls.email.touched) {
+            <mat-error>Please enter a valid email address</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-field">
           <mat-label>Phone Number</mat-label>
           <mat-icon matPrefix>phone</mat-icon>
-          <input matInput formControlName="phoneNumber" placeholder="+254XXXXXXXXX" type="tel" />
+          <input matInput formControlName="phoneNumber" placeholder="+254700000000" type="tel" autocomplete="tel" />
           <mat-hint>Format: <strong>+254XXXXXXXXX</strong></mat-hint>
-          @if(form.controls.phoneNumber.hasError('required') && form.controls.phoneNumber.touched){
+          @if (form.controls.phoneNumber.hasError('required') && form.controls.phoneNumber.touched) {
             <mat-error>Phone number is required</mat-error>
           }
-          @if(form.controls.phoneNumber.hasError('invalidPhoneNumber')){
-            <mat-error>Enter a valid phone number (+254XXXXXXXXX)</mat-error>
+          @if (form.controls.phoneNumber.hasError('invalidPhoneNumber')) {
+            <mat-error>Enter a valid Kenyan number (+254XXXXXXXXX)</mat-error>
           }
         </mat-form-field>
 
-        <div class="password-row">
+        <!-- Password row -->
+        <div class="two-col-row">
           <mat-form-field appearance="outline" class="full-field">
             <mat-label>Password</mat-label>
             <mat-icon matPrefix>lock</mat-icon>
-            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" />
-            <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" autocomplete="new-password" />
+            <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button" [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'">
               <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
             </button>
-            @if(form.controls.password.hasError('required') && form.controls.password.touched){
+            @if (form.controls.password.hasError('required') && form.controls.password.touched) {
               <mat-error>Password is required</mat-error>
             }
-            @if(form.controls.password.hasError('minlength')){
+            @if (form.controls.password.hasError('minlength')) {
               <mat-error>Minimum 6 characters</mat-error>
             }
           </mat-form-field>
@@ -86,14 +105,14 @@
           <mat-form-field appearance="outline" class="full-field">
             <mat-label>Confirm Password</mat-label>
             <mat-icon matPrefix>lock_reset</mat-icon>
-            <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword" />
-            <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" type="button">
+            <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword" autocomplete="new-password" />
+            <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" type="button" [attr.aria-label]="hideConfirmPassword ? 'Show password' : 'Hide password'">
               <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
             </button>
-            @if(form.controls.confirmPassword.hasError('required') && form.controls.confirmPassword.touched){
+            @if (form.controls.confirmPassword.hasError('required') && form.controls.confirmPassword.touched) {
               <mat-error>Please confirm your password</mat-error>
             }
-            @if(form.hasError('passwordMismatch') && form.controls.confirmPassword.touched){
+            @if (form.hasError('passwordMismatch') && form.controls.confirmPassword.touched) {
               <mat-error>Passwords do not match</mat-error>
             }
           </mat-form-field>
@@ -106,17 +125,12 @@
             and
             <a href="/privacy-policy" target="_blank">Privacy Policy</a>
           </mat-checkbox>
-          @if(form.controls.termsAccepted.touched && form.controls.termsAccepted.invalid) {
+          @if (form.controls.termsAccepted.touched && form.controls.termsAccepted.invalid) {
             <div class="terms-error">You must accept the Terms &amp; Conditions to continue</div>
           }
         </div>
 
-        <button
-          mat-flat-button
-          class="submit-btn"
-          type="submit"
-          [disabled]="form.invalid"
-        >
+        <button mat-flat-button class="submit-btn" type="submit">
           <mat-icon>person_add</mat-icon>
           Create Account
         </button>
