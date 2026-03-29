@@ -8,16 +8,20 @@ interface PageResponse<T> {
   last: boolean;
 }
 
-interface HomeOwnerRef {
-  id: number;
-  user: User;
-}
-
 interface HireRequest {
   id: number;
-  homeOwner: HomeOwnerRef;
-  houseHelp: User;
-  createdAt: string;
   status: string;
   paid: boolean;
+  createdAt: string;
+  houseHelp: {
+    id: number;
+    name: string;
+  };
+  homeOwner: {
+    id: number;
+    user: {
+      id: number;
+      name: string;
+    };
+  };
 }

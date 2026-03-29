@@ -1,12 +1,8 @@
-import {Component, inject, OnInit, ViewChild, TemplateRef} from '@angular/core';
-import {MatCard} from '@angular/material/card';
+import {Component, OnInit, ViewChild, TemplateRef, ChangeDetectorRef, inject} from '@angular/core';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSelectModule} from '@angular/material/select';
 import {HousehelpService} from './house-helps.service';
-import {AsyncPipe} from '@angular/common';
-import {Observable, of, shareReplay} from 'rxjs';
-import {tap, catchError} from 'rxjs/operators';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -21,13 +17,11 @@ import {FormsModule} from '@angular/forms';
   templateUrl: './house-helps.component.html',
   styleUrls: ['./house-helps.component.scss'],
   imports: [
-    MatCard,
     MatIconModule,
     MatButtonModule,
     MatSelectModule,
     MatDialogModule,
     FormsModule,
-    AsyncPipe,
     MatPaginatorModule,
   ],
   providers: [HousehelpService, AgentService],
@@ -40,14 +34,15 @@ export class HouseHelpsComponent implements OnInit {
   private readonly agentService: AgentService = inject(AgentService);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
-  private dialog: MatDialog = inject(MatDialog);
+  private readonly dialog = inject(MatDialog);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   page = 0;
   size = 20;
   loading = true;
-  shimmerRows = [1,2,3,4,5];
+  shimmerRows = [1, 2, 3, 4, 5];
 
-  houseHelpsPage$!: Observable<PageResponse<HouseHelp>>;
+  houseHelpsPage: PageResponse<HouseHelp> | null = null;
 
   agents: Agent[] = [];
   selectedAgentId: number | null = null;
@@ -60,13 +55,18 @@ export class HouseHelpsComponent implements OnInit {
 
   loadHouseHelps(): void {
     this.loading = true;
-    const shared$ = this.househelpService.getHouseHelps(this.page, this.size, null).pipe(
-      tap(() => this.loading = false),
-      catchError(() => { this.loading = false; return of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true }); }),
-      shareReplay(1)
-    );
-    this.houseHelpsPage$ = shared$ as any;
-    shared$.subscribe();
+    this.househelpService.getHouseHelps(this.page, this.size, null).subscribe({
+      next: (data) => {
+        this.houseHelpsPage = data;
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.houseHelpsPage = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true };
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   loadAgents(): void {

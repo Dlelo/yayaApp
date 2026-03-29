@@ -13,6 +13,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatChipGrid, MatChipRow, MatChipInput } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Observable, take, tap, shareReplay } from 'rxjs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { LoginService } from '../login/login.service';
 import { AccountDetailsService } from '../account-details/account-details.service';
@@ -42,7 +43,8 @@ import {CHILD_AGE_RANGE_OPTIONS, ChildAgeRange} from './child-age-range.enum';
     MatChipGrid,
     MatChipRow,
     MatChipInput,
-    MatCheckbox
+    MatCheckbox,
+    MatTooltipModule,
   ],
   providers: [HousehelpService, HomeOwnerService],
 })
@@ -65,14 +67,88 @@ export class EditAccountDetailsComponent implements OnInit {
 
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
-  skills: string[] = [];
-  languages: string[] = [];
-
   form!: FormGroup;
   isHouseHelp = false;
   isHomeOwner = false;
 
   childAgeRangeOptions = CHILD_AGE_RANGE_OPTIONS;
+
+  readonly availabilityTypeOptions = [
+    { value: 'DAYBURG',           label: 'Day Burg (Day Worker)' },
+    { value: 'LIVE_IN',           label: 'Live In' },
+    { value: 'EMERGENCY',         label: 'Emergency' },
+    { value: 'EMERGENCY_LIVE_IN', label: 'Emergency Live In' },
+    { value: 'EMERGENCY_DAYBURG', label: 'Emergency Day Burg' },
+  ];
+
+  readonly skillsOptions = [
+    { value: 'COOKING',                    label: 'Cooking' },
+    { value: 'COOK_CHAPATI',               label: 'Cook Chapati' },
+    { value: 'COOK_MANDAZI',               label: 'Cook Mandazi' },
+    { value: 'BAKE_CAKE',                  label: 'Bake Cake' },
+    { value: 'BAKE_BREAD',                 label: 'Bake Bread' },
+    { value: 'COOK_FRIES',                 label: 'Cook Fries' },
+    { value: 'COOK_BHAGIA',                label: 'Cook Bhagia' },
+    { value: 'COOK_NYAMA_CHOMA',           label: 'Cook Nyama Choma' },
+    { value: 'COOKING_KENYAN_DISHES',      label: 'Kenyan Dishes' },
+    { value: 'BABYSITTING',                label: 'Babysitting' },
+    { value: 'ELDERS_CARE',                label: 'Elders Care' },
+    { value: 'SPECIAL_NEEDS_CARE',         label: 'Special Needs Care' },
+    { value: 'MOTHER_HELP_AFTER_DELIVERY', label: 'Post-Delivery Help' },
+    { value: 'DRIVE',                      label: 'Driving' },
+    { value: 'SHOPPING_RUNS',              label: 'Shopping Runs' },
+    { value: 'CLEANING',                   label: 'Cleaning' },
+    { value: 'LAUNDRY',                    label: 'Laundry' },
+    { value: 'HOUSEKEEPING',               label: 'Housekeeping' },
+    { value: 'IRONING',                    label: 'Ironing' },
+    { value: 'DISH_WASHING',               label: 'Dish Washing' },
+  ];
+
+  readonly languagesOptions = [
+    { value: 'ENGLISH', label: 'English' },
+    { value: 'SWAHILI',  label: 'Swahili' },
+    { value: 'LUHYA',    label: 'Luhya' },
+    { value: 'LUO',      label: 'Luo' },
+    { value: 'KIKUYU',   label: 'Kikuyu' },
+    { value: 'KAMBA',    label: 'Kamba' },
+    { value: 'KISII',    label: 'Kisii' },
+  ];
+
+  readonly careServicesOptions = [
+    { value: 'HOMEWORK_HELP',              label: 'Homework Help' },
+    { value: 'EVENTS',                     label: 'Events' },
+    { value: 'SHOPPING_RUNS',              label: 'Shopping Runs' },
+    { value: 'TRACKING_CHILD_DEVELOPMENT', label: 'Track Child Development' },
+    { value: 'TOILET_TRAINING',            label: 'Toilet Training' },
+    { value: 'PET_CARE',                   label: 'Pet Care' },
+    { value: 'PRAY_WITH_CHILD',            label: 'Pray with Child' },
+    { value: 'PRAY_WITH_FAMILY',           label: 'Pray with Family' },
+    { value: 'FEEDING_CHILD',              label: 'Feeding Child' },
+    { value: 'FAMILY_PRAYER',              label: 'Family Prayer' },
+    { value: 'READING_BIBLE_STORIES',      label: 'Read Bible Stories' },
+    { value: 'READ_BEDTIME_STORIES',       label: 'Bedtime Stories' },
+    { value: 'POTTY_TRAINING',             label: 'Potty Training' },
+    { value: 'TRAVEL_WITH_FAMILY',         label: 'Travel with Family' },
+    { value: 'TAKE_CHILDREN_TO_SCHOOL',    label: 'Take to School' },
+    { value: 'PICK_CHILDREN_FROM_SCHOOL',  label: 'Pick from School' },
+    { value: 'TAKE_CHILDREN_FOR_EVENTS',   label: 'Take to Events' },
+    { value: 'TAKE_CHILDREN_TO_PARK',      label: 'Take to Park' },
+    { value: 'EDUCATIONAL_PLAY',           label: 'Educational Play' },
+    { value: 'TAKE_CHILDREN_TO_CLINICS',   label: 'Take to Clinics' },
+  ];
+
+  readonly countyOptions = [
+    'NAIROBI','KIAMBU','MACHAKOS','KAJIADO','MURANG_A','NYERI','KIRINYAGA','NYANDARUA',
+    'EMBU','THARAKA_NITHI','MERU','ISIOLO','MARSABIT','GARISSA','WAJIR','MANDERA',
+    'MOMBASA','KWALE','KILIFI','TANA_RIVER','LAMU','TAITA_TAVETA','NAKURU','NAROK',
+    'KERICHO','BOMET','KAKAMEGA','VIHIGA','BUNGOMA','BUSIA','SIAYA','KISUMU',
+    'HOMA_BAY','MIGORI','KISII','NYAMIRA','NAIVASHA','BARINGO','LAIKIPIA','SAMBURU',
+    'TRANS_NZOIA','UASIN_GISHU','ELGEYO_MARAKWET','NANDI','WEST_POKOT','TURKANA','MAKUENI',
+  ];
+
+  countyLabel(v: string): string {
+    return v.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  }
 
   goodConductFileName: string | null = null;
   goodConductPreviewUrl: string | null = null;
@@ -88,8 +164,6 @@ export class EditAccountDetailsComponent implements OnInit {
   profilePictureFile: File | null = null;
   profilePicturePreviewUrl: string | null = null;
   profileUploadProgress = 0;
-
-  availabilityTypes = ['DAYBURG', 'EMERGENCY', 'LIVE_IN'];
 
   additionalDocUrls: string[] = [];
   additionalDocUploading = false;
@@ -188,10 +262,6 @@ export class EditAccountDetailsComponent implements OnInit {
     const currentValues: string[] = control?.value || [];
     control?.setValue([...currentValues, value]);
 
-    if (target === 'skills' || target === 'languages') {
-      this[target] = [...currentValues, value]; // Update component-level array for display
-    }
-
     event.chipInput!.clear();
   }
 
@@ -200,9 +270,6 @@ export class EditAccountDetailsComponent implements OnInit {
     const updated = (control?.value || []).filter((v: string) => v !== value);
     control?.setValue(updated);
 
-    if (target === 'skills' || target === 'languages') {
-      this[target] = updated;
-    }
   }
 
 
@@ -219,21 +286,8 @@ export class EditAccountDetailsComponent implements OnInit {
             Validators.required
           ],
 
-          skills: [
-            Array.isArray(user.houseHelp?.skills)
-              ? user.houseHelp.skills
-              : user.houseHelp?.skills
-                ? user.houseHelp.skills.split(',')
-                : []
-          ],
-
-          languages: [
-            Array.isArray(user.houseHelp?.languages)
-              ? user.houseHelp.languages
-              : user.houseHelp?.languages
-                ? user.houseHelp.languages.split(',')
-                : []
-          ],
+          skills: [Array.isArray(user.houseHelp?.skills) ? user.houseHelp.skills : []],
+          languages: [Array.isArray(user.houseHelp?.languages) ? user.houseHelp.languages : []],
 
           goodConduct: [user.houseHelp?.goodConduct || ''],
           medicalReport: [user.houseHelp?.medicalReport || ''],
@@ -257,18 +311,19 @@ export class EditAccountDetailsComponent implements OnInit {
           ],
           additionalDocuments: [user.houseHelp?.additionalDocuments || []],
           preferences: this.fb.group({
-            houseHelpType: [user.houseHelp?.preferences?.houseHelpType || null],
-            minExperience: [user.houseHelp?.preferences?.minExperience || 0],
-            preferredLocation: [user.houseHelp?.preferences?.preferredLocation || ''],
-            preferredSkills: [this.normalizeList(user.houseHelp?.preferences?.preferredSkills)],
-            preferredLanguages: [this.normalizeList(user.houseHelp?.preferences?.preferredLanguages)],
-            preferredChildAgeRanges: [user.houseHelp?.preferences?.preferredChildAgeRanges as ChildAgeRange[] || [] as ChildAgeRange[]],
-            preferredMaxChildren: [user.houseHelp?.preferences?.preferredMaxChildren || null],
-            preferredServices: [user.houseHelp?.preferences?.preferredServices || []],
-            preferredReligion: [user.houseHelp?.preferences?.preferredReligion || ''],
-            okayWithPets: [user.houseHelp?.preferences?.okayWithPets || false],
-            minSalary: [user.houseHelp?.preferences?.minSalary || null],
-            maxSalary: [user.houseHelp?.preferences?.maxSalary || null],
+            // Field names match HouseHelpPreferenceUpdateDTO exactly
+            houseHelpType:           [user.houseHelp?.preferences?.houseHelpType || null],
+            minExperience:           [user.houseHelp?.preferences?.minExperience || null],
+            preferredLocation:       [user.houseHelp?.preferences?.preferredLocation || ''],
+            preferredSkills:         [user.houseHelp?.preferences?.preferredSkills || []],
+            preferredLanguages:      [user.houseHelp?.preferences?.preferredLanguages || []],
+            preferredChildAgeRanges: [user.houseHelp?.preferences?.preferredChildAgeRanges || []],
+            preferredMaxChildren:    [user.houseHelp?.preferences?.preferredMaxChildren || null],
+            preferredServices:       [user.houseHelp?.preferences?.preferredServices || []],
+            preferredReligion:       [user.houseHelp?.preferences?.preferredReligion || ''],
+            okayWithPets:            [user.houseHelp?.preferences?.okayWithPets ?? false],
+            minSalary:               [user.houseHelp?.preferences?.minSalary || null],
+            maxSalary:               [user.houseHelp?.preferences?.maxSalary || null],
           }),
         })
         : null,
@@ -286,17 +341,23 @@ export class EditAccountDetailsComponent implements OnInit {
           profilePicture: [user.homeOwner?.profilePicture || ''],
           additionalDocuments: [user.homeOwner?.additionalDocuments || []],
           preferences: this.fb.group({
-            preferredLocation: [user.homeOwner?.preferences?.preferredLocation || ''],
-            preferredSkills: [this.normalizeList(user.homeOwner?.preferences?.preferredSkills)],
-            preferredLanguages: [this.normalizeList(user.homeOwner?.preferences?.preferredLanguages)],
-            preferredChildAgeRanges: [user.homeOwner?.preferences?.preferredChildAgeRanges as ChildAgeRange[] || user.homeOwner?.preferences?.childrenAgeRanges as ChildAgeRange[] || [] as ChildAgeRange[]],
-            preferredMaxChildren: [user.homeOwner?.preferences?.preferredMaxChildren || null],
-            preferredServices: [user.homeOwner?.preferences?.preferredServices || []],
-            preferredReligion: [user.homeOwner?.preferences?.preferredReligion || user.homeOwner?.preferences?.religionPreference || ''],
-            hasPets: [user.homeOwner?.preferences?.hasPets || false],
-            maxSalary: [user.homeOwner?.preferences?.maxSalary || user.homeOwner?.preferences?.preferredMaxSalary || null],
-            minSalary: [user.homeOwner?.preferences?.minSalary || user.homeOwner?.preferences?.preferredMinSalary || null],
-
+            // Field names match HomeOwnerPreferenceUpdateDTO exactly
+            houseHelpType:         [user.homeOwner?.preferences?.houseHelpType || null],
+            minExperience:         [user.homeOwner?.preferences?.minExperience || null],
+            location:              [user.homeOwner?.preferences?.location || ''],
+            preferredSkills:       [user.homeOwner?.preferences?.preferredSkills || []],
+            preferredLanguages:    [user.homeOwner?.preferences?.preferredLanguages || []],
+            minMatchScore:         [user.homeOwner?.preferences?.minMatchScore || 50],
+            childrenAgeRanges:     [user.homeOwner?.preferences?.childrenAgeRanges || []],
+            numberOfChildren:      [user.homeOwner?.preferences?.numberOfChildren || null],
+            requiredServices:      [user.homeOwner?.preferences?.requiredServices || []],
+            hasPets:               [user.homeOwner?.preferences?.hasPets ?? false],
+            religionPreference:    [user.homeOwner?.preferences?.religionPreference || ''],
+            requiresSecurityCleared: [user.homeOwner?.preferences?.requiresSecurityCleared ?? false],
+            preferredMaxAge:       [user.homeOwner?.preferences?.preferredMaxAge || null],
+            preferredMinAge:       [user.homeOwner?.preferences?.preferredMinAge || null],
+            minSalary:             [user.homeOwner?.preferences?.minSalary || null],
+            maxSalary:             [user.homeOwner?.preferences?.maxSalary || null],
           }),
         })
         : null,
@@ -307,12 +368,6 @@ export class EditAccountDetailsComponent implements OnInit {
       : user.homeOwner?.pinLocation;
 
     if (this.isHouseHelp && user.houseHelp) {
-      this.skills = this.normalizeList(user.houseHelp.skills);
-      this.languages = this.normalizeList(user.houseHelp.languages);
-
-      this.form.get('houseHelp.skills')?.setValue(this.skills);
-      this.form.get('houseHelp.languages')?.setValue(this.languages);
-
       this.additionalDocUrls = user.houseHelp?.additionalDocuments || [];
     }
 
@@ -355,28 +410,6 @@ export class EditAccountDetailsComponent implements OnInit {
     if (this.form.invalid || !this.userId) return;
 
      const formValue = this.form.value;
-
-    // Normalize chips arrays
-    ['skills', 'languages'].forEach(field => {
-      if (formValue.houseHelp?.[field]) {
-        formValue.houseHelp[field] = (Array.isArray(formValue.houseHelp[field])
-            ? formValue.houseHelp[field]
-            : formValue.houseHelp[field].split(',')
-        ).map((s: string) => s.trim()).filter((s: string) => s.length > 0);
-      }
-    });
-
-     if (formValue.houseHelp?.languages) {
-       const languages = Array.isArray(formValue.houseHelp.languages)
-        ? formValue.houseHelp.languages
-        : typeof formValue.houseHelp.languages === 'string'
-           ? formValue.houseHelp.languages.split(',')
-          : [];
-
-       formValue.houseHelp.languages = languages
-         .map((s: string) => s.trim())
-         .filter((s: string) => s.length > 0);
-     }
 
     if(this.isHouseHelp){
 

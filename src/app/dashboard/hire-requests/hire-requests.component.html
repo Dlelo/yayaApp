@@ -62,7 +62,7 @@
           </tbody>
         </table>
       </div>
-    } @else if (hireRequestsPage$ | async; as pageData) {
+    } @else if (hireRequestsPage; as pageData) {
       <div class="table-meta">
         <span class="table-count">{{ pageData.totalElements }} total requests</span>
       </div>

@@ -13,7 +13,5 @@ interface User {
   name: string;
   email: string;
   phoneNumber: string;
-  roles:[{
-    name:string
-  }];
+  roles: string[];
 }

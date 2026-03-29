@@ -30,16 +30,14 @@ export class UsersService {
   getUsers(
     page:number,
     size:number,
-    filter: any = {}
   ): Observable<PageResponse<User>> {
 
     const params = new HttpParams()
       .set('page', page)
       .set('size', size);
 
-    return this.http.post<PageResponse<User>>(
-      `${this.apiUrl}/search`,
-      filter,
+    return this.http.get<PageResponse<User>>(
+      `${this.apiUrl}`,
       { params }
     );
   }

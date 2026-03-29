@@ -1,14 +1,10 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {MatCard} from '@angular/material/card';
+import {Component, OnInit, ChangeDetectorRef, inject} from '@angular/core';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButton} from '@angular/material/button';
 import {Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {Observable, of, shareReplay} from 'rxjs';
-import {tap, catchError} from 'rxjs/operators';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {HomeOwnerService} from './home-owners.service';
-import {AsyncPipe} from '@angular/common';
 import {MatDialog} from '@angular/material/dialog';
 import {SecurityVerifyDialogComponent} from '../security-clearance-dialog/security-clearance-dialog.component';
 
@@ -17,27 +13,26 @@ import {SecurityVerifyDialogComponent} from '../security-clearance-dialog/securi
   selector: 'app-home-owners',
   templateUrl: './home-owners.component.html',
   imports: [
-    MatCard,
     MatIconModule,
     MatButton,
-    AsyncPipe,
     MatPaginator,
   ],
   providers: [HomeOwnerService],
   standalone: true
 })
 export class HomeOwnersComponent implements OnInit {
-  private readonly  homeOwnerService:HomeOwnerService = inject(HomeOwnerService);
+  private readonly homeOwnerService: HomeOwnerService = inject(HomeOwnerService);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
-  private dialog: MatDialog = inject(MatDialog);
+  private readonly dialog = inject(MatDialog);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   page = 0;
   size = 20;
   loading = true;
-  shimmerRows = [1,2,3,4,5];
+  shimmerRows = [1, 2, 3, 4, 5];
 
-  homeOwnerPage$!: Observable<PageResponse<HomeOwner>>;
+  homeOwnerPage: PageResponse<HomeOwner> | null = null;
 
   ngOnInit(): void {
     this.loadHomeOwners();
@@ -45,28 +40,28 @@ export class HomeOwnersComponent implements OnInit {
 
   loadHomeOwners(): void {
     this.loading = true;
-    const shared$ = this.homeOwnerService.getHomeOwners(this.page, this.size, true).pipe(
-      tap(() => this.loading = false),
-      catchError(() => { this.loading = false; return of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true }); }),
-      shareReplay(1)
-    );
-    this.homeOwnerPage$ = shared$ as any;
-    shared$.subscribe();
+    this.homeOwnerService.getHomeOwners(this.page, this.size, true).subscribe({
+      next: (data) => {
+        this.homeOwnerPage = data;
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.homeOwnerPage = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true };
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
-  activateHouseHelp(id:number|undefined, active:boolean):void{
+  activateHouseHelp(id: number | undefined, active: boolean): void {
     this.homeOwnerService.setActiveStatus(id, active).subscribe({
       next: () => {
-        this.snackBar.open('✅HomeOwner updated successfully!', 'Close', {
-          duration: 3000,
-        });
+        this.snackBar.open('HomeOwner updated successfully!', 'Close', { duration: 3000 });
         this.loadHomeOwners();
       },
-      error: (err) => {
-        console.error(err);
-        this.snackBar.open('❌ Failed to update homeowner. Please try again.', 'Close', {
-          duration: 3000,
-        });
+      error: () => {
+        this.snackBar.open('Failed to update homeowner. Please try again.', 'Close', { duration: 3000 });
       },
     });
   }
@@ -77,38 +72,26 @@ export class HomeOwnersComponent implements OnInit {
     this.loadHomeOwners();
   }
 
-  editHomeOwner(userID:number|null){
+  editHomeOwner(userID: number | null) {
     this.router.navigate(['/edit-account/', userID]);
   }
 
-  securityVerify(homeOwnerId:number|undefined) {
+  securityVerify(homeOwnerId: number | undefined) {
     const ref = this.dialog.open(SecurityVerifyDialogComponent, {
       width: '450px',
-      data: {
-        homeOwnerId,
-        type: 'HOMEOWNER'
-      }
+      data: { homeOwnerId, type: 'HOMEOWNER' }
     });
 
     ref.afterClosed().subscribe(result => {
-      if (!result) {
-        return;
-      }
-
-      this.homeOwnerService.setSecurityCleared(homeOwnerId, result.cleared, result.comments)
-        .subscribe({
-          next: (res) => {
-            this.snackBar.open('✅Security verified successfully!', 'Close', {
-              duration: 3000,
-            });
-          },
-          error: (err) => {
-           this.snackBar.open('❌ Security verification failed. Invalid credentials.', 'Close', {
-              duration: 3000,
-            });
-          }
-        });
+      if (!result) return;
+      this.homeOwnerService.setSecurityCleared(homeOwnerId, result.cleared, result.comments).subscribe({
+        next: () => {
+          this.snackBar.open('Security verified successfully!', 'Close', { duration: 3000 });
+        },
+        error: () => {
+          this.snackBar.open('Security verification failed. Invalid credentials.', 'Close', { duration: 3000 });
+        }
+      });
     });
   }
-
 }

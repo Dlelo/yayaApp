@@ -26,7 +26,7 @@ export class ReportsComponent implements OnInit {
 
   ngOnInit(): void {
     forkJoin({
-      users: this.usersService.getUsers(0, 1, {}).pipe(catchError(() => of({ totalElements: 0 } as any))),
+      users: this.usersService.getUsers(0, 1).pipe(catchError(() => of({ totalElements: 0 } as any))),
       houseHelps: this.househelpService.getHouseHelps(0, 1, null).pipe(catchError(() => of({ totalElements: 0 } as any))),
       hireRequests: this.hireRequestsService.getHireRequests(0, 1).pipe(catchError(() => of({ totalElements: 0 } as any))),
       payments: this.paymentService.getPayments(0, 1).pipe(catchError(() => of({ totalElements: 0 } as any))),

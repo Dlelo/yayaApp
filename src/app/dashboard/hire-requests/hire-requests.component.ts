@@ -1,11 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { MatCard } from '@angular/material/card';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
-import { AsyncPipe, DatePipe, TitleCasePipe } from '@angular/common';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { DatePipe, TitleCasePipe } from '@angular/common';
+import { MatDialogModule } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Observable, catchError, of, shareReplay } from 'rxjs';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
@@ -18,13 +16,11 @@ import { HireRequestsService } from './hire-requests.service';
   templateUrl: './hire-requests.component.html',
   styleUrls: ['./hire-requests.component.scss'],
   imports: [
-    MatCard,
     MatIconModule,
     MatDialogModule,
     MatButton,
     DatePipe,
     TitleCasePipe,
-    AsyncPipe,
     MatPaginatorModule,
     MatSelectModule,
     MatFormFieldModule,
@@ -37,18 +33,18 @@ export class HireRequestsComponent implements OnInit {
   private readonly hireRequestsService = inject(HireRequestsService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   page = 0;
   size = 20;
   isLoading = true;
   hasError = false;
-  shimmerRows = [1,2,3,4,5];
+  shimmerRows = [1, 2, 3, 4, 5];
 
-  // Filters
   selectedStatus: string = '';
   selectedPayment: string = '';
 
-  hireRequestsPage$!: Observable<PageResponse<HireRequest>>;
+  hireRequestsPage: PageResponse<HireRequest> | null = null;
 
   statusOptions = [
     { value: '', label: 'All Statuses' },
@@ -75,19 +71,18 @@ export class HireRequestsComponent implements OnInit {
     if (this.selectedStatus) filter.status = this.selectedStatus;
     if (this.selectedPayment !== '') filter.paid = this.selectedPayment;
 
-    this.hireRequestsPage$ = this.hireRequestsService
-      .getHireRequests(this.page, this.size, filter)
-      .pipe(
-        catchError(err => {
-          this.hasError = true;
-          this.isLoading = false;
-          return of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true });
-        }),
-        shareReplay(1)
-      );
-
-    this.hireRequestsPage$.subscribe(() => {
-      this.isLoading = false;
+    this.hireRequestsService.getHireRequests(this.page, this.size, filter).subscribe({
+      next: (data) => {
+        this.hireRequestsPage = data;
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.hasError = true;
+        this.hireRequestsPage = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true };
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -98,27 +93,18 @@ export class HireRequestsComponent implements OnInit {
   }
 
   onFilterChange(): void {
-    this.page = 0; // Reset to first page on filter
+    this.page = 0;
     this.loadHireRequests();
   }
 
   updateStatus(id: number, status: string): void {
     this.hireRequestsService.updateStatus(id, status).subscribe({
       next: () => {
-        this.snackBar.open(
-          `✅ Request ${status.toLowerCase()} successfully!`,
-          'Close',
-          { duration: 3000 }
-        );
+        this.snackBar.open(`Request ${status.toLowerCase()} successfully!`, 'Close', { duration: 3000 });
         this.loadHireRequests();
       },
-      error: (err) => {
-        console.error(err);
-        this.snackBar.open(
-          '❌ Failed to update request. Please try again.',
-          'Close',
-          { duration: 3000 }
-        );
+      error: () => {
+        this.snackBar.open('Failed to update request. Please try again.', 'Close', { duration: 3000 });
       }
     });
   }

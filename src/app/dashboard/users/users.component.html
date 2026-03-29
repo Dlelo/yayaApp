@@ -34,7 +34,7 @@
           </tbody>
         </table>
       </div>
-    } @else if (usersPage$ | async; as pageData) {
+    } @else if (usersPage; as pageData) {
       <div class="table-meta">
         <span class="table-count">{{ pageData.totalElements }} users</span>
       </div>
@@ -64,7 +64,7 @@
                 <td>
                   <div class="role-chips">
                     @for (role of user.roles; track $index) {
-                      <span class="role-chip">{{ role?.name }}</span>
+                      <span class="role-chip">{{ role }}</span>
                     }
                   </div>
                 </td>

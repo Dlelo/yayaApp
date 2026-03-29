@@ -18,14 +18,10 @@
               <div class="col-md-6">
                 <div class="upload-card">
                   <label class="upload-label">Profile Picture</label>
-
                   <div class="preview-window">
                     @if(profilePicturePreviewUrl){
                       <img [src]="profilePicturePreviewUrl" alt="Profile" class="preview-image profile-preview" />
-                      <button
-                        mat-icon-button
-                        class="delete-btn"
-                        type="button"
+                      <button mat-icon-button class="delete-btn" type="button"
                         (click)="profilePictureFile=null; profilePicturePreviewUrl=null">
                         <mat-icon>close</mat-icon>
                       </button>
@@ -36,37 +32,21 @@
                       </div>
                     }
                   </div>
-
                   <div class="upload-actions">
                     <label mat-stroked-button class="upload-btn">
-                      <mat-icon>upload</mat-icon>
-                      Choose File
-                      <input
-                        type="file"
-                        hidden
-                        accept="image/jpeg,image/jpg"
-                        (change)="onProfilePictureSelected($event)"
-                      />
+                      <mat-icon>upload</mat-icon> Choose File
+                      <input type="file" hidden accept="image/jpeg,image/jpg"
+                        (change)="onProfilePictureSelected($event)" />
                     </label>
-
                     @if(profilePicturePreviewUrl){
-                      <button
-                        mat-flat-button
-                        color="primary"
-                        type="button"
-                        class="upload-submit-btn"
+                      <button mat-flat-button color="primary" type="button" class="upload-submit-btn"
                         (click)="uploadProfilePicture(userDetails?.houseHelp?.id || userDetails?.homeOwner?.id)">
                         Upload
                       </button>
                     }
                   </div>
-
                   @if(profileUploadProgress > 0 && profileUploadProgress < 100){
-                    <mat-progress-bar
-                      mode="determinate"
-                      [value]="profileUploadProgress"
-                      class="mt-2">
-                    </mat-progress-bar>
+                    <mat-progress-bar mode="determinate" [value]="profileUploadProgress" class="mt-2"></mat-progress-bar>
                   }
                 </div>
               </div>
@@ -75,26 +55,13 @@
               <div class="col-md-6">
                 <div class="upload-card">
                   <label class="upload-label">National ID</label>
-
                   <div class="preview-window">
-                    @if(nationalIdPreviewUrl){
-                      <img [src]="nationalIdPreviewUrl" alt="National ID" class="preview-image" />
-                      <button
-                        mat-icon-button
-                        class="delete-btn"
-                        type="button"
-                        (click)="nationalIdFile=null; nationalIdPreviewUrl=null">
-                        <mat-icon>close</mat-icon>
-                      </button>
-                    } @else if(nationalIdFileName){
+                    @if(nationalIdFileName){
                       <div class="file-preview">
                         <mat-icon>description</mat-icon>
                         <span class="file-name">{{ nationalIdFileName }}</span>
                       </div>
-                      <button
-                        mat-icon-button
-                        class="delete-btn"
-                        type="button"
+                      <button mat-icon-button class="delete-btn" type="button"
                         (click)="nationalIdFile=null; nationalIdFileName=null">
                         <mat-icon>close</mat-icon>
                       </button>
@@ -105,53 +72,29 @@
                       </div>
                     }
                   </div>
-
                   <div class="upload-actions">
                     <label mat-stroked-button class="upload-btn">
-                      <mat-icon>upload</mat-icon>
-                      Choose File
-                      <input
-                        type="file"
-                        hidden
-                        accept="application/pdf"
-                        (change)="onFileSelected($event)"
-                      />
+                      <mat-icon>upload</mat-icon> Choose File
+                      <input type="file" hidden accept="application/pdf" (change)="onFileSelected($event)" />
                     </label>
-
-                    @if(nationalIdPreviewUrl || nationalIdFileName){
+                    @if(nationalIdFileName){
                       @if(isHouseHelp){
-                        <button
-                          mat-flat-button
-                          color="primary"
-                          type="button"
-                          class="upload-submit-btn"
-                          (click)="uploadNationalId(userDetails?.houseHelp?.id)">
-                          Upload
-                        </button>
+                        <button mat-flat-button color="primary" type="button" class="upload-submit-btn"
+                          (click)="uploadNationalId(userDetails?.houseHelp?.id)">Upload</button>
                       }
                       @if(isHomeOwner){
-                        <button
-                          mat-flat-button
-                          color="primary"
-                          type="button"
-                          class="upload-submit-btn"
-                          (click)="uploadNationalId(userDetails?.homeOwner?.id)">
-                          Upload
-                        </button>
+                        <button mat-flat-button color="primary" type="button" class="upload-submit-btn"
+                          (click)="uploadNationalId(userDetails?.homeOwner?.id)">Upload</button>
                       }
                     }
                   </div>
-
                   @if(uploadProgress > 0 && uploadProgress < 100){
-                    <mat-progress-bar
-                      mode="determinate"
-                      [value]="uploadProgress"
-                      class="mt-2">
-                    </mat-progress-bar>
+                    <mat-progress-bar mode="determinate" [value]="uploadProgress" class="mt-2"></mat-progress-bar>
                   }
                 </div>
               </div>
             </div>
+
             <div class="col-md-12 mt-3">
               <label class="map-label">Pin Your Location</label>
               <p class="map-hint">Click on the map or drag the pin to set your location</p>
@@ -159,11 +102,10 @@
             </div>
           </div>
 
-          <!-- HOUSEHELP fields -->
+          <!-- ═══ HOUSE HELP FIELDS ═══ -->
           @if(isHouseHelp){
             <div formGroupName="houseHelp">
               <h4 class="section-title mb-3">Personal Information</h4>
-
               <div class="row g-3">
                 <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
@@ -176,32 +118,30 @@
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Availability Type</mat-label>
                     <mat-select formControlName="houseHelpType">
-                      @for(type of availabilityTypes; track $index){
-                        <mat-option [value]="type">
-                          {{ type.replace('_', ' ') }}
-                        </mat-option>
+                      @for(opt of availabilityTypeOptions; track opt.value){
+                        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
                       }
                     </mat-select>
                   </mat-form-field>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Age</mat-label>
                     <input matInput formControlName="age" type="number" />
                   </mat-form-field>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Religion</mat-label>
                     <input matInput formControlName="religion" />
                   </mat-form-field>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Number of Children</mat-label>
+                    <mat-label>Number of Own Children</mat-label>
                     <input matInput formControlName="numberOfChildren" type="number" />
                   </mat-form-field>
                 </div>
@@ -215,113 +155,89 @@
               </div>
 
               <h4 class="section-title mb-3 mt-4">Professional Details</h4>
-
               <div class="row g-3">
+
+                <!-- Skills — multi-select from enum -->
                 <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Skills</mat-label>
-
-                    <mat-chip-grid #skillsGrid>
-                      @for(skill of skills; track skill){
-                        <mat-chip-row (removed)="removeChip(skill, 'skills')">
-                          {{ skill }}
-                          <button matChipRemove>
-                            <mat-icon>cancel</mat-icon>
-                          </button>
-                        </mat-chip-row>
+                    <mat-select formControlName="skills" multiple>
+                      @for(opt of skillsOptions; track opt.value){
+                        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
                       }
-
-                      <input
-                        placeholder="Add skill"
-                        [matChipInputFor]="skillsGrid"
-                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                        (matChipInputTokenEnd)="addChip($event, 'skills')" />
-                    </mat-chip-grid>
+                    </mat-select>
+                    <mat-hint>Select all skills you possess</mat-hint>
                   </mat-form-field>
                 </div>
 
-
+                <!-- Languages — multi-select from enum -->
                 <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Languages Spoken</mat-label>
+                    <mat-select formControlName="languages" multiple>
+                      @for(opt of languagesOptions; track opt.value){
+                        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-4">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Years of Experience</mat-label>
                     <input matInput type="number" formControlName="yearsOfExperience" />
                   </mat-form-field>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Available</mat-label>
+                    <mat-label>Availability Notes</mat-label>
                     <input matInput formControlName="availability" />
                   </mat-form-field>
                 </div>
 
-
                 <div class="col-md-12">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Experience summary</mat-label>
-                    <textarea matInput formControlName="experienceSummary">
-
-                    </textarea>
+                    <mat-label>Experience Summary</mat-label>
+                    <textarea matInput formControlName="experienceSummary" rows="3"></textarea>
                   </mat-form-field>
                 </div>
-
-
-                <div class="col-md-12">
-                  <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Languages</mat-label>
-
-                    <mat-chip-grid #languagesGrid>
-                      @for(lang of languages; track lang){
-                        <mat-chip-row (removed)="removeChip(lang, 'languages')">
-                          {{ lang }}
-                          <button matChipRemove>
-                            <mat-icon>cancel</mat-icon>
-                          </button>
-                        </mat-chip-row>
-                      }
-
-                      <input
-                        placeholder="Add language"
-                        [matChipInputFor]="languagesGrid"
-                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                        (matChipInputTokenEnd)="addChip($event, 'languages')" />
-                    </mat-chip-grid>
-                  </mat-form-field>
-                </div>
-
               </div>
 
               <h4 class="section-title mb-3 mt-4">Location & Physical Details</h4>
-
               <div class="row g-3">
-
-                @if(isHouseHelp){
-                  <div class="col-md-6">
-                    <mat-form-field appearance="outline" class="w-100">
-                      <mat-label>Current County</mat-label>
-                      <input matInput formControlName="currentCounty" />
-                    </mat-form-field>
-                  </div>
-
-                  <div class="col-md-6">
-                    <mat-form-field appearance="outline" class="w-100">
-                      <mat-label>Home County</mat-label>
-                      <input matInput formControlName="homeCounty" />
-                    </mat-form-field>
-                  </div>
-                }
-
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Current County</mat-label>
+                    <mat-select formControlName="currentCounty">
+                      @for(county of countyOptions; track county){
+                        <mat-option [value]="county">{{ countyLabel(county) }}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                </div>
 
                 <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Current Location</mat-label>
+                    <mat-label>Home County</mat-label>
+                    <mat-select formControlName="homeCounty">
+                      @for(county of countyOptions; track county){
+                        <mat-option [value]="county">{{ countyLabel(county) }}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Current Location / Estate</mat-label>
                     <input matInput formControlName="currentLocation" />
                   </mat-form-field>
                 </div>
 
                 <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Home Location</mat-label>
+                    <mat-label>Home Location / Village</mat-label>
                     <input matInput formControlName="homeLocation" />
                   </mat-form-field>
                 </div>
@@ -342,7 +258,6 @@
               </div>
 
               <h4 class="section-title mb-3 mt-4">Emergency Contact</h4>
-
               <div class="row g-3">
                 <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
@@ -350,7 +265,6 @@
                     <input matInput formControlName="contactPersons" />
                   </mat-form-field>
                 </div>
-
                 <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Contact Person Phone</mat-label>
@@ -359,127 +273,114 @@
                 </div>
               </div>
 
-              <h4 class="section-title mb-3 mt-4">Preferences</h4>
+              <!-- ─── HOUSE HELP PREFERENCES ─── -->
+              <h4 class="section-title mb-3 mt-4">Work Preferences</h4>
+              <p class="section-hint">These help match you with the right families</p>
 
               <div formGroupName="preferences" class="row g-3">
-                <!-- Min Experience -->
+
                 <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Minimum Experience (years)</mat-label>
-                    <input matInput type="number" formControlName="minExperience"/>
-                  </mat-form-field>
-                </div>
-
-                <!-- Preferred Location -->
-                <div class="col-md-6">
-                  <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Preferred Location</mat-label>
-                    <input matInput formControlName="preferredLocation"/>
-                  </mat-form-field>
-                </div>
-
-                <!-- Preferred Skills Chips -->
-                <div class="col-md-6">
-                  <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Preferred Skills</mat-label>
-                    <mat-chip-grid #prefSkillsGrid>
-                      <mat-chip-row *ngFor="let skill of form.get('houseHelp.preferences.preferredSkills')?.value"
-                                    (removed)="removeChip(skill, 'preferredSkills')">
-                        {{ skill }}
-                        <button matChipRemove><mat-icon>cancel</mat-icon></button>
-                      </mat-chip-row>
-
-                      <input placeholder="Add skill"
-                             [matChipInputFor]="prefSkillsGrid"
-                             [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                             (matChipInputTokenEnd)="addChip($event, 'preferredSkills', 'houseHelp')"/>
-                    </mat-chip-grid>
-                  </mat-form-field>
-                </div>
-
-                <!-- Preferred Languages Chips -->
-                <div class="col-md-6">
-                  <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Preferred Languages</mat-label>
-                    <mat-chip-grid #prefLanguagesGrid>
-                      <mat-chip-row *ngFor="let lang of form.get('houseHelp.preferences.preferredLanguages')?.value"
-                                    (removed)="removeChip(lang, 'preferredLanguages')">
-                        {{ lang }}
-                        <button matChipRemove><mat-icon>cancel</mat-icon></button>
-                      </mat-chip-row>
-
-                      <input placeholder="Add language"
-                             [matChipInputFor]="prefLanguagesGrid"
-                             [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                             (matChipInputTokenEnd)="addChip($event, 'preferredLanguages', 'houseHelp')"/>
-                    </mat-chip-grid>
-                  </mat-form-field>
-                </div>
-
-                <!-- Preferred Child Age Ranges -->
-                <div class="col-md-6">
-                  <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Preferred Age Ranges of Children</mat-label>
-
-                    <mat-select
-                      formControlName="preferredChildAgeRanges"
-                      multiple
-                    >
-                      <mat-option
-                        *ngFor="let option of childAgeRangeOptions"
-                        [value]="option.value"
-                      >
-                        {{ option.label }}
-                      </mat-option>
+                    <mat-label>Preferred Work Type</mat-label>
+                    <mat-select formControlName="houseHelpType">
+                      <mat-option [value]="null">No preference</mat-option>
+                      @for(opt of availabilityTypeOptions; track opt.value){
+                        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                      }
                     </mat-select>
                   </mat-form-field>
                 </div>
 
-                <!-- Preferred Max Children -->
                 <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Preferred Maximum Children</mat-label>
-                    <input matInput type="number" formControlName="preferredMaxChildren"/>
+                    <mat-label>Preferred Location / Area</mat-label>
+                    <input matInput formControlName="preferredLocation" placeholder="e.g. Westlands, Nairobi" />
                   </mat-form-field>
                 </div>
 
-                <!-- Preferred Religion -->
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Preferred Religion</mat-label>
-                    <input matInput formControlName="preferredReligion"/>
+                    <mat-label>Min. Salary (KSh)</mat-label>
+                    <input matInput type="number" formControlName="minSalary" />
                   </mat-form-field>
                 </div>
 
-                <!-- Okay With Pets -->
-                <div class="col-md-6 d-flex align-items-center mt-2">
+                <div class="col-md-4">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Max. Salary (KSh)</mat-label>
+                    <input matInput type="number" formControlName="maxSalary" />
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-4">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Preferred Max. Children</mat-label>
+                    <input matInput type="number" formControlName="preferredMaxChildren" />
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Child Age Ranges You're Comfortable With</mat-label>
+                    <mat-select formControlName="preferredChildAgeRanges" multiple>
+                      @for(opt of childAgeRangeOptions; track opt.value){
+                        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Services You Can Offer</mat-label>
+                    <mat-select formControlName="preferredServices" multiple>
+                      @for(opt of careServicesOptions; track opt.value){
+                        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Preferred Skills to Use</mat-label>
+                    <mat-select formControlName="preferredSkills" multiple>
+                      @for(opt of skillsOptions; track opt.value){
+                        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Preferred Languages in Household</mat-label>
+                    <mat-select formControlName="preferredLanguages" multiple>
+                      @for(opt of languagesOptions; track opt.value){
+                        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Preferred Family Religion</mat-label>
+                    <input matInput formControlName="preferredReligion" placeholder="e.g. Christian, Muslim" />
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-6 d-flex align-items-center gap-4 mt-2">
                   <mat-checkbox formControlName="okayWithPets">Okay with Pets</mat-checkbox>
                 </div>
-
-                <!-- Min & Max Salary -->
-                <div class="col-md-3">
-                  <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Minimum Salary (KSh)</mat-label>
-                    <input matInput type="number" formControlName="minSalary"/>
-                  </mat-form-field>
-                </div>
-
-                <div class="col-md-3">
-                  <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Maximum Salary (KSh)</mat-label>
-                    <input matInput type="number" formControlName="maxSalary"/>
-                  </mat-form-field>
-                </div>
               </div>
-
             </div>
           }
 
-          <!-- HOMEOWNER fields -->
+          <!-- ═══ HOME OWNER FIELDS ═══ -->
           @if(isHomeOwner){
             <div formGroupName="homeOwner">
               <h4 class="section-title mb-3">Personal Information</h4>
-
               <div class="row g-3">
                 <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
@@ -487,7 +388,6 @@
                     <input matInput formControlName="nationalId" />
                   </mat-form-field>
                 </div>
-
                 <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Number of Dependents</mat-label>
@@ -497,7 +397,6 @@
               </div>
 
               <h4 class="section-title mb-3 mt-4">Property Details</h4>
-
               <div class="row g-3">
                 <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
@@ -506,135 +405,161 @@
                       <mat-option value="apartment">Apartment</mat-option>
                       <mat-option value="bungalow">Bungalow</mat-option>
                       <mat-option value="mansionette">Mansionette</mat-option>
+                      <mat-option value="townhouse">Town House</mat-option>
+                      <mat-option value="maisonette">Maisonette</mat-option>
                     </mat-select>
                   </mat-form-field>
                 </div>
-
                 <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Number of Bedrooms</mat-label>
                     <input matInput formControlName="numberOfRooms" type="number" />
                   </mat-form-field>
                 </div>
-
                 <div class="col-md-12">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Location</mat-label>
-                    <input matInput formControlName="homeLocation"/>
+                    <mat-label>Home Location / Area</mat-label>
+                    <input matInput formControlName="homeLocation" />
                   </mat-form-field>
                 </div>
               </div>
 
-              <h4 class="section-title mb-3 mt-4">Preferences</h4>
+              <!-- ─── HOME OWNER PREFERENCES ─── -->
+              <h4 class="section-title mb-3 mt-4">House Help Preferences</h4>
+              <p class="section-hint">Tell us what you're looking for in a house help</p>
 
               <div formGroupName="preferences" class="row g-3">
 
-                <!-- Preferred Location -->
                 <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Preferred Location</mat-label>
-                    <input matInput formControlName="preferredLocation"/>
-                  </mat-form-field>
-                </div>
-
-                <!-- Preferred Skills Chips -->
-                <div class="col-md-6">
-                  <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Preferred Skills</mat-label>
-                    <mat-chip-grid #hoPrefSkillsGrid>
-                      <mat-chip-row *ngFor="let skill of form.get('homeOwner.preferences.preferredSkills')?.value"
-                                    (removed)="removeChip(skill, 'preferredSkills', 'homeOwner')">
-                        {{ skill }}
-                        <button matChipRemove><mat-icon>cancel</mat-icon></button>
-                      </mat-chip-row>
-
-                      <input placeholder="Add skill"
-                             [matChipInputFor]="hoPrefSkillsGrid"
-                             [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                             (matChipInputTokenEnd)="addChip($event, 'preferredSkills', 'homeOwner')"/>
-                    </mat-chip-grid>
-                  </mat-form-field>
-                </div>
-
-                <!-- Preferred Languages Chips -->
-                <div class="col-md-6">
-                  <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Preferred Languages</mat-label>
-                    <mat-chip-grid #hoPrefLanguagesGrid>
-                      <mat-chip-row *ngFor="let lang of form.get('homeOwner.preferences.preferredLanguages')?.value"
-                                    (removed)="removeChip(lang, 'preferredLanguages', 'homeOwner')">
-                        {{ lang }}
-                        <button matChipRemove><mat-icon>cancel</mat-icon></button>
-                      </mat-chip-row>
-
-                      <input placeholder="Add language"
-                             [matChipInputFor]="hoPrefLanguagesGrid"
-                             [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                             (matChipInputTokenEnd)="addChip($event, 'preferredLanguages', 'homeOwner')"/>
-                    </mat-chip-grid>
-                  </mat-form-field>
-                </div>
-
-                <!-- Preferred Child Age Ranges -->
-                <div class="col-md-6">
-                  <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Preferred Child Age Ranges (comma separated)</mat-label>
-
-                    <mat-select
-                      formControlName="preferredChildAgeRanges"
-                      multiple
-                    >
-                      <mat-option
-                        *ngFor="let option of childAgeRangeOptions"
-                        [value]="option.value"
-                      >
-                        {{ option.label }}
-                      </mat-option>
+                    <mat-label>Preferred Availability Type</mat-label>
+                    <mat-select formControlName="houseHelpType">
+                      <mat-option [value]="null">No preference</mat-option>
+                      @for(opt of availabilityTypeOptions; track opt.value){
+                        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                      }
                     </mat-select>
                   </mat-form-field>
                 </div>
 
-                <!-- Preferred Max Children -->
                 <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Preferred Maximum Children</mat-label>
-                    <input matInput type="number" formControlName="preferredMaxChildren"/>
+                    <mat-label>Preferred Location / Area</mat-label>
+                    <input matInput formControlName="location" placeholder="e.g. Karen, Nairobi" />
                   </mat-form-field>
                 </div>
 
-                <!-- Preferred Religion -->
+                <div class="col-md-4">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Min. Experience (years)</mat-label>
+                    <input matInput type="number" formControlName="minExperience" />
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-4">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Min. Age Preferred</mat-label>
+                    <input matInput type="number" formControlName="preferredMinAge" />
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-4">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Max. Age Preferred</mat-label>
+                    <input matInput type="number" formControlName="preferredMaxAge" />
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-4">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Min. Salary Offered (KSh)</mat-label>
+                    <input matInput type="number" formControlName="minSalary" />
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-4">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Max. Salary Offered (KSh)</mat-label>
+                    <input matInput type="number" formControlName="maxSalary" />
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-4">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Min. Match Score (0–100)</mat-label>
+                    <input matInput type="number" formControlName="minMatchScore" min="0" max="100" />
+                    <mat-hint>Default: 50</mat-hint>
+                  </mat-form-field>
+                </div>
+
                 <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Preferred Religion</mat-label>
-                    <input matInput formControlName="preferredReligion"/>
+                    <mat-label>Number of Children</mat-label>
+                    <input matInput type="number" formControlName="numberOfChildren" />
                   </mat-form-field>
                 </div>
 
-                <!-- Okay With Pets -->
-                <div class="col-md-6 d-flex align-items-center mt-2">
-                  <mat-checkbox formControlName="hasPets"> Has Pets</mat-checkbox>
-                </div>
-
-                <!-- Min & Max Salary -->
-                <div class="col-md-3">
+                <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Minimum Salary (KSh)</mat-label>
-                    <input matInput type="number" formControlName="minSalary"/>
+                    <mat-label>Children's Age Ranges</mat-label>
+                    <mat-select formControlName="childrenAgeRanges" multiple>
+                      @for(opt of childAgeRangeOptions; track opt.value){
+                        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                      }
+                    </mat-select>
                   </mat-form-field>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Maximum Salary (KSh)</mat-label>
-                    <input matInput type="number" formControlName="maxSalary"/>
+                    <mat-label>Required Services</mat-label>
+                    <mat-select formControlName="requiredServices" multiple>
+                      @for(opt of careServicesOptions; track opt.value){
+                        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                      }
+                    </mat-select>
+                    <mat-hint>What tasks should the house help perform?</mat-hint>
                   </mat-form-field>
+                </div>
+
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Preferred Skills</mat-label>
+                    <mat-select formControlName="preferredSkills" multiple>
+                      @for(opt of skillsOptions; track opt.value){
+                        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Preferred Languages</mat-label>
+                    <mat-select formControlName="preferredLanguages" multiple>
+                      @for(opt of languagesOptions; track opt.value){
+                        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Religion Preference</mat-label>
+                    <input matInput formControlName="religionPreference" placeholder="e.g. Christian, Muslim" />
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-12 d-flex align-items-center gap-4 mt-2">
+                  <mat-checkbox formControlName="hasPets">We have pets at home</mat-checkbox>
+                  <mat-checkbox formControlName="requiresSecurityCleared">Require security-cleared house help</mat-checkbox>
                 </div>
               </div>
-
             </div>
           }
 
-          <!-- Additional Documents Upload -->
+          <!-- Additional Documents -->
           <div class="section-card mt-3">
             <h4 class="section-title mb-3">Additional Documents</h4>
             <div class="upload-box">

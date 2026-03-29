@@ -1,16 +1,13 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {MatCard} from '@angular/material/card';
+import {Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButton} from '@angular/material/button';
-import {AsyncPipe, JsonPipe} from '@angular/common';
 import {UsersService} from './users.service';
 import {EditUserDialogComponent} from './edit-user-dialog/edit-user-dialog.component';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {Router} from '@angular/router';
-import {Observable, of, shareReplay} from 'rxjs';
-import {tap, catchError} from 'rxjs/operators';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {LoginService} from '../../login/login.service';
+import {inject} from '@angular/core';
 
 
 
@@ -19,33 +16,31 @@ import {LoginService} from '../../login/login.service';
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss'],
   imports: [
-    MatCard,
     MatIconModule,
     MatDialogModule,
     MatButton,
-    AsyncPipe,
     MatPaginatorModule,
   ],
   providers: [UsersService],
   standalone: true
 })
-export class UsersComponent implements OnInit{
-  private readonly  usersService:UsersService = inject(UsersService);
+export class UsersComponent implements OnInit {
+  private readonly usersService: UsersService = inject(UsersService);
   private dialog: MatDialog = inject(MatDialog);
-  private readonly router:Router = inject(Router);
+  private readonly router: Router = inject(Router);
   private readonly loginService = inject(LoginService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
-  allRoles = ["ADMIN", "HOMEOWNER", "HOUSEHELP", "AGENT",'SALES','SECURITY'];
+  allRoles = ["ADMIN", "HOMEOWNER", "HOUSEHELP", "AGENT", 'SALES', 'SECURITY'];
 
   page = 0;
   size = 20;
   loading = true;
-  shimmerRows = [1,2,3,4,5];
+  shimmerRows = [1, 2, 3, 4, 5];
 
-  usersPage$!: Observable<PageResponse<User>>;
+  usersPage: PageResponse<User> | null = null;
 
   roles = this.loginService.userRoles;
-
 
   openEditUserDialog(user: any) {
     const ref = this.dialog.open(EditUserDialogComponent, {
@@ -53,7 +48,7 @@ export class UsersComponent implements OnInit{
       data: {
         userId: user.id,
         name: user.name,
-        currentRoles: user.roles?.map((r: any) => r.name || r),
+        currentRoles: user.roles ?? [],
         allRoles: this.allRoles
       }
     });
@@ -64,14 +59,13 @@ export class UsersComponent implements OnInit{
           .subscribe(() => this.loadUsers());
       }
     });
-
   }
 
-  openUserAccountDetails(userID:number|null){
+  openUserAccountDetails(userID: number | null) {
     this.router.navigate(['/edit-account/', userID]);
   }
 
-  openViewUserDetails(userID:number|null){
+  openViewUserDetails(userID: number | null) {
     this.router.navigate(['/account/', userID]);
   }
 
@@ -87,12 +81,17 @@ export class UsersComponent implements OnInit{
 
   loadUsers(): void {
     this.loading = true;
-    const shared$ = this.usersService.getUsers(this.page, this.size).pipe(
-      tap(() => this.loading = false),
-      catchError(() => { this.loading = false; return of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true }); }),
-      shareReplay(1)
-    );
-    this.usersPage$ = shared$ as any;
-    shared$.subscribe();
+    this.usersService.getUsers(this.page, this.size).subscribe({
+      next: (data) => {
+        this.usersPage = data;
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.usersPage = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true };
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 }

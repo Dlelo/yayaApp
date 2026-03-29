@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, ChangeDetectorRef, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -6,10 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
-import { AsyncPipe } from '@angular/common';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { Observable, of, shareReplay } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
 import { AgentService, Agent } from './agent.service';
 
 interface AgentUser {
@@ -41,7 +38,6 @@ interface AgentUser {
     MatFormFieldModule,
     MatDialogModule,
     FormsModule,
-    AsyncPipe,
     MatPaginatorModule,
   ],
   providers: [AgentService],
@@ -53,13 +49,14 @@ export class AgentsComponent implements OnInit {
   private readonly agentService = inject(AgentService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   page = 0;
   size = 20;
   loading = true;
-  shimmerRows = [1,2,3,4,5];
+  shimmerRows = [1, 2, 3, 4, 5];
 
-  agentsPage$!: Observable<PageResponse<AgentUser>>;
+  agentsPage: PageResponse<AgentUser> | null = null;
 
   editingAgent: Partial<Agent> & { id?: number } = {};
 
@@ -75,13 +72,18 @@ export class AgentsComponent implements OnInit {
 
   loadAgents(): void {
     this.loading = true;
-    const shared$ = (this.agentService.getAgents(this.page, this.size) as any).pipe(
-      tap(() => this.loading = false),
-      catchError(() => { this.loading = false; return of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true }); }),
-      shareReplay(1)
-    );
-    this.agentsPage$ = shared$;
-    shared$.subscribe();
+    this.agentService.getAgents(this.page, this.size).subscribe({
+      next: (data: any) => {
+        this.agentsPage = data;
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.agentsPage = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true };
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   verifyAgent(agentProfileId: number): void {
