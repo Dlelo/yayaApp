@@ -1,74 +1,334 @@
-<div class="dash-page">
+<div class="reports-page">
   <div class="dash-page-header">
     <div>
-      <h1 class="dash-title">Reports</h1>
-      <p class="dash-subtitle">Platform statistics and key metrics</p>
+      <h1 class="dash-title">Business Reports</h1>
+      <p class="dash-subtitle">Analytics and key platform metrics</p>
     </div>
   </div>
 
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-icon stat-icon--blue">
-        <span class="material-icons">people</span>
-      </div>
-      <div class="stat-body">
-        <div class="stat-value">
-          @if (loading()) {
-            <span class="shimmer shimmer-text"></span>
-          } @else {
-            {{ totalUsers() }}
-          }
+  @if (loading) {
+    <div class="kpi-grid">
+      @for (i of [1,2,3,4,5,6]; track i) {
+        <div class="kpi-card shimmer-card">
+          <span class="shimmer shimmer-icon"></span>
+          <div class="kpi-body">
+            <span class="shimmer shimmer-val"></span>
+            <span class="shimmer shimmer-lbl"></span>
+          </div>
         </div>
-        <div class="stat-label">Total Users</div>
+      }
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card shimmer-card" style="height:280px"></div>
+      <div class="chart-card shimmer-card" style="height:280px"></div>
+    </div>
+    <div class="analytics-grid">
+      <div class="analytics-card shimmer-card" style="height:240px"></div>
+      <div class="analytics-card shimmer-card" style="height:240px"></div>
+    </div>
+  } @else if (stats) {
+
+    <!-- ── KPI Cards ── -->
+    <div class="kpi-grid">
+      <div class="kpi-card kpi-card--blue">
+        <div class="kpi-icon"><mat-icon>people</mat-icon></div>
+        <div class="kpi-body">
+          <div class="kpi-val">{{ stats.totalUsers | number }}</div>
+          <div class="kpi-lbl">Total Users</div>
+          <div class="kpi-sub">+{{ stats.usersThisMonth }} this month</div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-card--green">
+        <div class="kpi-icon"><mat-icon>cleaning_services</mat-icon></div>
+        <div class="kpi-body">
+          <div class="kpi-val">{{ stats.totalHouseHelps | number }}</div>
+          <div class="kpi-lbl">House Helps</div>
+          <div class="kpi-sub">+{{ stats.houseHelpsThisMonth }} this month</div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-card--cyan">
+        <div class="kpi-icon"><mat-icon>home</mat-icon></div>
+        <div class="kpi-body">
+          <div class="kpi-val">{{ stats.totalHomeOwners | number }}</div>
+          <div class="kpi-lbl">Home Owners</div>
+          <div class="kpi-sub">+{{ stats.homeOwnersThisMonth }} this month</div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-card--purple">
+        <div class="kpi-icon"><mat-icon>badge</mat-icon></div>
+        <div class="kpi-body">
+          <div class="kpi-val">{{ stats.totalAgents | number }}</div>
+          <div class="kpi-lbl">Agents</div>
+          <div class="kpi-sub">Platform agents</div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-card--gold">
+        <div class="kpi-icon"><mat-icon>payments</mat-icon></div>
+        <div class="kpi-body">
+          <div class="kpi-val">{{ stats.totalRevenue | currency:'KES ':' symbol':'1.0-0' }}</div>
+          <div class="kpi-lbl">Total Revenue</div>
+          <div class="kpi-sub">{{ stats.revenueThisMonth | currency:'KES ':' symbol':'1.0-0' }} this month</div>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-card--orange">
+        <div class="kpi-icon"><mat-icon>assignment_turned_in</mat-icon></div>
+        <div class="kpi-body">
+          <div class="kpi-val">{{ hireSuccessRate }}%</div>
+          <div class="kpi-lbl">Hire Success Rate</div>
+          <div class="kpi-sub">{{ stats.acceptedHireRequests }} of {{ stats.totalHireRequests }} requests</div>
+        </div>
       </div>
     </div>
 
-    <div class="stat-card">
-      <div class="stat-icon stat-icon--green">
-        <span class="material-icons">cleaning_services</span>
-      </div>
-      <div class="stat-body">
-        <div class="stat-value">
-          @if (loading()) {
-            <span class="shimmer shimmer-text"></span>
-          } @else {
-            {{ totalHouseHelps() }}
-          }
+    <!-- ── Donut Charts ── -->
+    <div class="charts-grid">
+
+      <!-- Hire Request Status -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <mat-icon class="chart-icon chart-icon--orange">assignment</mat-icon>
+          <div>
+            <div class="chart-title">Hire Request Status</div>
+            <div class="chart-sub">{{ stats.totalHireRequests | number }} total requests</div>
+          </div>
         </div>
-        <div class="stat-label">House Helps</div>
+        <div class="chart-body">
+          <div class="donut-wrap">
+            <div class="donut" [style.background]="hireDonutBg"></div>
+            <div class="donut-center">
+              <div class="donut-pct">{{ hireSuccessRate }}%</div>
+              <div class="donut-pct-lbl">accepted</div>
+            </div>
+          </div>
+          <div class="donut-legend">
+            <div class="legend-item">
+              <span class="legend-dot" style="background:#059669"></span>
+              <span class="legend-lbl">Accepted</span>
+              <span class="legend-val">{{ stats.acceptedHireRequests | number }}</span>
+              <span class="legend-pct">{{ pct(stats.acceptedHireRequests, stats.totalHireRequests) }}%</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background:#f97316"></span>
+              <span class="legend-lbl">Pending</span>
+              <span class="legend-val">{{ stats.pendingHireRequests | number }}</span>
+              <span class="legend-pct">{{ pct(stats.pendingHireRequests, stats.totalHireRequests) }}%</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background:#ef4444"></span>
+              <span class="legend-lbl">Rejected</span>
+              <span class="legend-val">{{ rejectedHires | number }}</span>
+              <span class="legend-pct">{{ pct(rejectedHires, stats.totalHireRequests) }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Status -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <mat-icon class="chart-icon chart-icon--green">account_balance_wallet</mat-icon>
+          <div>
+            <div class="chart-title">Payment Status</div>
+            <div class="chart-sub">{{ totalPayments | number }} total payments</div>
+          </div>
+        </div>
+        <div class="chart-body">
+          <div class="donut-wrap">
+            <div class="donut" [style.background]="paymentDonutBg"></div>
+            <div class="donut-center">
+              <div class="donut-pct">{{ paymentSuccessRate }}%</div>
+              <div class="donut-pct-lbl">success</div>
+            </div>
+          </div>
+          <div class="donut-legend">
+            <div class="legend-item">
+              <span class="legend-dot" style="background:#059669"></span>
+              <span class="legend-lbl">Successful</span>
+              <span class="legend-val">{{ stats.successfulPayments | number }}</span>
+              <span class="legend-pct">{{ pct(stats.successfulPayments, totalPayments) }}%</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background:#f97316"></span>
+              <span class="legend-lbl">Pending</span>
+              <span class="legend-val">{{ stats.pendingPayments | number }}</span>
+              <span class="legend-pct">{{ pct(stats.pendingPayments, totalPayments) }}%</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background:#ef4444"></span>
+              <span class="legend-lbl">Failed</span>
+              <span class="legend-val">{{ failedPayments | number }}</span>
+              <span class="legend-pct">{{ pct(failedPayments, totalPayments) }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Analytics ── -->
+    <div class="analytics-grid">
+
+      <!-- Revenue Breakdown -->
+      <div class="analytics-card">
+        <div class="analytics-header">
+          <mat-icon class="chart-icon chart-icon--gold">trending_up</mat-icon>
+          <div class="chart-title">Revenue Breakdown</div>
+        </div>
+
+        <div class="rev-total">{{ stats.totalRevenue | currency:'KES ':' symbol':'1.0-0' }}</div>
+        <div class="rev-total-lbl">All-time revenue</div>
+
+        <div class="bar-section">
+          <div class="bar-row">
+            <span class="bar-lbl">This Month</span>
+            <div class="bar-track">
+              <div class="bar-fill bar-fill--green" [style.width.%]="revenueMonthPct"></div>
+            </div>
+            <span class="bar-amt">{{ stats.revenueThisMonth | currency:'KES ':' symbol':'1.0-0' }}</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-lbl">This Week</span>
+            <div class="bar-track">
+              <div class="bar-fill bar-fill--cyan" [style.width.%]="revenueWeekPct"></div>
+            </div>
+            <span class="bar-amt">{{ stats.revenueThisWeek | currency:'KES ':' symbol':'1.0-0' }}</span>
+          </div>
+        </div>
+
+        <div class="payment-split">
+          <div class="split-item split-item--success">
+            <mat-icon>check_circle</mat-icon>
+            <span>{{ stats.successfulPayments | number }} successful</span>
+          </div>
+          <div class="split-item split-item--pending">
+            <mat-icon>schedule</mat-icon>
+            <span>{{ stats.pendingPayments | number }} pending</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Registration Growth -->
+      <div class="analytics-card">
+        <div class="analytics-header">
+          <mat-icon class="chart-icon chart-icon--blue">person_add</mat-icon>
+          <div class="chart-title">Registration Growth</div>
+        </div>
+
+        <div class="growth-legend">
+          <span class="growth-dot growth-dot--week"></span><span class="growth-legend-lbl">This week</span>
+          <span class="growth-dot growth-dot--month"></span><span class="growth-legend-lbl">This month</span>
+        </div>
+
+        @for (row of userGrowthRows; track row.label) {
+          <div class="growth-row">
+            <div class="growth-label">
+              <mat-icon [style.color]="row.color">{{ row.icon }}</mat-icon>
+              <span>{{ row.label }}</span>
+            </div>
+            <div class="growth-bars">
+              @if (row.week > 0) {
+                <div class="growth-bar-row">
+                  <div class="growth-track">
+                    <div class="growth-fill growth-fill--week"
+                      [style.width.%]="pct(row.week, maxGrowth())"
+                      [style.background]="row.color"></div>
+                  </div>
+                  <span class="growth-num">{{ row.week }}</span>
+                </div>
+              }
+              <div class="growth-bar-row">
+                <div class="growth-track">
+                  <div class="growth-fill growth-fill--month"
+                    [style.width.%]="pct(row.month, maxGrowth())"
+                    [style.background]="row.color + '99'"></div>
+                </div>
+                <span class="growth-num">{{ row.month }}</span>
+              </div>
+            </div>
+          </div>
+        }
+
+        <div class="growth-totals">
+          <div class="growth-total-item">
+            <span class="growth-total-val">{{ stats.usersThisWeek }}</span>
+            <span class="growth-total-lbl">users this week</span>
+          </div>
+          <div class="growth-total-item">
+            <span class="growth-total-val">{{ stats.usersThisMonth + stats.houseHelpsThisMonth + stats.homeOwnersThisMonth }}</span>
+            <span class="growth-total-lbl">total this month</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Platform Overview ── -->
+    <div class="platform-card">
+      <div class="platform-header">
+        <mat-icon class="chart-icon chart-icon--blue">dashboard</mat-icon>
+        <div class="chart-title">Platform Overview</div>
+      </div>
+      <div class="platform-grid">
+        <div class="platform-item">
+          <div class="platform-icon" style="background:rgba(59,130,246,0.1)">
+            <mat-icon style="color:#3b82f6">people</mat-icon>
+          </div>
+          <div class="platform-metric">{{ stats.totalUsers | number }}</div>
+          <div class="platform-lbl">Users</div>
+          <div class="platform-sub">+{{ stats.usersThisWeek }} this week</div>
+        </div>
+        <div class="platform-item">
+          <div class="platform-icon" style="background:rgba(5,150,105,0.1)">
+            <mat-icon style="color:#059669">cleaning_services</mat-icon>
+          </div>
+          <div class="platform-metric">{{ stats.totalHouseHelps | number }}</div>
+          <div class="platform-lbl">House Helps</div>
+          <div class="platform-sub">+{{ stats.houseHelpsThisMonth }} this month</div>
+        </div>
+        <div class="platform-item">
+          <div class="platform-icon" style="background:rgba(0,172,193,0.1)">
+            <mat-icon style="color:#00acc1">home</mat-icon>
+          </div>
+          <div class="platform-metric">{{ stats.totalHomeOwners | number }}</div>
+          <div class="platform-lbl">Home Owners</div>
+          <div class="platform-sub">+{{ stats.homeOwnersThisMonth }} this month</div>
+        </div>
+        <div class="platform-item">
+          <div class="platform-icon" style="background:rgba(139,92,246,0.1)">
+            <mat-icon style="color:#8b5cf6">badge</mat-icon>
+          </div>
+          <div class="platform-metric">{{ stats.totalAgents | number }}</div>
+          <div class="platform-lbl">Agents</div>
+          <div class="platform-sub">Platform managers</div>
+        </div>
+        <div class="platform-item">
+          <div class="platform-icon" style="background:rgba(249,115,22,0.1)">
+            <mat-icon style="color:#f97316">assignment</mat-icon>
+          </div>
+          <div class="platform-metric">{{ stats.totalHireRequests | number }}</div>
+          <div class="platform-lbl">Hire Requests</div>
+          <div class="platform-sub">{{ stats.pendingHireRequests }} pending</div>
+        </div>
+        <div class="platform-item">
+          <div class="platform-icon" style="background:rgba(16,185,129,0.1)">
+            <mat-icon style="color:#10b981">payments</mat-icon>
+          </div>
+          <div class="platform-metric">{{ totalPayments | number }}</div>
+          <div class="platform-lbl">Payments</div>
+          <div class="platform-sub">{{ stats.successfulPayments }} successful</div>
+        </div>
       </div>
     </div>
 
-    <div class="stat-card">
-      <div class="stat-icon stat-icon--orange">
-        <span class="material-icons">assignment</span>
-      </div>
-      <div class="stat-body">
-        <div class="stat-value">
-          @if (loading()) {
-            <span class="shimmer shimmer-text"></span>
-          } @else {
-            {{ totalHireRequests() }}
-          }
-        </div>
-        <div class="stat-label">Hire Requests</div>
-      </div>
+  } @else {
+    <div class="empty-state">
+      <mat-icon>bar_chart</mat-icon>
+      <p>Unable to load report data</p>
     </div>
-
-    <div class="stat-card">
-      <div class="stat-icon stat-icon--cyan">
-        <span class="material-icons">payments</span>
-      </div>
-      <div class="stat-body">
-        <div class="stat-value">
-          @if (loading()) {
-            <span class="shimmer shimmer-text"></span>
-          } @else {
-            {{ totalPayments() }}
-          }
-        </div>
-        <div class="stat-label">Total Payments</div>
-      </div>
-    </div>
-  </div>
+  }
 </div>
