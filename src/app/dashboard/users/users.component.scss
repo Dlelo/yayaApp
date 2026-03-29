@@ -1,0 +1,230 @@
+.users-container {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+
+  // ─── Header ───────────────────────────────────────────
+  .card-header {
+    padding: 24px 24px 16px;
+    border-bottom: 1px solid #e0e0e0;
+    background: linear-gradient(135deg, #2a9d72 0%, #1e8560 100%);
+
+    .title {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+    }
+  }
+
+  // ─── State Containers ─────────────────────────────────
+  .state-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+    text-align: center;
+    gap: 8px;
+
+    .state-icon {
+      font-size: 56px;
+      width: 56px;
+      height: 56px;
+      margin-bottom: 8px;
+      color: #adb5bd;
+    }
+
+    h3 { margin: 0; font-size: 18px; font-weight: 600; color: #495057; }
+    p  { margin: 0; font-size: 14px; color: #868e96; }
+  }
+
+  // ─── Table ────────────────────────────────────────────
+  .table-container {
+    overflow-x: auto;
+    padding: 0;
+    position: relative;
+  }
+
+  .custom-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 14px;
+
+    thead {
+      background-color: #f8f9fa;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+
+      tr th {
+        padding: 12px 8px;
+        text-align: left;
+        font-weight: 600;
+        color: #495057;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #dee2e6;
+        white-space: nowrap;
+
+        &.col-number {
+          width: 50px;
+          text-align: center;
+          padding: 12px 4px;
+        }
+
+        &.col-name   { width: 180px; }
+        &.col-email  { min-width: 200px; }
+        &.col-roles  { min-width: 180px; }
+
+        &.col-actions {
+          width: 1%;
+          text-align: right;
+          padding: 12px 8px;
+          white-space: nowrap;
+        }
+      }
+    }
+
+    tbody {
+      tr.table-row {
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #e9ecef;
+
+        &:hover {
+          background-color: #f8f9fa;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        &:last-child { border-bottom: none; }
+
+        td {
+          padding: 12px 8px;
+          vertical-align: middle;
+          white-space: nowrap;
+
+          &.col-number {
+            text-align: center;
+            padding: 12px 4px;
+
+            .index-badge {
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              width: 28px;
+              height: 28px;
+              background-color: #e9ecef;
+              border-radius: 50%;
+              font-weight: 600;
+              color: #495057;
+              font-size: 12px;
+            }
+          }
+
+          &.col-actions {
+            text-align: right;
+            padding: 12px 8px;
+            white-space: nowrap;
+          }
+
+          .name {
+            font-weight: 500;
+            color: #212529;
+            font-size: 14px;
+          }
+
+          .email {
+            color: #6c757d;
+            font-size: 13px;
+          }
+        }
+      }
+    }
+  }
+
+  // ─── Role Badges ──────────────────────────────────────
+  .roles-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .role-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    background-color: #e9ecef;
+    color: #495057;
+    border: 1px solid #dee2e6;
+  }
+
+  // ─── Action Buttons ────────────────────────────────────
+  .action-buttons {
+    display: inline-flex;
+    gap: 4px;
+    justify-content: flex-end;
+    align-items: center;
+    white-space: nowrap;
+
+    .action-btn {
+      font-size: 11px;
+      padding: 0 8px;
+      height: 32px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      white-space: nowrap;
+      flex-shrink: 0;
+
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+
+      span { font-size: 11px; }
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+    }
+  }
+
+  // ─── Pagination ────────────────────────────────────────
+  .pagination-wrapper {
+    padding: 16px 24px;
+    border-top: 1px solid #e0e0e0;
+    background-color: #fafafa;
+
+    ::ng-deep .mat-mdc-paginator {
+      background-color: transparent;
+    }
+  }
+}
+
+// ─── Responsive ────────────────────────────────────────
+@media (max-width: 1200px) {
+  .users-container {
+    .action-buttons .action-btn span { display: none; }
+    .action-buttons .action-btn { padding: 0 4px; }
+  }
+}
+
+@media (max-width: 768px) {
+  .users-container {
+    .custom-table {
+      thead th { font-size: 10px; padding: 10px 6px; }
+      tbody td { padding: 10px 6px; font-size: 12px; }
+    }
+  }
+}
