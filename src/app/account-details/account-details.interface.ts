@@ -1,3 +1,10 @@
+interface GeoLocation {
+  latitude: number;
+  longitude: number;
+  placeName?: string;
+  addressLine?: string;
+}
+
 interface HouseHelp {
   active:boolean;
   id: number;
@@ -23,6 +30,8 @@ interface HouseHelp {
   securityClearanceComments:string;
   profilePictureDocument:string;
   contactPersonsPhoneNumber:string;
+  pinLocation?: GeoLocation;
+  additionalDocuments?: string[];
 }
 
 interface HomeOwner {
@@ -37,7 +46,8 @@ interface HomeOwner {
   securityCleared:boolean;
   securityClearanceComments:string;
   profilePictureDocument: string;
-
+  pinLocation?: GeoLocation;
+  additionalDocuments?: string[];
 }
 
 

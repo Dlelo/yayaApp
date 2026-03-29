@@ -1,11 +1,10 @@
 import {Component, inject, computed, OnInit} from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatSidenav, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
-import {MatListItem, MatListModule, MatNavList} from '@angular/material/list';
+import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { LoginService } from '../login/login.service';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
-import {MatToolbar} from '@angular/material/toolbar';
 import {MatIconButton} from '@angular/material/button';
 
 @Component({
@@ -21,7 +20,6 @@ import {MatIconButton} from '@angular/material/button';
     MatSidenavContainer,
     MatSidenav,
     MatSidenavContent,
-    MatToolbar,
     MatIconButton,
   ]
 })

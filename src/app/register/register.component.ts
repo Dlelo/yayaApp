@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import libphonenumber from 'google-libphonenumber';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import { RouterLink } from '@angular/router';
 
 // Custom validator for password match
 export function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
@@ -133,10 +134,11 @@ export function createRegionSpecificPhoneValidator(regionCode: string) {
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatIconModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    RouterLink,
   ],
   templateUrl: './register.component.html',
+  styleUrl: './register.component.scss',
 })
 export class RegisterHousehelpComponent {
   private registerService:RegisterService = inject(RegisterService);

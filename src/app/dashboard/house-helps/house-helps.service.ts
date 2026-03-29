@@ -46,11 +46,20 @@ export class HousehelpService {
     }
 
     return this.http.post<any>(`${this.apiUrl}/search`, filter, { params }).pipe(
-      map(res => ({
-        data: res.content ?? res,
-        length: res.totalElements ?? res.length ?? 0,
-        pages:res.pageable ?? 0
-      }))
+      map(res => {
+        let data;
+        try {
+          data = JSON.parse(res);
+        } catch {
+          data = res;
+        }
+
+        return {
+          data: data.content ?? data,
+          length: data.totalElements ?? data.length ?? 0,
+          pages: data.pageable ?? 0
+        };
+      })
     );
   }
 

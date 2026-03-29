@@ -15,48 +15,64 @@
             <mat-icon>person</mat-icon>
           </div>
         }
-<!--        <span class="badge-new">New</span>-->
       </div>
 
       <h2 class="name">{{ houseHelp?.user?.name }}</h2>
 
-      <div class="meta">
-        <p><strong>Security Verified: </strong>
-          @if(houseHelp?.securityCleared){
-            Yes <mat-icon class="step-icon green-shield">verified</mat-icon>
-          } @else {
-            No <mat-icon class="step-icon red-shield">shield_off</mat-icon>
+      <!-- Rating Summary -->
+      <div class="rating-summary">
+        <div class="stars-display">
+          @for(star of getStarArray(5); track star) {
+            <mat-icon [ngClass]="star <= ratingSummary().average ? 'star-filled' : 'star-empty'">
+              {{ star <= ratingSummary().average ? 'star' : 'star_outline' }}
+            </mat-icon>
           }
-        </p>
-
-
+        </div>
+        <span class="rating-text">
+          {{ ratingSummary().average > 0 ? ratingSummary().average : 'No ratings' }}
+          @if(ratingSummary().count > 0) {
+            <span class="review-count">({{ ratingSummary().count }} reviews)</span>
+          }
+        </span>
       </div>
 
-      <div class="meta">
+      <div class="meta-badges">
+        <div class="meta-badge" [ngClass]="houseHelp?.securityCleared ? 'badge-verified' : 'badge-unverified'">
+          <mat-icon>{{ houseHelp?.securityCleared ? 'verified' : 'shield' }}</mat-icon>
+          {{ houseHelp?.securityCleared ? 'Security Verified' : 'Unverified' }}
+        </div>
 
-        <p><strong>Religion: </strong> <span> {{ houseHelp?.religion ?? "-" }}</span></p>
-
+        @if(houseHelp?.houseHelpType) {
+          <div class="meta-badge badge-type">
+            <mat-icon>schedule</mat-icon>
+            {{ houseHelp.houseHelpType.replace('_', ' ') }}
+          </div>
+        }
       </div>
 
-      <div class="meta">
-        <p><strong>Weight: </strong> <span> {{ houseHelp?.weight ?? '-' }}kg</span></p>
-
-      </div>
-
-      <div class="meta">
-        <p><strong>Height: </strong> <span> {{ houseHelp?.height ?? '-' }} cm</span></p>
-
+      <div class="meta-list">
+        <div class="meta-item">
+          <mat-icon>church</mat-icon>
+          <span>{{ houseHelp?.religion ?? 'Not specified' }}</span>
+        </div>
+        <div class="meta-item">
+          <mat-icon>monitor_weight</mat-icon>
+          <span>{{ houseHelp?.weight ? houseHelp.weight + ' kg' : '-' }}</span>
+        </div>
+        <div class="meta-item">
+          <mat-icon>height</mat-icon>
+          <span>{{ houseHelp?.height ? houseHelp.height + ' cm' : '-' }}</span>
+        </div>
       </div>
 
       <button
-        mat-raised-button
-        color="secondary"
-        class="connect-btn"
+        mat-flat-button
+        class="hire-btn"
         (click)="navigateToPay('/pay')"
       >
-        Click to hire
+        <mat-icon>handshake</mat-icon>
+        Hire Now
       </button>
-
     </mat-card>
 
     <!-- RIGHT COLUMN -->
@@ -65,343 +81,261 @@
       <!-- INFO GRID -->
       <div class="info-grid">
         <div class="info-card">
+          <mat-icon class="info-icon">cake</mat-icon>
           <span class="label">Age</span>
           <strong>{{ houseHelp?.age ?? '-' }}</strong>
         </div>
 
         <div class="info-card">
+          <mat-icon class="info-icon">work_history</mat-icon>
           <span class="label">Experience</span>
-          <strong>{{ houseHelp?.yearsOfExperience }}+ years</strong>
+          <strong>{{ houseHelp?.yearsOfExperience ? houseHelp.yearsOfExperience + '+ yrs' : '-' }}</strong>
         </div>
 
         <div class="info-card">
-          <span class="label">Level of education: </span>
-          <strong>{{ houseHelp?.levelOfEducation ?? "-" }}</strong>
+          <mat-icon class="info-icon">school</mat-icon>
+          <span class="label">Education</span>
+          <strong>{{ houseHelp?.levelOfEducation ?? '-' }}</strong>
         </div>
 
         <div class="info-card">
-          <span class="label">Job Type</span>
-          <strong>{{ houseHelp?.houseHelpType }}</strong>
-        </div>
-
-        <div class="info-card">
-          <span class="label">Salary Range:</span>
-          <strong>   {{ houseHelp.preferences.minSalary ? (houseHelp.preferences.minSalary + ' KSh') : '-' }}
-            - {{ houseHelp.preferences.maxSalary ? (houseHelp.preferences.maxSalary + ' KSh') : '-' }}
+          <mat-icon class="info-icon">payments</mat-icon>
+          <span class="label">Salary Range</span>
+          <strong>
+            {{ houseHelp.preferences?.minSalary ? (houseHelp.preferences.minSalary + ' KSh') : '-' }}
+            –
+            {{ houseHelp.preferences?.maxSalary ? (houseHelp.preferences.maxSalary + ' KSh') : '-' }}
           </strong>
         </div>
 
         <div class="info-card">
-          <span class="label">Number of children:</span>
-          <strong>{{ houseHelp?.numberOfChildren ?? "-" }} (children/child)</strong>
+          <mat-icon class="info-icon">child_care</mat-icon>
+          <span class="label">Children</span>
+          <strong>{{ houseHelp?.numberOfChildren ?? '-' }}</strong>
         </div>
 
         <div class="info-card">
-          <span class="label">Current location:</span>
+          <mat-icon class="info-icon">location_on</mat-icon>
+          <span class="label">Location</span>
           <strong>{{ houseHelp?.currentLocation ?? '-' }}</strong>
         </div>
 
         <div class="info-card">
-          <span class="label">Home location:</span>
+          <mat-icon class="info-icon">home</mat-icon>
+          <span class="label">Home Area</span>
           <strong>{{ houseHelp?.homeLocation ?? '-' }}</strong>
         </div>
 
         <div class="info-card">
-          <span class="label">Available</span>
+          <mat-icon class="info-icon">event_available</mat-icon>
+          <span class="label">Availability</span>
           <strong>{{ houseHelp?.availability ?? '-' }}</strong>
         </div>
-
       </div>
 
       <!-- ABOUT -->
-      <mat-card class="about-card">
-        <h3>About</h3>
-        <p>
+      <mat-card class="section-card">
+        <div class="section-header">
+          <mat-icon>info</mat-icon>
+          <h3>About</h3>
+        </div>
+        <p class="about-text">
           {{ houseHelp?.experienceSummary ?? 'No description provided.' }}
         </p>
       </mat-card>
 
-      <!-- HOUSEHELP PREFERENCES -->
+      <!-- SKILLS -->
+      @if(houseHelp.skills && houseHelp.skills.length > 0) {
+        <mat-card class="section-card">
+          <div class="section-header">
+            <mat-icon>build</mat-icon>
+            <h3>Skills</h3>
+          </div>
+          <div class="chips-grid">
+            @for (skill of houseHelp.skills; track $index) {
+              <span class="chip chip-primary">
+                <mat-icon>check_circle</mat-icon>
+                {{ skill.replace('_', ' ') }}
+              </span>
+            }
+          </div>
+        </mat-card>
+      }
 
-      <mat-card class="about-card">
-        <h3>Skills</h3>
-        @for (skill of houseHelp.skills; track $index) {
-          <li class="col-md-6 mb-2">
-            <span class="text-success">✔</span> {{ skill }}
-          </li>
+      <!-- PREFERENCES -->
+      @if(houseHelp.preferences) {
+        <mat-card class="section-card">
+          <div class="section-header">
+            <mat-icon>tune</mat-icon>
+            <h3>Work Preferences</h3>
+          </div>
+          <div class="pref-grid">
+
+            @if(houseHelp.preferences.preferredLocation) {
+              <div class="pref-item">
+                <mat-icon>place</mat-icon>
+                <div>
+                  <span class="pref-label">Preferred Locations</span>
+                  <span class="pref-value">{{ houseHelp.preferences.preferredLocation }}</span>
+                </div>
+              </div>
+            }
+
+            @if(houseHelp.preferences.preferredReligion) {
+              <div class="pref-item">
+                <mat-icon>church</mat-icon>
+                <div>
+                  <span class="pref-label">Preferred Religion</span>
+                  <span class="pref-value">{{ houseHelp.preferences.preferredReligion }}</span>
+                </div>
+              </div>
+            }
+
+            <div class="pref-item">
+              <mat-icon>pets</mat-icon>
+              <div>
+                <span class="pref-label">Okay with Pets</span>
+                <span class="pref-value" [ngClass]="houseHelp.preferences?.okayWithPets ? 'text-success' : 'text-danger'">
+                  {{ houseHelp.preferences?.okayWithPets === true ? 'Yes' : houseHelp.preferences?.okayWithPets === false ? 'No' : '-' }}
+                </span>
+              </div>
+            </div>
+
+            @if(houseHelp.preferences.preferredChildAgeRanges?.length) {
+              <div class="pref-item">
+                <mat-icon>child_care</mat-icon>
+                <div>
+                  <span class="pref-label">Child Age Ranges</span>
+                  <div class="chips-row">
+                    @for(age of houseHelp.preferences.preferredChildAgeRanges; track $index) {
+                      <span class="chip chip-sm">{{ age.replace('_', ' ') }}</span>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+
+            @if(houseHelp.preferences.preferredSkills?.length) {
+              <div class="pref-item">
+                <mat-icon>build</mat-icon>
+                <div>
+                  <span class="pref-label">Preferred Skills</span>
+                  <div class="chips-row">
+                    @for(skill of houseHelp.preferences.preferredSkills; track $index) {
+                      <span class="chip chip-sm">{{ skill.replace('_', ' ') }}</span>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+
+            @if(houseHelp.preferences.preferredLanguages?.length) {
+              <div class="pref-item">
+                <mat-icon>language</mat-icon>
+                <div>
+                  <span class="pref-label">Preferred Languages</span>
+                  <div class="chips-row">
+                    @for(lang of houseHelp.preferences.preferredLanguages; track $index) {
+                      <span class="chip chip-sm">{{ lang }}</span>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+
+          </div>
+        </mat-card>
+      }
+
+      <!-- REVIEWS SECTION -->
+      <mat-card class="section-card reviews-card">
+        <div class="section-header">
+          <mat-icon>rate_review</mat-icon>
+          <h3>Reviews</h3>
+          @if(ratingSummary().count > 0) {
+            <div class="overall-rating">
+              <span class="big-rating">{{ ratingSummary().average }}</span>
+              <div class="stars-inline">
+                @for(star of getStarArray(5); track star) {
+                  <mat-icon class="star-sm" [ngClass]="star <= ratingSummary().average ? 'star-filled' : 'star-empty'">
+                    {{ star <= ratingSummary().average ? 'star' : 'star_outline' }}
+                  </mat-icon>
+                }
+              </div>
+              <span class="review-count-text">{{ ratingSummary().count }} reviews</span>
+            </div>
+          }
+        </div>
+
+        <!-- Review List -->
+        @if(reviews().length > 0) {
+          <div class="reviews-list">
+            @for(review of reviews(); track review.id) {
+              <div class="review-item">
+                <div class="review-avatar">{{ review.reviewerName.charAt(0).toUpperCase() }}</div>
+                <div class="review-body">
+                  <div class="review-top">
+                    <strong class="reviewer-name">{{ review.reviewerName }}</strong>
+                    <div class="review-stars">
+                      @for(star of getStarArray(5); track star) {
+                        <mat-icon class="star-xs" [ngClass]="star <= review.rating ? 'star-filled' : 'star-empty'">
+                          {{ star <= review.rating ? 'star' : 'star_outline' }}
+                        </mat-icon>
+                      }
+                    </div>
+                    <span class="review-date">{{ review.createdAt | date:'mediumDate' }}</span>
+                  </div>
+                  @if(review.comment) {
+                    <p class="review-comment">{{ review.comment }}</p>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="no-reviews">
+            <mat-icon>reviews</mat-icon>
+            <p>No reviews yet. Be the first to review!</p>
+          </div>
+        }
+
+        <!-- Leave a Review (homeowners only) -->
+        @if(isHomeOwner) {
+          <div class="add-review">
+            <h4>Leave a Review</h4>
+            <div class="star-picker">
+              <span class="star-label">Your rating:</span>
+              @for(star of getStarArray(5); track star) {
+                <mat-icon
+                  class="star-pick"
+                  [ngClass]="star <= (hoverRating || newRating) ? 'star-filled' : 'star-empty'"
+                  (click)="setRating(star)"
+                  (mouseenter)="hoverRating = star"
+                  (mouseleave)="hoverRating = 0"
+                >star</mat-icon>
+              }
+              @if(newRating > 0) {
+                <span class="selected-rating">{{ newRating }}/5</span>
+              }
+            </div>
+
+            <mat-form-field appearance="outline" class="review-textarea">
+              <mat-label>Share your experience (optional)</mat-label>
+              <textarea matInput rows="3" [(ngModel)]="newComment" placeholder="Describe your experience..."></textarea>
+            </mat-form-field>
+
+            <button
+              mat-flat-button
+              class="submit-review-btn"
+              (click)="submitReview()"
+              [disabled]="submittingReview || newRating === 0"
+            >
+              <mat-icon>send</mat-icon>
+              {{ submittingReview ? 'Submitting...' : 'Submit Review' }}
+            </button>
+          </div>
         }
       </mat-card>
-
-        @if(houseHelp.preferences){
-          <mat-card class="about-card mt-4">
-            <h3>Preferences</h3>
-
-            <div class="row g-3">
-
-              <div class="col-md-12">
-                <p><strong>Preferred Counties / Locations:</strong>
-                  <span *ngFor="let loc of houseHelp.preferences.preferredLocation; let last = last">
-              {{ loc }}<span *ngIf="!last">, </span>
-            </span>
-                  <span *ngIf="!houseHelp.preferences.preferredLocation?.length">-</span>
-                </p>
-              </div>
-
-              <div class="col-md-12">
-                <p><strong>Preferred household religion:</strong>
-                  <span> {{houseHelp.preferences.preferredReligion}}</span>
-                </p>
-              </div>
-
-              <div class="col-md-12">
-                <p><strong>Preferred Age Ranges of Children:</strong>
-                  <span *ngFor="let age of houseHelp.preferences.preferredChildAgeRanges; let last = last">
-              {{ age }}<span *ngIf="!last">, </span>
-            </span>
-                  <span *ngIf="!houseHelp.preferences.preferredChildAgeRanges?.length">-</span>
-                </p>
-              </div>
-
-              <div class="col-md-12">
-                <p><strong>Preferred Skills:</strong>
-                  <span *ngFor="let skill of houseHelp.preferences.preferredSkills; let last = last">
-              {{ skill }}<span *ngIf="!last">, </span>
-            </span>
-                  <span *ngIf="!houseHelp.preferences.preferredSkills?.length">-</span>
-                </p>
-              </div>
-
-              <div class="col-md-12">
-                <p><strong>Preferred Languages:</strong>
-                  <span *ngFor="let lang of houseHelp.preferences.preferredLanguages; let last = last">
-              {{ lang }}<span *ngIf="!last">, </span>
-            </span>
-                  <span *ngIf="!houseHelp.preferences.preferredLanguages?.length">-</span>
-                </p>
-              </div>
-
-              <div class="col-md-12">
-                <p><strong>Preferred Services / Tasks:</strong>
-                  <span *ngFor="let service of houseHelp.preferences.preferredServices; let last = last">
-              {{ service }}<span *ngIf="!last">, </span>
-            </span>
-                  <span *ngIf="!houseHelp.preferences.preferredServices?.length">-</span>
-                </p>
-              </div>
-
-              <div class="col-md-12">
-                <p><strong>Okay with Pets:</strong>
-                  @if(houseHelp.preferences?.okayWithPets === true){
-                    Yes <mat-icon class="step-icon green-check">check_circle</mat-icon>
-                  } @else if(houseHelp.preferences?.okayWithPets === false){
-                    No <mat-icon class="step-icon red-cross">cancel</mat-icon>
-                  } @else {
-                    -
-                  }
-                </p>
-              </div>
-
-            </div>
-          </mat-card>
-        }
-
-
-      <!--      <section class="capabilities-section">-->
-
-<!--        &lt;!&ndash; CAN BABYSIT &ndash;&gt;-->
-<!--        <h2 class="section-title">-->
-<!--          Can Babysit-->
-<!--          <span class="underline"></span>-->
-<!--        </h2>-->
-
-<!--        <h3 class="sub-title">Children</h3>-->
-
-<!--        <div class="three-column-list">-->
-<!--          <ul>-->
-<!--            <li>0 – 5 months old</li>-->
-<!--            <li>6 – 11 months old</li>-->
-<!--            <li>1 year old</li>-->
-<!--          </ul>-->
-
-<!--          <ul>-->
-<!--            <li>2 years old</li>-->
-<!--            <li>3 years old</li>-->
-<!--            <li>4 – 6 years old</li>-->
-<!--          </ul>-->
-
-<!--          <ul>-->
-<!--            <li>7+ years old</li>-->
-<!--          </ul>-->
-<!--        </div>-->
-
-<!--        <p class="children-count">-->
-<!--          Will care for up to: <strong>👶 3 Children</strong>-->
-<!--        </p>-->
-
-<!--        &lt;!&ndash; SKILLS & SERVICES &ndash;&gt;-->
-<!--        <h2 class="section-title">-->
-<!--          Skills &amp; Services-->
-<!--          <span class="underline"></span>-->
-<!--        </h2>-->
-
-<!--        &lt;!&ndash; LANGUAGES &ndash;&gt;-->
-<!--        <h3 class="sub-title">Languages</h3>-->
-<!--        <div class="three-column-list">-->
-<!--          <ul>-->
-<!--            <li>Japanese</li>-->
-<!--          </ul>-->
-<!--          <ul>-->
-<!--            <li>English</li>-->
-<!--          </ul>-->
-<!--          <ul>-->
-<!--            <li>French</li>-->
-<!--          </ul>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; SERVICES &ndash;&gt;-->
-<!--        <h3 class="sub-title">Services</h3>-->
-<!--        <div class="three-column-list">-->
-<!--          <ul>-->
-<!--            <li>Online lessons</li>-->
-<!--            <li>Pick up children</li>-->
-<!--            <li>Care for sick children</li>-->
-<!--            <li>Mother's helper after childbirth</li>-->
-<!--            <li>Light housekeeping</li>-->
-<!--          </ul>-->
-
-<!--          <ul>-->
-<!--            <li>Cooking / Meal preparation</li>-->
-<!--            <li>Care with foreign language</li>-->
-<!--            <li>Homework help</li>-->
-<!--            <li>Events</li>-->
-<!--            <li>Overnight</li>-->
-<!--          </ul>-->
-
-<!--          <ul>-->
-<!--            <li>Travel</li>-->
-<!--            <li>Pet care</li>-->
-<!--            <li>Toilet training</li>-->
-<!--          </ul>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; CERTIFICATES &ndash;&gt;-->
-<!--        <h3 class="sub-title">Certificates</h3>-->
-<!--        <ul class="centered-list">-->
-<!--          <li>Not Completed Government Approved Babysitter Training</li>-->
-<!--        </ul>-->
-
-<!--      </section>-->
-
-<!--      <section class="reviews-section">-->
-
-<!--        <h2 class="section-title">-->
-<!--          Reviews-->
-<!--          <span class="underline"></span>-->
-<!--        </h2>-->
-
-<!--        &lt;!&ndash; REVIEW CARD &ndash;&gt;-->
-<!--        <div class="review-card light-blue">-->
-<!--          <div class="stars">-->
-<!--            ★★★★★-->
-<!--          </div>-->
-<!--          <p class="rating-text">Your rating: <strong>5</strong></p>-->
-
-<!--          <p class="review-text">-->
-<!--            Manon was a delight to work with. She was punctual and kept her calm-->
-<!--            while my 7mo had a crying fit (it was her first time having a babysitter-->
-<!--            that wasn't family!). Manon assured us as we stepped out the door and-->
-<!--            kept us informed of the baby's mood/progress. I would definitely-->
-<!--            recommend Manon.-->
-<!--          </p>-->
-
-<!--          <p class="review-author">Jessica</p>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; REVIEW CARD &ndash;&gt;-->
-<!--        <div class="review-card light-yellow">-->
-<!--          <div class="stars">-->
-<!--            ★★★★★-->
-<!--          </div>-->
-<!--          <p class="rating-text">Your rating: <strong>5</strong></p>-->
-
-<!--          <p class="review-text">-->
-<!--            Tout s'est très bien placé !<br />-->
-<!--            Manon a pris le temps de faire connaissance doucement avec notre fille.<br />-->
-<!--            Elle a été très ponctuelle également.<br />-->
-<!--            Nous recommencerons :)-->
-<!--          </p>-->
-
-<!--          <p class="review-author">Auriane</p>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; REVIEW CARD &ndash;&gt;-->
-<!--        <div class="review-card light-blue">-->
-<!--          <div class="stars">-->
-<!--            ★★★★★-->
-<!--          </div>-->
-<!--          <p class="rating-text">Your rating: <strong>5</strong></p>-->
-
-<!--          <p class="review-text">-->
-<!--            Excellent experience overall. Very calm, reliable, and caring.-->
-<!--            Highly recommended.-->
-<!--          </p>-->
-
-<!--          <p class="review-author">—</p>-->
-<!--        </div>-->
-
-<!--      </section>-->
-<!--      <section class="add-review-section">-->
-
-<!--        <h3 class="add-review-title">Leave a Review</h3>-->
-
-<!--        <form class="review-form">-->
-
-<!--          &lt;!&ndash; STAR RATING &ndash;&gt;-->
-<!--          <div class="rating-input">-->
-<!--            <span>Your rating:</span>-->
-<!--            <div class="star-input">-->
-<!--              <mat-icon>star</mat-icon>-->
-<!--              <mat-icon>star</mat-icon>-->
-<!--              <mat-icon>star</mat-icon>-->
-<!--              <mat-icon>star</mat-icon>-->
-<!--              <mat-icon>star</mat-icon>-->
-<!--            </div>-->
-<!--          </div>-->
-
-<!--          &lt;!&ndash; REVIEW TEXT &ndash;&gt;-->
-<!--          <mat-form-field appearance="outline" class="full-width">-->
-<!--            <mat-label>Your review</mat-label>-->
-<!--            <textarea-->
-<!--              matInput-->
-<!--              rows="4"-->
-<!--              placeholder="Share your experience..."-->
-<!--            ></textarea>-->
-<!--          </mat-form-field>-->
-
-<!--          &lt;!&ndash; NAME &ndash;&gt;-->
-<!--          <mat-form-field appearance="outline" class="full-width">-->
-<!--            <mat-label>Your name</mat-label>-->
-<!--            <input-->
-<!--              matInput-->
-<!--              placeholder="Optional"-->
-<!--            />-->
-<!--          </mat-form-field>-->
-
-<!--          &lt;!&ndash; SUBMIT &ndash;&gt;-->
-<!--          <div class="submit-row">-->
-<!--            <button-->
-<!--              mat-raised-button-->
-<!--              color="primary"-->
-<!--              type="submit"-->
-<!--            >-->
-<!--              Submit Review-->
-<!--            </button>-->
-<!--          </div>-->
-
-<!--        </form>-->
-
-<!--      </section>-->
-
 
     </div>
   </div>

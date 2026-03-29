@@ -415,7 +415,7 @@
                   </mat-form-field>
                 </div>
 
-                <!-- Preferred Child Age Ranges (comma separated for simplicity) -->
+                <!-- Preferred Child Age Ranges -->
                 <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Preferred Age Ranges of Children</mat-label>
@@ -439,14 +439,6 @@
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Preferred Maximum Children</mat-label>
                     <input matInput type="number" formControlName="preferredMaxChildren"/>
-                  </mat-form-field>
-                </div>
-
-                <!-- Preferred Services (comma separated) -->
-                <div class="col-md-6">
-                  <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Preferred Services</mat-label>
-                    <input matInput formControlName="preferredServices"/>
                   </mat-form-field>
                 </div>
 
@@ -586,7 +578,18 @@
                 <div class="col-md-6">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Preferred Child Age Ranges (comma separated)</mat-label>
-                    <input matInput formControlName="preferredChildAgeRanges"/>
+
+                    <mat-select
+                      formControlName="preferredChildAgeRanges"
+                      multiple
+                    >
+                      <mat-option
+                        *ngFor="let option of childAgeRangeOptions"
+                        [value]="option.value"
+                      >
+                        {{ option.label }}
+                      </mat-option>
+                    </mat-select>
                   </mat-form-field>
                 </div>
 
@@ -595,14 +598,6 @@
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Preferred Maximum Children</mat-label>
                     <input matInput type="number" formControlName="preferredMaxChildren"/>
-                  </mat-form-field>
-                </div>
-
-                <!-- Preferred Services -->
-                <div class="col-md-6">
-                  <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Preferred Services (comma separated)</mat-label>
-                    <input matInput formControlName="preferredServices"/>
                   </mat-form-field>
                 </div>
 
@@ -616,7 +611,7 @@
 
                 <!-- Okay With Pets -->
                 <div class="col-md-6 d-flex align-items-center mt-2">
-                  <mat-checkbox formControlName="okayWithPets"> Okay with Pets</mat-checkbox>
+                  <mat-checkbox formControlName="hasPets"> Has Pets</mat-checkbox>
                 </div>
 
                 <!-- Min & Max Salary -->
@@ -637,6 +632,42 @@
 
             </div>
           }
+
+          <!-- Additional Documents Upload -->
+          <div class="section-card mt-3">
+            <h4 class="section-title mb-3">Additional Documents</h4>
+            <div class="upload-box">
+              <label class="upload-label">Upload PDF or Image files</label>
+              <div class="upload-trigger">
+                <input type="file" id="additionalDocInput" multiple accept=".pdf,image/*"
+                       (change)="onAdditionalDocSelected($event)" style="display:none">
+                <button mat-stroked-button type="button" (click)="additionalDocInput.click()" [disabled]="additionalDocUploading">
+                  <mat-icon>upload_file</mat-icon>
+                  {{ additionalDocUploading ? 'Uploading...' : 'Choose Files' }}
+                </button>
+                <input #additionalDocInput type="file" multiple accept=".pdf,image/*"
+                       (change)="onAdditionalDocSelected($event)" style="display:none">
+              </div>
+              @if (additionalDocUrls.length) {
+                <div class="doc-list mt-3">
+                  @for (doc of additionalDocUrls; track doc; let i = $index) {
+                    <div class="doc-item">
+                      <mat-icon>description</mat-icon>
+                      <span class="doc-name">Document {{ i + 1 }}</span>
+                      <div class="doc-actions">
+                        <button mat-icon-button type="button" (click)="viewDocument(doc)" title="View">
+                          <mat-icon>visibility</mat-icon>
+                        </button>
+                        <button mat-icon-button type="button" (click)="removeAdditionalDoc(doc)" title="Remove" color="warn">
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
 
           <div class="d-flex justify-content-end mt-4 gap-2">
             <button mat-stroked-button color="warn" type="button" (click)="cancel()">Cancel</button>

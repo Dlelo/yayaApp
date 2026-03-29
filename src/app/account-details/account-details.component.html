@@ -4,6 +4,13 @@
   @if (user) {
     <div class="account-shell">
 
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Account Profile</h1>
+          <p class="page-subtitle">View and manage account information</p>
+        </div>
+      </div>
+
       <div class="hero">
         <div class="hero-left">
           <div class="avatar">
@@ -58,7 +65,7 @@
           </div>
         </div>
 
-        @if (user?.roles?.includes('ADMIN') || user?.roles?.includes('SALES')) {
+        @if (canEdit()) {
           <button mat-stroked-button color="primary" (click)="editAccount(userId || '')">
             <mat-icon>edit</mat-icon>
             Edit profile
@@ -205,6 +212,50 @@
           </div>
         </div>
 
+        <!-- Leaflet pin location map -->
+        @if(hh?.pinLocation?.latitude && hh?.pinLocation?.longitude){
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Location</p>
+                <h2>Pin Location</h2>
+              </div>
+            </div>
+            <div id="account-map" style="height:280px;border-radius:12px;overflow:hidden;"></div>
+            @if(hh?.pinLocation?.placeName){
+              <p class="text-muted" style="margin-top:0.5rem;font-size:0.85rem;">
+                <mat-icon style="font-size:15px;vertical-align:middle">place</mat-icon>
+                {{ hh?.pinLocation?.placeName }}
+              </p>
+            }
+          </div>
+        }
+
+        <!-- Additional Documents -->
+        @if(hh?.additionalDocuments?.length){
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Files</p>
+                <h2>Additional Documents</h2>
+              </div>
+            </div>
+            <div class="doc-grid">
+              @for(doc of hh?.additionalDocuments; track doc; let i = $index){
+                <div class="doc ready">
+                  <div>
+                    <p class="label">Document {{ i + 1 }}</p>
+                    <p class="value">Uploaded</p>
+                  </div>
+                  <button mat-icon-button (click)="viewDocument(doc)">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
         <!-- Security Clearance (Admin/Security only) -->
         @if(user?.roles?.includes('ADMIN') || user?.roles?.includes('SECURITY')){
           @if(hh?.securityCleared || hh?.securityClearanceComments){
@@ -312,6 +363,50 @@
           </div>
         </div>
 
+        <!-- Leaflet pin location map (homeowner) -->
+        @if(ho?.pinLocation?.latitude && ho?.pinLocation?.longitude){
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Location</p>
+                <h2>Pin Location</h2>
+              </div>
+            </div>
+            <div id="account-map" style="height:280px;border-radius:12px;overflow:hidden;"></div>
+            @if(ho?.pinLocation?.placeName){
+              <p class="text-muted" style="margin-top:0.5rem;font-size:0.85rem;">
+                <mat-icon style="font-size:15px;vertical-align:middle">place</mat-icon>
+                {{ ho?.pinLocation?.placeName }}
+              </p>
+            }
+          </div>
+        }
+
+        <!-- Additional Documents (homeowner) -->
+        @if(ho?.additionalDocuments?.length){
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Files</p>
+                <h2>Additional Documents</h2>
+              </div>
+            </div>
+            <div class="doc-grid">
+              @for(doc of ho?.additionalDocuments; track doc; let i = $index){
+                <div class="doc ready">
+                  <div>
+                    <p class="label">Document {{ i + 1 }}</p>
+                    <p class="value">Uploaded</p>
+                  </div>
+                  <button mat-icon-button (click)="viewDocument(doc)">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
         <!-- Security Clearance (Admin/Security only) -->
         @if(user?.roles?.includes('ADMIN') || user?.roles?.includes('SECURITY')){
           @if(ho?.securityCleared || ho?.securityClearanceComments){
@@ -367,8 +462,40 @@
         }
       }
 
+      <!-- My Reviews section (house helps only) -->
+      @if (user?.roles?.includes('HOUSEHELP') && myReviews.length > 0) {
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">Feedback</p>
+              <h2>My Reviews</h2>
+            </div>
+          </div>
+          <div class="reviews-list">
+            @for (review of myReviews; track review.id) {
+              <div class="review-item">
+                <div class="review-meta">
+                  <div class="review-avatar">{{ review.reviewerName[0].toUpperCase() }}</div>
+                  <div class="review-info">
+                    <span class="reviewer-name">{{ review.reviewerName }}</span>
+                    <div class="review-stars">
+                      @for (s of [1,2,3,4,5]; track s) {
+                        <mat-icon class="star-icon" [class.filled]="s <= review.rating">star</mat-icon>
+                      }
+                    </div>
+                  </div>
+                </div>
+                @if (review.comment) {
+                  <p class="review-comment">{{ review.comment }}</p>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+
       <!-- Footer message for non-admin users -->
-      @if(!user?.roles?.includes('ADMIN') && !user?.roles?.includes('SALES')){
+      @if(!canEdit()){
         <div class="card info-card">
           <p class="info-message">
             <mat-icon>info</mat-icon>

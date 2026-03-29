@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HousehelpService } from '../dashboard/house-helps/house-helps.service';
 import { Observable, of } from 'rxjs';
@@ -8,6 +8,8 @@ import { MatCard, MatCardActions, MatCardContent } from '@angular/material/card'
 import { AsyncPipe, NgClass, SlicePipe } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { LoginService } from '../login/login.service';
+import { RecommendationsService, HouseHelpMatch } from '../recommendations/recommendations.service';
 
 @Component({
   standalone: true,
@@ -32,12 +34,20 @@ export class ListingsComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private househelpService = inject(HousehelpService);
+  private loginService = inject(LoginService);
+  private recommendationsService = inject(RecommendationsService);
 
   houseHelps$!: Observable<any>;
+  recommendations = signal<HouseHelpMatch[]>([]);
+  activeTab = signal<'browse' | 'recommended'>('browse');
 
   page: number = 0;
   size: number = 20;
   type: string = 'ALL';
+
+  get isHomeOwner() {
+    return this.loginService.userRoles().includes('ROLE_HOMEOWNER');
+  }
 
   filters: any = {
     active: true,
@@ -54,6 +64,17 @@ export class ListingsComponent implements OnInit {
       this.type = (params.get('type') || 'all').toUpperCase();
       this.filters.houseHelpType = this.type === 'ALL' ? null : this.type;
       this.load(this.type);
+    });
+
+    if (this.isHomeOwner) {
+      this.loadRecommendations();
+    }
+  }
+
+  loadRecommendations(): void {
+    this.recommendationsService.getRecommendations().subscribe({
+      next: data => this.recommendations.set(data),
+      error: () => {}
     });
   }
 
@@ -89,42 +110,27 @@ export class ListingsComponent implements OnInit {
     this.router.navigate(['/profile', id]);
   }
 
-  /**
-   * Get CSS class for availability badge based on type
-   */
   getAvailabilityClass(houseHelpType: string): string {
     if (!houseHelpType) return '';
-    
     switch (houseHelpType.toUpperCase()) {
-      case 'DAYBURG':
-        return 'dayburg';
-      case 'LIVE_IN':
-        return 'live-in';
-      case 'EMERGENCY':
-        return 'emergency';
-      default:
-        return '';
+      case 'DAYBURG': return 'dayburg';
+      case 'LIVE_IN': return 'live-in';
+      case 'EMERGENCY': return 'emergency';
+      default: return '';
     }
   }
 
-  /**
-   * Format availability type for display
-   * Converts "LIVE_IN" -> "Live In", "DAYBURG" -> "Dayburg"
-   */
   formatAvailability(houseHelpType: string): string {
     if (!houseHelpType) return 'Not specified';
-    
     return houseHelpType.replace('_', ' ').toLowerCase()
       .split(' ')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
   }
 
-  /**
-   * Get profile picture URL
-   * Returns the CDN URL directly since files are public
-   */
-  getProfilePictureUrl(houseHelp: any): string | null {
-    return houseHelp?.profilePictureDocument || null;
+  getMatchScoreClass(score: number): string {
+    if (score >= 80) return 'match-excellent';
+    if (score >= 60) return 'match-good';
+    return 'match-fair';
   }
 }

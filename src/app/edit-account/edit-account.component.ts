@@ -13,7 +13,6 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatChipGrid, MatChipRow, MatChipInput } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Observable, take, tap } from 'rxjs';
-import * as L from 'leaflet';
 
 import { LoginService } from '../login/login.service';
 import { AccountDetailsService } from '../account-details/account-details.service';
@@ -92,8 +91,11 @@ export class EditAccountDetailsComponent implements OnInit, AfterViewInit {
 
   availabilityTypes = ['DAYBURG', 'EMERGENCY', 'LIVE_IN'];
 
-  map!: L.Map;
-  marker!: L.Marker;
+  additionalDocUrls: string[] = [];
+  additionalDocUploading = false;
+
+  map!: any;
+  marker!: any;
   mapCenter = { lat: -1.286389, lng: 36.817223 }; // Nairobi default
   zoomLevel = 6;
 
@@ -118,13 +120,18 @@ export class EditAccountDetailsComponent implements OnInit, AfterViewInit {
   }
 
   private async initializeMap() {
+    // Guard: form may not be ready yet (HTTP response hasn't arrived) or map element may not exist
+    if (!this.form) return;
+    const mapEl = document.getElementById('map');
+    if (!mapEl) return;
+
     const L = (await import('leaflet')).default;
 
     const pin = this.isHouseHelp
       ? this.form.get('houseHelp.pinLocation')?.value
       : this.form.get('homeOwner.pinLocation')?.value;
 
-    const initialLatLng: L.LatLngExpression = pin
+    const initialLatLng: [number, number] = pin
       ? [pin.latitude, pin.longitude]
       : [this.mapCenter.lat, this.mapCenter.lng];
 
@@ -141,7 +148,7 @@ export class EditAccountDetailsComponent implements OnInit, AfterViewInit {
       this.updateFormPin(pos.lat, pos.lng);
     });
 
-    this.map.on('click', (e: L.LeafletMouseEvent) => {
+    this.map.on('click', (e: any) => {
       this.marker.setLatLng(e.latlng);
       this.updateFormPin(e.latlng.lat, e.latlng.lng);
     });
@@ -156,7 +163,7 @@ export class EditAccountDetailsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private getPinFromForm(): L.LatLngExpression {
+  private getPinFromForm(): [number, number] {
     const pin = this.isHouseHelp
       ? this.form.get('houseHelp.pinLocation')?.value
       : this.form.get('homeOwner.pinLocation')?.value;
@@ -245,6 +252,7 @@ export class EditAccountDetailsComponent implements OnInit, AfterViewInit {
           contactPersonsPhoneNumber: [
             user.houseHelp?.contactPersonsPhoneNumber || ''
           ],
+          additionalDocuments: [user.houseHelp?.additionalDocuments || []],
           preferences: this.fb.group({
             houseHelpType: [user.houseHelp?.preferences?.houseHelpType || null],
             minExperience: [user.houseHelp?.preferences?.minExperience || 0],
@@ -273,17 +281,19 @@ export class EditAccountDetailsComponent implements OnInit, AfterViewInit {
           nationalIdDocument:[user.homeOwner?.nationalIdDocument || ''],
           nationalId: [user.homeOwner?.nationalId || ''],
           profilePicture: [user.homeOwner?.profilePicture || ''],
+          additionalDocuments: [user.homeOwner?.additionalDocuments || []],
           preferences: this.fb.group({
             preferredLocation: [user.homeOwner?.preferences?.preferredLocation || ''],
             preferredSkills: [this.normalizeList(user.homeOwner?.preferences?.preferredSkills)],
             preferredLanguages: [this.normalizeList(user.homeOwner?.preferences?.preferredLanguages)],
-            preferredChildAgeRanges: [user.homeOwner?.preferences?.preferredChildAgeRanges || []],
+            preferredChildAgeRanges: [user.homeOwner?.preferences?.preferredChildAgeRanges as ChildAgeRange[] || user.homeOwner?.preferences?.childrenAgeRanges as ChildAgeRange[] || [] as ChildAgeRange[]],
             preferredMaxChildren: [user.homeOwner?.preferences?.preferredMaxChildren || null],
             preferredServices: [user.homeOwner?.preferences?.preferredServices || []],
-            preferredReligion: [user.homeOwner?.preferences?.preferredReligion || ''],
-            okayWithPets: [user.homeOwner?.preferences?.okayWithPets || false],
-            minSalary: [user.homeOwner?.preferences?.minSalary || null],
-            maxSalary: [user.homeOwner?.preferences?.maxSalary || null],
+            preferredReligion: [user.homeOwner?.preferences?.preferredReligion || user.homeOwner?.preferences?.religionPreference || ''],
+            hasPets: [user.homeOwner?.preferences?.hasPets || false],
+            maxSalary: [user.homeOwner?.preferences?.maxSalary || user.homeOwner?.preferences?.preferredMaxSalary || null],
+            minSalary: [user.homeOwner?.preferences?.minSalary || user.homeOwner?.preferences?.preferredMinSalary || null],
+
           }),
         })
         : null,
@@ -299,6 +309,12 @@ export class EditAccountDetailsComponent implements OnInit, AfterViewInit {
 
       this.form.get('houseHelp.skills')?.setValue(this.skills);
       this.form.get('houseHelp.languages')?.setValue(this.languages);
+
+      this.additionalDocUrls = user.houseHelp?.additionalDocuments || [];
+    }
+
+    if (this.isHomeOwner && user.homeOwner) {
+      this.additionalDocUrls = user.homeOwner?.additionalDocuments || [];
     }
   }
 
@@ -647,9 +663,39 @@ export class EditAccountDetailsComponent implements OnInit, AfterViewInit {
     }
   }
 
-
-
-
+  viewDocument(url: string): void {
+    window.open(url, '_blank');
   }
+
+  onAdditionalDocSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const files = Array.from(input.files || []);
+    if (!files.length) return;
+
+    this.additionalDocUploading = true;
+    const uploads = files.map(file => this.fileUploadService.uploadDocument(file).toPromise());
+
+    Promise.allSettled(uploads).then(results => {
+      results.forEach(result => {
+        if (result.status === 'fulfilled' && result.value) {
+          this.additionalDocUrls = [...this.additionalDocUrls, result.value];
+        }
+      });
+      const ctrl = this.form.get('houseHelp.additionalDocuments') || this.form.get('homeOwner.additionalDocuments');
+      ctrl?.setValue(this.additionalDocUrls);
+      this.additionalDocUploading = false;
+      this.snackBar.open(`✅ ${results.filter(r => r.status === 'fulfilled').length} document(s) uploaded`, 'Close', { duration: 3000 });
+    });
+
+    input.value = '';
+  }
+
+  removeAdditionalDoc(url: string): void {
+    this.additionalDocUrls = this.additionalDocUrls.filter(u => u !== url);
+    const ctrl = this.form.get('houseHelp.additionalDocuments') || this.form.get('homeOwner.additionalDocuments');
+    ctrl?.setValue(this.additionalDocUrls);
+  }
+
+}
 
 

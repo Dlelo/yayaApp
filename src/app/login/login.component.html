@@ -1,47 +1,82 @@
-<div class="container mt-4">
-  <h2 class="mb-4 text-center">Login</h2>
+<div class="auth-page">
 
-  <form [formGroup]="form" (ngSubmit)="submit()">
-    <div class="row g-3">
-      <div class="col-md-12">
-        <mat-form-field class="w-100">
-          <mat-label>Email or Phone number</mat-label>
-          <input matInput formControlName="identifier" />
-          <mat-hint>
-            Format: use valid email format or phone number format <strong>+254XXXXXXXXX</strong>
-          </mat-hint>
-          @if(form.controls.identifier.hasError('required')){
-            <mat-error>Email or Phone number is required</mat-error>
-          }
-        </mat-form-field>
+  <!-- Left brand panel -->
+  <div class="brand-panel">
+    <div class="brand-inner">
+      <img src="/logo.png" alt="yayaConnectApp" class="brand-logo" />
+      <h2 class="brand-tagline">Welcome back to yayaConnect</h2>
+      <p class="brand-sub">Kenya's trusted platform for professional domestic staffing.</p>
+
+      <ul class="brand-features">
+        <li>
+          <span class="feature-icon"><mat-icon>verified_user</mat-icon></span>
+          Security-cleared professionals
+        </li>
+        <li>
+          <span class="feature-icon"><mat-icon>bolt</mat-icon></span>
+          Placed within 24 hours
+        </li>
+        <li>
+          <span class="feature-icon"><mat-icon>handshake</mat-icon></span>
+          Trusted by 1,000+ families
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Right form panel -->
+  <div class="form-panel">
+    <div class="form-card">
+      <div class="form-header">
+        <h1>Sign In</h1>
+        <p>Enter your credentials to access your account</p>
       </div>
 
-      <div class="col-md-12">
-        <mat-form-field class="w-100">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+
+        <mat-form-field appearance="outline" class="full-field">
+          <mat-label>Email or Phone Number</mat-label>
+          <mat-icon matPrefix>person</mat-icon>
+          <input matInput formControlName="identifier" placeholder="+254XXXXXXXXX or email" />
+          @if(form.controls.identifier.hasError('required') && form.controls.identifier.touched){
+            <mat-error>Email or phone number is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-field">
           <mat-label>Password</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
           <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" />
           <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
-            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
-          @if(form.controls.password.hasError('required')){
+          @if(form.controls.password.hasError('required') && form.controls.password.touched){
             <mat-error>Password is required</mat-error>
           }
         </mat-form-field>
-      </div>
-    </div>
 
-    <div class="row mt-4">
-      <div class="col text-center">
         <button
-          mat-raised-button
-          color="primary"
-          class="px-5 py-2"
+          mat-flat-button
+          class="submit-btn"
           type="submit"
-          [disabled]="form.invalid"
+          [disabled]="form.invalid || loading"
         >
-          Submit
+          @if(loading) {
+            <mat-icon class="spin">refresh</mat-icon>
+            Signing in...
+          } @else {
+            <mat-icon>login</mat-icon>
+            Sign In
+          }
         </button>
+
+      </form>
+
+      <div class="form-footer">
+        Don't have an account?
+        <a routerLink="/register">Create account</a>
       </div>
     </div>
-  </form>
+  </div>
+
 </div>

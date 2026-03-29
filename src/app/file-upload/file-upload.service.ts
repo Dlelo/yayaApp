@@ -72,4 +72,10 @@ uploadHomeOwnerProfilePicture(homeOwnerId: number, file: File): Observable<HttpE
     }
   );
 }
+
+uploadDocument(file: File): Observable<string> {
+  const formData = new FormData();
+  formData.append('file', file);
+  return this.http.post(`${environment.apiUrl}/uploads/document`, formData, { responseType: 'text' });
+}
 }

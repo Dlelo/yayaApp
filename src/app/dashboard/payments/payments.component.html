@@ -1,187 +1,149 @@
-<div class="container my-4">
-  <mat-card class="payments-card">
-    <mat-card-header>
-      <mat-card-title>
-        <h2>
-          <mat-icon class="align-middle me-2">payment</mat-icon>
-          Payment History
-        </h2>
-      </mat-card-title>
-    </mat-card-header>
+<div class="dash-page">
+  <div class="dash-page-header">
+    <div>
+      <h1 class="dash-title">Payments</h1>
+      <p class="dash-subtitle">All platform payment transactions</p>
+    </div>
+  </div>
 
-    <mat-card-content>
-      
+  <div class="dash-card">
 
-      <!-- Error State -->
-      @if (error) {
-        <div class="alert alert-danger" role="alert">
-          <mat-icon class="align-middle me-2">error</mat-icon>
-          {{ error }}
-          <button mat-button color="primary" (click)="loadPayments()" class="ms-3">
-            <mat-icon>refresh</mat-icon>
-            Retry
-          </button>
-        </div>
-      }
+    @if (loading) {
+      <div class="table-meta">
+        <span class="shimmer shimmer-text" style="width:120px;display:inline-block"></span>
+      </div>
+      <div class="table-wrap">
+        <table class="dash-table">
+          <thead>
+            <tr>
+              <th>#</th><th>User</th><th>Transaction ID</th><th>Amount</th><th>Provider</th><th>Status</th><th>Date</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of [1,2,3,4,5]; track s) {
+              <tr>
+                @for (c of [1,2,3,4,5,6,7,8]; track c) {
+                  <td><span class="shimmer shimmer-text"></span></td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else if (error) {
+      <div class="empty-state">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ error }}</p>
+        <button mat-stroked-button (click)="loadPayments()">
+          <mat-icon>refresh</mat-icon> Retry
+        </button>
+      </div>
+    } @else if (payments.length === 0) {
+      <div class="empty-state">
+        <mat-icon>receipt_long</mat-icon>
+        <p>No payments found</p>
+      </div>
+    } @else {
+      <div class="table-meta">
+        <span class="table-count">{{ totalElements }} total payments</span>
+      </div>
 
-      <!-- Loading State -->
-      @else if (loading) {
-        <div class="text-center py-5">
-          <mat-spinner diameter="50" class="mx-auto mb-3"></mat-spinner>
-          <p class="text-muted">Loading payments...</p>
-        </div>
-      }
+      <div class="table-wrap">
+        <table class="dash-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>User</th>
+              <th>Transaction ID</th>
+              <th>Amount</th>
+              <th>Provider</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (payment of payments; track payment.id; let i = $index) {
+              <tr>
+                <td class="row-num">{{ i + 1 + (currentPage * pageSize) }}</td>
+                <td>
+                  <div class="user-cell">
+                    <div class="user-avatar">{{ (payment.userName || '?')[0].toUpperCase() }}</div>
+                    <div>
+                      <div>{{ payment.userName }}</div>
+                      <div class="text-muted" style="font-size:0.78rem">{{ payment.userEmail }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="text-muted" style="font-size:0.8rem;font-family:monospace">
+                  {{ payment.transactionId || '—' }}
+                </td>
+                <td style="font-weight:700;color:#111827">
+                  KES {{ payment.amount | number:'1.0-0' }}
+                </td>
+                <td class="text-muted">{{ payment.provider }}</td>
+                <td>
+                  <span class="status-badge"
+                    [class.status-badge--active]="payment.status === 'SUCCESS'"
+                    [class.status-badge--inactive]="payment.status === 'FAILED'"
+                    [class.status-badge--pending]="payment.status === 'PENDING'">
+                    <mat-icon style="font-size:13px;width:13px;height:13px;margin-right:3px;vertical-align:middle">
+                      {{ getStatusIcon(payment.status) }}
+                    </mat-icon>
+                    {{ payment.status }}
+                  </span>
+                </td>
+                <td class="text-muted">{{ payment.createdAt | date:'mediumDate' }}</td>
+                <td>
+                  <div class="action-btns">
+                    @if (payment.status === 'PENDING') {
+                      <button mat-stroked-button class="btn-action btn-verify" (click)="verifyPayment(payment)">
+                        <mat-icon>check_circle</mat-icon> Verify
+                      </button>
+                    }
+                    <button mat-stroked-button class="btn-action btn-view" (click)="viewDetails(payment)">
+                      <mat-icon>visibility</mat-icon> View
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
 
-      <!-- Empty State -->
-      @else if (payments.length === 0) {
-        <div class="empty-state text-center py-5">
-          <mat-icon class="empty-icon">receipt_long</mat-icon>
-          <h4>No Payments Found</h4>
-          <p class="text-muted">You haven't made any payments yet.</p>
-        </div>
-      }
-
-      <!-- Payments Table -->
-      @else {
-        <div class="table-responsive">
-          <table mat-table [dataSource]="payments" class="w-100">
-            
-            <!-- Transaction ID Column -->
-            <ng-container matColumnDef="transactionId">
-              <th mat-header-cell *matHeaderCellDef>Transaction ID</th>
-              <td mat-cell *matCellDef="let payment">
-                <span class="transaction-id">{{ payment.transactionId }}</span>
-              </td>
-            </ng-container>
-
-            <!-- User Column -->
-            <ng-container matColumnDef="user">
-              <th mat-header-cell *matHeaderCellDef>User</th>
-              <td mat-cell *matCellDef="let payment">
-                {{ payment.userName }}
-              </td>
-            </ng-container>
-
-            <!-- Amount Column -->
-            <ng-container matColumnDef="amount">
-              <th mat-header-cell *matHeaderCellDef>Amount</th>
-              <td mat-cell *matCellDef="let payment">
-                <strong class="amount">KES {{ payment.amount | number:'1.2-2' }}</strong>
-              </td>
-            </ng-container>
-
-            <!-- Provider Column -->
-            <ng-container matColumnDef="provider">
-              <th mat-header-cell *matHeaderCellDef>Provider</th>
-              <td mat-cell *matCellDef="let payment">
-                <span class="provider-badge">
-                  <mat-icon class="provider-icon">phone_android</mat-icon>
-                  {{ payment.provider }}
-                </span>
-              </td>
-            </ng-container>
-
-            <!-- Status Column -->
-            <ng-container matColumnDef="status">
-              <th mat-header-cell *matHeaderCellDef>Status</th>
-              <td mat-cell *matCellDef="let payment">
-                <span [class]="'status-badge status-' + payment.status.toLowerCase()">
-                  <mat-icon class="status-icon">{{ getStatusIcon(payment.status) }}</mat-icon>
-                  {{ payment.status }}
-                </span>
-              </td>
-            </ng-container>
-
-            <!-- Date Column -->
-            <ng-container matColumnDef="createdAt">
-              <th mat-header-cell *matHeaderCellDef>Date</th>
-              <td mat-cell *matCellDef="let payment">
-                <span class="date">{{ payment.createdAt | date:'medium' }}</span>
-              </td>
-            </ng-container>
-
-            <!-- Actions Column -->
-            <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef>Actions</th>
-              <td mat-cell *matCellDef="let payment">
-                <button 
-                  mat-icon-button 
-                  [matMenuTriggerFor]="menu"
-                  matTooltip="More options"
-                >
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-                <mat-menu #menu="matMenu">
-                  <button mat-menu-item (click)="viewDetails(payment)">
-                    <mat-icon>visibility</mat-icon>
-                    <span>View Details</span>
-                  </button>
-                  <button mat-menu-item (click)="verifyPayment(payment)">
-                    <mat-icon>check_circle</mat-icon>
-                    <span>Verify Payment</span>
-                  </button>
-                  <button mat-menu-item (click)="downloadReceipt(payment)">
-                    <mat-icon>download</mat-icon>
-                    <span>Download Receipt</span>
-                  </button>
-                </mat-menu>
-              </td>
-            </ng-container>
-
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-          </table>
-        </div>
-
-        <!-- Pagination -->
-        <mat-paginator
-          [length]="totalElements"
-          [pageSize]="pageSize"
-          [pageSizeOptions]="[5, 10, 20, 50]"
-          [pageIndex]="currentPage"
-          (page)="onPageChange($event)"
-          showFirstLastButtons
-        >
-        </mat-paginator>
-      }
-    </mat-card-content>
-  </mat-card>
+      <mat-paginator
+        [length]="totalElements"
+        [pageSize]="pageSize"
+        [pageIndex]="currentPage"
+        [pageSizeOptions]="[10, 20, 50]"
+        (page)="onPageChange($event)">
+      </mat-paginator>
+    }
+  </div>
 </div>
 
-<!-- Payment Details Dialog (Optional) -->
+<!-- Payment Detail Dialog -->
 <ng-template #paymentDetailsDialog>
-  <h2 mat-dialog-title>Payment Details</h2>
+  <h2 mat-dialog-title style="font-weight:700;color:#1a3c34">Payment Details</h2>
   <mat-dialog-content>
     @if (selectedPayment) {
-      <div class="payment-details">
-        <div class="detail-row">
-          <span class="label">Transaction ID:</span>
-          <span class="value">{{ selectedPayment.transactionId }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">Amount:</span>
-          <span class="value">KES {{ selectedPayment.amount | number:'1.2-2' }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">Provider:</span>
-          <span class="value">{{ selectedPayment.provider }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">Status:</span>
-          <span class="value">{{ selectedPayment.status }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">Date:</span>
-          <span class="value">{{ selectedPayment.createdAt | date:'full' }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">User:</span>
-          <span class="value">{{ selectedPayment.user?.firstName }} {{ selectedPayment.user?.lastName }}</span>
-        </div>
+      <div class="pay-details">
+        <div class="pay-row"><span class="pay-label">Transaction ID</span><span class="pay-val mono">{{ selectedPayment.transactionId }}</span></div>
+        <div class="pay-row"><span class="pay-label">User</span><span class="pay-val">{{ selectedPayment.userName }}</span></div>
+        <div class="pay-row"><span class="pay-label">Email</span><span class="pay-val">{{ selectedPayment.userEmail }}</span></div>
+        <div class="pay-row"><span class="pay-label">Amount</span><span class="pay-val" style="font-weight:700">KES {{ selectedPayment.amount | number:'1.2-2' }}</span></div>
+        @if (selectedPayment.surchargeFee && selectedPayment.surchargeFee > 0) {
+          <div class="pay-row"><span class="pay-label">Base Fee</span><span class="pay-val">KES {{ selectedPayment.baseFee | number:'1.2-2' }}</span></div>
+          <div class="pay-row"><span class="pay-label">Surcharge</span><span class="pay-val">KES {{ selectedPayment.surchargeFee | number:'1.2-2' }} ({{ selectedPayment.surchargeReason }})</span></div>
+        }
+        <div class="pay-row"><span class="pay-label">Provider</span><span class="pay-val">{{ selectedPayment.provider }}</span></div>
+        <div class="pay-row"><span class="pay-label">Status</span><span class="pay-val">{{ selectedPayment.status }}</span></div>
+        <div class="pay-row"><span class="pay-label">Date</span><span class="pay-val">{{ selectedPayment.createdAt | date:'full' }}</span></div>
       </div>
     }
   </mat-dialog-content>
   <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close>Close</button>
+    <button mat-stroked-button mat-dialog-close>Close</button>
   </mat-dialog-actions>
 </ng-template>

@@ -1,26 +1,74 @@
-<div class="row g-3">
-  <div class="col-md-3">
-    <mat-card class="p-3 text-center shadow-sm">
-      <h3>{{ totalUsers }}</h3>
-      <p>Total Users</p>
-    </mat-card>
+<div class="dash-page">
+  <div class="dash-page-header">
+    <div>
+      <h1 class="dash-title">Reports</h1>
+      <p class="dash-subtitle">Platform statistics and key metrics</p>
+    </div>
   </div>
-  <div class="col-md-3">
-    <mat-card class="p-3 text-center shadow-sm">
-      <h3>{{ activeSubs }}</h3>
-      <p>Active Subscriptions</p>
-    </mat-card>
-  </div>
-  <div class="col-md-3">
-    <mat-card class="p-3 text-center shadow-sm">
-      <h3>{{ hireRequests }}</h3>
-      <p>Hire Requests</p>
-    </mat-card>
-  </div>
-  <div class="col-md-3">
-    <mat-card class="p-3 text-center shadow-sm">
-      <h3>{{ revenue | currency:'KES' }}</h3>
-      <p>Revenue</p>
-    </mat-card>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--blue">
+        <span class="material-icons">people</span>
+      </div>
+      <div class="stat-body">
+        <div class="stat-value">
+          @if (loading()) {
+            <span class="shimmer shimmer-text"></span>
+          } @else {
+            {{ totalUsers() }}
+          }
+        </div>
+        <div class="stat-label">Total Users</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--green">
+        <span class="material-icons">cleaning_services</span>
+      </div>
+      <div class="stat-body">
+        <div class="stat-value">
+          @if (loading()) {
+            <span class="shimmer shimmer-text"></span>
+          } @else {
+            {{ totalHouseHelps() }}
+          }
+        </div>
+        <div class="stat-label">House Helps</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--orange">
+        <span class="material-icons">assignment</span>
+      </div>
+      <div class="stat-body">
+        <div class="stat-value">
+          @if (loading()) {
+            <span class="shimmer shimmer-text"></span>
+          } @else {
+            {{ totalHireRequests() }}
+          }
+        </div>
+        <div class="stat-label">Hire Requests</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--cyan">
+        <span class="material-icons">payments</span>
+      </div>
+      <div class="stat-body">
+        <div class="stat-value">
+          @if (loading()) {
+            <span class="shimmer shimmer-text"></span>
+          } @else {
+            {{ totalPayments() }}
+          }
+        </div>
+        <div class="stat-label">Total Payments</div>
+      </div>
+    </div>
   </div>
 </div>

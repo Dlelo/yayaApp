@@ -1,61 +1,166 @@
-<div class="container mt-4">
-  <h2 class="mb-4 text-center">Available Househelps</h2>
+<div class="listing-page">
 
-  <!-- FILTERS -->
-  <mat-card class="mb-4 p-3 shadow-sm">
-    <div class="row g-3">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>Find House Help</h1>
+    <p>Browse verified, professional domestic workers</p>
+  </div>
 
-      <!-- Experience -->
-      <div class="col-md-3">
-        <input
-          type="number"
-          class="form-control"
-          placeholder="Min Experience (years)"
-          [(ngModel)]="filters.experience"
-        />
-      </div>
-
-      <!-- Location -->
-      <div class="col-md-3">
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Location"
-          [(ngModel)]="filters.location"
-        />
-      </div>
-
-      <!-- Availability -->
-      <div class="col-md-3">
-        <select
-          class="form-select"
-          [(ngModel)]="filters.houseHelpType"
-        >
-          <option [ngValue]="null">All Types</option>
-          <option value="DAYBURG">Dayburg</option>
-          <option value="LIVE_IN">Live-in</option>
-          <option value="EMERGENCY">Emergency</option>
-        </select>
-      </div>
-
-      <!-- Actions -->
-      <div class="col-md-3 d-flex gap-2">
-        <button mat-raised-button color="primary" (click)="applyFilters()">
-          Apply Filters
-        </button>
-
-        <button mat-button color="warn" (click)="clearFilters()">
-          Clear
-        </button>
-      </div>
-
+  <!-- Tabs (for homeowners: Browse + Recommended) -->
+  @if(isHomeOwner) {
+    <div class="tab-bar">
+      <button
+        class="tab-btn"
+        [class.active]="activeTab() === 'browse'"
+        (click)="activeTab.set('browse')"
+      >
+        <mat-icon>search</mat-icon>
+        Browse All
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeTab() === 'recommended'"
+        (click)="activeTab.set('recommended')"
+      >
+        <mat-icon>recommend</mat-icon>
+        Recommended for You
+        @if(recommendations().length > 0) {
+          <span class="tab-badge">{{ recommendations().length }}</span>
+        }
+      </button>
     </div>
-  </mat-card>
+  }
 
-  <!-- House Help Cards -->
-  <div class="row g-4">
-    @for (houseHelp of (houseHelps$ | async)?.data; track houseHelp.id) {
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+  <!-- RECOMMENDED TAB -->
+  @if(activeTab() === 'recommended' && isHomeOwner) {
+    <div class="recommendations-section">
+      @if(recommendations().length > 0) {
+        <div class="section-intro">
+          <mat-icon>auto_awesome</mat-icon>
+          <p>These profiles are matched to your preferences and requirements.</p>
+        </div>
+        <div class="cards-grid">
+          @for(match of recommendations(); track match.houseHelp.id) {
+            <mat-card class="househelp-card h-100">
+              <div class="profile-header cover">
+                <div class="cover-placeholder">
+                  <mat-icon class="placeholder-icon">person</mat-icon>
+                </div>
+                <div class="availability-badge" [ngClass]="getAvailabilityClass(match.houseHelp.houseHelpType)">
+                  <mat-icon>schedule</mat-icon>
+                  {{ formatAvailability(match.houseHelp.houseHelpType) }}
+                </div>
+                <div class="match-score-badge" [ngClass]="getMatchScoreClass(match.matchScore)">
+                  {{ match.matchScore }}% Match
+                </div>
+              </div>
+
+              <mat-card-content class="card-body">
+                <h5 class="name">{{ match.houseHelp.name }}</h5>
+
+                <div class="verification-row">
+                  @if(match.houseHelp.securityCleared) {
+                    <span class="badge-small badge-verified">
+                      <mat-icon>verified</mat-icon> Security Verified
+                    </span>
+                  }
+                  @if(match.houseHelp.verified) {
+                    <span class="badge-small badge-active">
+                      <mat-icon>check_circle</mat-icon> Verified
+                    </span>
+                  }
+                </div>
+
+                @if(match.houseHelp.skills && match.houseHelp.skills.length > 0) {
+                  <div class="skills-section">
+                    <div class="skills-label">Skills</div>
+                    <div class="skills-tags">
+                      @for(skill of match.houseHelp.skills | slice:0:3; track $index) {
+                        <span class="skill-tag">{{ $any(skill).replace('_', ' ') }}</span>
+                      }
+                      @if(match.houseHelp.skills.length > 3) {
+                        <span class="skill-tag more">+{{ match.houseHelp.skills.length - 3 }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+              </mat-card-content>
+
+              <mat-card-actions class="card-actions">
+                <button
+                  mat-flat-button
+                  class="view-profile-btn"
+                  (click)="seeDetails(match.houseHelp.id)"
+                >
+                  <mat-icon>visibility</mat-icon>
+                  View Profile
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          }
+        </div>
+      } @else {
+        <div class="empty-state">
+          <mat-icon>tune</mat-icon>
+          <h3>No recommendations yet</h3>
+          <p>Update your preferences in your account settings to get personalized matches.</p>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- BROWSE TAB -->
+  @if(activeTab() === 'browse') {
+    <!-- FILTERS -->
+    <mat-card class="filter-card">
+      <div class="filter-grid">
+
+        <div class="filter-field">
+          <label>Min Experience (years)</label>
+          <input
+            type="number"
+            class="filter-input"
+            placeholder="e.g. 2"
+            [(ngModel)]="filters.experience"
+          />
+        </div>
+
+        <div class="filter-field">
+          <label>Location</label>
+          <input
+            type="text"
+            class="filter-input"
+            placeholder="e.g. Nairobi"
+            [(ngModel)]="filters.location"
+          />
+        </div>
+
+        <div class="filter-field">
+          <label>Availability Type</label>
+          <select class="filter-select" [(ngModel)]="filters.houseHelpType">
+            <option [ngValue]="null">All Types</option>
+            <option value="DAYBURG">Dayburg</option>
+            <option value="LIVE_IN">Live-in</option>
+            <option value="EMERGENCY">Emergency</option>
+          </select>
+        </div>
+
+        <div class="filter-actions">
+          <button mat-flat-button class="apply-btn" (click)="applyFilters()">
+            <mat-icon>search</mat-icon>
+            Search
+          </button>
+          <button mat-stroked-button class="clear-btn" (click)="clearFilters()">
+            Clear
+          </button>
+        </div>
+
+      </div>
+    </mat-card>
+
+    <!-- House Help Cards -->
+    <div class="cards-grid">
+      @for (houseHelp of (houseHelps$ | async)?.data; track houseHelp.id) {
         <mat-card class="househelp-card h-100">
 
           <!-- Profile Picture Section -->
@@ -73,7 +178,7 @@
               </div>
             }
 
-          <!-- Availability Badge -->
+            <!-- Availability Badge -->
             <div class="availability-badge" [ngClass]="getAvailabilityClass(houseHelp.houseHelpType)">
               <mat-icon>schedule</mat-icon>
               {{ formatAvailability(houseHelp.houseHelpType) }}
@@ -81,23 +186,14 @@
           </div>
 
           <mat-card-content class="card-body">
-            <!-- Name and Rating -->
+            <!-- Name -->
             <h5 class="name">{{ houseHelp.user?.name }}</h5>
-
-            <div class="rating mb-2">
-              <mat-icon class="star">star</mat-icon>
-              <mat-icon class="star">star</mat-icon>
-              <mat-icon class="star">star</mat-icon>
-              <mat-icon class="star">star</mat-icon>
-              <mat-icon class="star-outline">star_outline</mat-icon>
-              <span class="rating-text">4.0</span>
-            </div>
 
             <!-- Experience -->
             @if(houseHelp.yearsOfExperience){
               <div class="info-item">
                 <mat-icon class="info-icon">work_history</mat-icon>
-                <span>{{ houseHelp.yearsOfExperience }} years exp.</span>
+                <span>{{ houseHelp.yearsOfExperience }} yrs experience</span>
               </div>
             }
 
@@ -109,13 +205,21 @@
               </div>
             }
 
+            <!-- Security Clearance -->
+            @if(houseHelp.securityCleared) {
+              <div class="info-item">
+                <mat-icon class="info-icon text-success">verified</mat-icon>
+                <span class="text-success">Security Verified</span>
+              </div>
+            }
+
             <!-- Skills -->
             @if(houseHelp.skills && houseHelp.skills.length > 0){
               <div class="skills-section">
                 <div class="skills-label">Skills</div>
                 <div class="skills-tags">
                   @for (skill of houseHelp.skills | slice:0:3; track $index) {
-                    <span class="skill-tag">{{ skill }}</span>
+                    <span class="skill-tag">{{ $any(skill).replace('_', ' ') }}</span>
                   }
                   @if(houseHelp.skills.length > 3){
                     <span class="skill-tag more">+{{ houseHelp.skills.length - 3 }}</span>
@@ -127,8 +231,7 @@
 
           <mat-card-actions class="card-actions">
             <button
-              mat-raised-button
-              color="primary"
+              mat-flat-button
               class="view-profile-btn"
               (click)="seeDetails(houseHelp.id)"
             >
@@ -137,17 +240,18 @@
             </button>
           </mat-card-actions>
         </mat-card>
-      </div>
-    }
-  </div>
+      }
+    </div>
 
-  <!-- Paginator -->
-  <div class="d-flex justify-content-center mt-4">
-    <mat-paginator
-      [length]="(houseHelps$ | async)?.length"
-      [pageSize]="(houseHelps$ | async)?.pages?.pageSize"
-      (page)="onPageChange($event)"
-    >
-    </mat-paginator>
-  </div>
+    <!-- Paginator -->
+    <div class="paginator-wrap">
+      <mat-paginator
+        [length]="(houseHelps$ | async)?.length"
+        [pageSize]="(houseHelps$ | async)?.pages?.pageSize"
+        (page)="onPageChange($event)"
+      >
+      </mat-paginator>
+    </div>
+  }
+
 </div>

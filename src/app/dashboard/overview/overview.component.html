@@ -1,55 +1,52 @@
-<div>
-  <h1 class="mb-4">Dashboard Overview</h1>
+<div class="overview-page">
 
-  <!-- Stats Cards -->
-  <div class="row mb-4">
-    <div class="col-md-3 col-sm-6 mb-3">
-      <mat-card class="shadow-sm text-center p-3">
-        <h4>{{ totalUsers }}</h4>
-        <p>Total Users</p>
-      </mat-card>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-3">
-      <mat-card class="shadow-sm text-center p-3">
-        <h4>{{ activeSubscriptions }}</h4>
-        <p>Active Subscriptions</p>
-      </mat-card>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-3">
-      <mat-card class="shadow-sm text-center p-3">
-        <h4>{{ pendingRequests }}</h4>
-        <p>Pending Requests</p>
-      </mat-card>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-3">
-      <mat-card class="shadow-sm text-center p-3">
-        <h4>Ksh {{ revenue | number }}</h4>
-        <p>Total Revenue</p>
-      </mat-card>
-    </div>
+  <div class="page-header">
+    <h1 class="page-title">Dashboard Overview</h1>
+    <p class="page-subtitle">Platform statistics and activity</p>
   </div>
 
-  <!-- Recent Users -->
-  <mat-card class="shadow-sm p-3">
-    <h3 class="mb-3">Recent Users</h3>
-    <table class="table table-striped">
-      <thead class="table-dark">
-      <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Joined</th>
-      </tr>
-      </thead>
-      <tbody>
-        @for(user of recentUsers; track $index){
-          <tr>
-            <td>{{ user.name }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.joined }}</td>
-          </tr>
-        }
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    @for (stat of stats; track stat.key) {
+      <div class="stat-card stat-card--{{ stat.color }}">
+        <div class="stat-icon-wrap">
+          <mat-icon>{{ stat.icon }}</mat-icon>
+        </div>
+        <div class="stat-body">
+          @if (loading()) {
+            <div class="stat-skeleton"></div>
+          } @else {
+            <span class="stat-value">{{ getStatValue(stat.key) | number }}</span>
+          }
+          <span class="stat-label">{{ stat.label }}</span>
+          <span class="stat-desc">{{ stat.description }}</span>
+        </div>
+      </div>
+    }
+  </div>
 
-      </tbody>
-    </table>
-  </mat-card>
+  <!-- Quick Links -->
+  <div class="section-header">
+    <h2>Quick Actions</h2>
+  </div>
+
+  <div class="quick-actions">
+    <a routerLink="../houseHelps" class="quick-card">
+      <mat-icon>manage_accounts</mat-icon>
+      <span>Manage House Helps</span>
+    </a>
+    <a routerLink="../homeOwners" class="quick-card">
+      <mat-icon>people</mat-icon>
+      <span>Manage Home Owners</span>
+    </a>
+    <a routerLink="../requests" class="quick-card">
+      <mat-icon>assignment</mat-icon>
+      <span>View Hire Requests</span>
+    </a>
+    <a routerLink="../users" class="quick-card">
+      <mat-icon>admin_panel_settings</mat-icon>
+      <span>User Management</span>
+    </a>
+  </div>
+
 </div>

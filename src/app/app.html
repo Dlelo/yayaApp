@@ -1,29 +1,57 @@
-<mat-toolbar color="primary">
-  <img
-    src="/logo.png"
-    alt="yayaConnectApp Logo"
-    class="img-fluid logo-img rounded"
-  />
-  <span class="spacer"></span>
-  <button mat-button (click)="navigate('/')">Home</button>
-  @if(isLoggedIn()) {
-    @if(userId(); as userId ){
-      <button mat-button (click)="navigate(`account/${userId}`)">Account details</button>
-    }
-    @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_HOMEOWNER') || roles().includes('ROLE_SALES') ||  roles().includes('ROLE_SECURITY')) {
-      <button mat-button (click)="navigate('/listing')">
-        Profiles
-      </button>
-    }
-    @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_SALES') ||  roles().includes('ROLE_SECURITY')) {
-      <button mat-button (click)="navigate('/dashboard')">Dashboard</button>
-    }
-   <button mat-button (click)="logout()">Logout</button>
-  } @else{
-    <button mat-button (click)="navigate('/login')">Sign In</button>
-    <button mat-button (click)="navigate('/register')">Sign Up</button>
-  }
+<mat-toolbar class="app-toolbar" color="primary">
+  <div class="toolbar-inner">
+    <!-- Logo -->
+    <div class="logo-wrap" (click)="navigate('/')">
+      <img
+        src="/logo.png"
+        alt="yayaConnectApp Logo"
+        class="logo-img"
+      />
+    </div>
 
+    <span class="spacer"></span>
+
+    <!-- Nav Links -->
+    <nav class="nav-links">
+      <button mat-button class="nav-btn" (click)="navigate('/')">
+        <mat-icon>home</mat-icon>
+        Home
+      </button>
+
+      @if(isLoggedIn()) {
+        @if(userId(); as userId) {
+          <button mat-button class="nav-btn" (click)="navigate(`account/${userId}`)">
+            <mat-icon>account_circle</mat-icon>
+            Account
+          </button>
+        }
+
+        @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_HOMEOWNER') || roles().includes('ROLE_SALES') || roles().includes('ROLE_SECURITY')) {
+          <button mat-button class="nav-btn" (click)="navigate('/listing')">
+            <mat-icon>people</mat-icon>
+            Browse
+          </button>
+        }
+
+        @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_SALES') || roles().includes('ROLE_SECURITY')) {
+          <button mat-button class="nav-btn" (click)="navigate('/dashboard')">
+            <mat-icon>dashboard</mat-icon>
+            Dashboard
+          </button>
+        }
+
+        <button mat-stroked-button class="logout-btn" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          Sign Out
+        </button>
+      } @else {
+        <button mat-button class="nav-btn" (click)="navigate('/login')">Sign In</button>
+        <button mat-flat-button class="signup-btn" (click)="navigate('/register')">
+          Get Started
+        </button>
+      }
+    </nav>
+  </div>
 </mat-toolbar>
 
 <router-outlet></router-outlet>

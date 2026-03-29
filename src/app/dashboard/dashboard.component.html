@@ -1,39 +1,48 @@
 <mat-sidenav-container class="dashboard-container">
+
   <mat-sidenav
     #sidenav
     [mode]="sidenavMode"
     [opened]="sidenavOpened"
     class="sidenav"
   >
-    <div class="p-3">
-      <h3 class="mb-4">
-        <a [routerLink]="['/dashboard']" >
-          Admin Panel
-        </a>
-      </h3>
+    <div class="sidenav-header">
+      <a [routerLink]="['/dashboard']" class="sidenav-brand">
+        <img src="/logo.png" alt="yayaConnect" class="sidenav-logo" />
+        <span class="sidenav-title">Admin Panel</span>
+      </a>
+    </div>
 
+    <nav class="sidenav-nav">
+      <p class="nav-section-label">Navigation</p>
       <mat-nav-list>
         @for (link of allowedNavLinks(); track link.path) {
-          <a class="mb-2" mat-list-item [routerLink]="link.path" routerLinkActive="active-link">
-            <mat-icon class="me-2">{{ link.icon }}</mat-icon>
-            <span>{{ link.label }}</span>
+          <a
+            mat-list-item
+            [routerLink]="link.path"
+            routerLinkActive="active-link"
+            class="nav-item"
+          >
+            <mat-icon class="nav-icon">{{ link.icon }}</mat-icon>
+            <span class="nav-label">{{ link.label }}</span>
           </a>
         }
       </mat-nav-list>
-    </div>
+    </nav>
   </mat-sidenav>
 
-  <mat-sidenav-content>
-    <mat-toolbar color="primary">
-      <button mat-icon-button (click)="sidenav.toggle()" class="d-md-none">
+  <mat-sidenav-content class="content-area">
+    <header class="dash-toolbar">
+      <button mat-icon-button (click)="sidenav.toggle()" class="menu-toggle">
         <mat-icon>menu</mat-icon>
       </button>
-      <span>Dashboard</span>
-    </mat-toolbar>
+      <span class="toolbar-title">Dashboard</span>
+      <span class="toolbar-spacer"></span>
+    </header>
 
-    <div class="p-4">
+    <main class="content-body">
       <router-outlet></router-outlet>
-    </div>
+    </main>
   </mat-sidenav-content>
-</mat-sidenav-container>
 
+</mat-sidenav-container>

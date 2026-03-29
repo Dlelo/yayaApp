@@ -15,10 +15,15 @@ export interface Payment {
   id: number;
   transactionId: string;
   user: User;
+  userName: string;
+  userEmail: string;
   amount: number;
+  baseFee?: number;
+  surchargeFee?: number;
+  surchargeReason?: string;
   provider: string;
   status: PaymentStatus;
-  createdAt: string; // Will be converted to Date if needed
+  createdAt: string;
 }
 
 export enum PaymentStatus {

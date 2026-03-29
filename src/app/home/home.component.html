@@ -1,191 +1,190 @@
-<div class="container content-container my-4">
-  <!-- Hero Section -->
-  <div class="row align-items-center bg-light rounded shadow-sm p-4 mb-5">
-    <!-- Text -->
-    <div class="col-md-6 text-center text-md-start mb-4 mb-md-0">
-      <h1 class="fw-bold mb-3">Helping You Find the Right Help.</h1>
-      <p class="lead mb-4">
-        Get Trusted and Professional Home Care personnel—Fast, Simple, and Stress-Free.
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-content">
+    <div class="hero-text">
+      <div class="hero-tag">Kenya's Trusted Domestic Staffing Platform</div>
+      <h1 class="hero-title">Find Trusted & Professional Home Help</h1>
+      <p class="hero-subtitle">
+        Connect with verified, security-cleared domestic workers — fast, simple, and stress-free.
       </p>
-      <p class="lead" ><span class="text-success">✔</span> Professional.</p>
-      <p class="lead"><span class="text-success">✔</span> Security verified.</p>
-      <p class="lead"><span class="text-success">✔</span> Friendly.</p>
-      <p class="lead"><span class="text-success">✔</span> Continuously trained.</p>
-      <p class="lead"><span class="text-success">✔</span> Arrives at your door step within 24 hours.</p>
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="navigate('ALL')"
-      >
-        Find Help Now
-      </button>
+      <ul class="hero-features">
+        <li><mat-icon>verified</mat-icon> Security Verified</li>
+        <li><mat-icon>stars</mat-icon> Professional & Trained</li>
+        <li><mat-icon>bolt</mat-icon> Available within 24 Hours</li>
+        <li><mat-icon>favorite</mat-icon> Caring & Friendly</li>
+      </ul>
+      <div class="hero-cta">
+        <button mat-flat-button class="cta-primary" (click)="navigate('ALL')">
+          Find Help Now
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+        <button mat-stroked-button class="cta-secondary" (click)="navigate('/register')">
+          Register as House Help
+        </button>
+      </div>
     </div>
 
-    <!-- Image -->
-    <div class="col-md-6 text-center">
+    <div class="hero-image-wrap">
       <img
         src="/househelp-banner.jpg"
-        alt="Househelp"
-        class="img-fluid rounded"
-        style="min-height: 280px; object-fit: cover"
+        alt="Professional House Help"
+        class="hero-image"
       />
+      <!-- Floating stat cards -->
+      <div class="stat-card stat-left">
+        <mat-icon>verified_user</mat-icon>
+        <div>
+          <strong>Security Cleared</strong>
+          <span>Every worker verified</span>
+        </div>
+      </div>
+      <div class="stat-card stat-right">
+        <mat-icon>schedule</mat-icon>
+        <div>
+          <strong>24 Hours</strong>
+          <span>Quick placement</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Services Section -->
+<section class="services-section">
+  <div class="services-container">
+    <div class="section-label">Our Services</div>
+    <h2 class="section-title">Choose the Right Service for Your Family</h2>
+    <p class="section-subtitle">Professional domestic workers tailored to your household needs</p>
+
+    <div class="services-grid">
+
+      <div class="service-card">
+        <div class="service-img-wrap">
+          <img src="/live-in.jpg" alt="Live-in househelp" class="service-img" />
+          <div class="service-overlay">
+            <span class="service-type-badge">Full Time</span>
+          </div>
+        </div>
+        <div class="service-body">
+          <h3>Live-in</h3>
+          <p>Round-the-clock professional care in the comfort of your home. Ideal for families needing constant support.</p>
+          <button mat-flat-button class="service-btn" (click)="navigate('LIVE_IN')">
+            Browse Live-in <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-img-wrap">
+          <img src="/day-burg.jpg" alt="Dayburg Nanny" class="service-img" />
+          <div class="service-overlay">
+            <span class="service-type-badge">Day Only</span>
+          </div>
+        </div>
+        <div class="service-body">
+          <h3>Dayburg</h3>
+          <p>Daytime childcare for working parents — safe, nurturing, and perfectly aligned with your schedule.</p>
+          <button mat-flat-button class="service-btn" (click)="navigate('DAYBURG')">
+            Browse Dayburg <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-img-wrap">
+          <img src="/emergency.jpg" alt="Emergency Nanny" class="service-img" />
+          <div class="service-overlay">
+            <span class="service-type-badge emergency-badge">On-call</span>
+          </div>
+        </div>
+        <div class="service-body">
+          <h3>Emergency</h3>
+          <p>Reliable, on-call help whenever you need urgent support. Compassionate assistance within hours.</p>
+          <button mat-flat-button class="service-btn" (click)="navigate('EMERGENCY')">
+            Browse Emergency <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="how-section">
+  <div class="how-container">
+    <div class="section-label">Simple Process</div>
+    <h2 class="section-title">How It Works</h2>
+
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-number">1</div>
+        <mat-icon class="step-icon">app_registration</mat-icon>
+        <h4>Create Account</h4>
+        <p>Sign up as a homeowner and complete your profile with your household requirements.</p>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <mat-icon class="step-icon">manage_search</mat-icon>
+        <h4>Browse & Match</h4>
+        <p>Browse verified profiles or get AI-matched recommendations based on your preferences.</p>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <mat-icon class="step-icon">handshake</mat-icon>
+        <h4>Hire & Connect</h4>
+        <p>Select your ideal candidate, make payment, and they'll be at your door within 24 hours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="app-footer">
+  <div class="footer-cta">
+    <div class="footer-cta-inner">
+      <h3>Need Help? We're Here for You.</h3>
+      <p>Call / SMS / WhatsApp: <strong>+254-118-266-951</strong></p>
     </div>
   </div>
 
-  <section class="py-5 px-4" style="background-color: #FFF9F0">
-    <div class="text-center mb-5">
-      <h2 class="fw-bold" style="color: #2E473B">Browse Services</h2>
-      <p class="text-muted">
-        Find the perfect service for your family’s needs
-      </p>
+  <div class="footer-main">
+    <div class="footer-brand">
+      <img src="/logo.png" alt="yayaConnectApp" class="footer-logo" />
+      <p>Kenya's trusted platform for connecting homeowners with professional domestic workers.</p>
     </div>
 
-    <div class="row g-4 justify-content-center">
-
-      <div class="col-12 col-sm-6 col-md-4">
-        <mat-card class="service-card h-100 shadow-sm">
-          <img
-            mat-card-image
-            src="/live-in.jpg"
-            alt="Live-in househelp"
-          />
-          <mat-card-content>
-            <h5 class="fw-bold my-2" style="color: #2E473B">Live-in</h5>
-            <p class="text-muted">
-              Round-the-clock professional care and support for your little ones
-              in the comfort of your home.
-            </p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button
-              mat-button
-              style="color: #E97B32"
-              (click)="navigate('LIVE_IN')"
-            >
-              Get Now →
-            </button>
-          </mat-card-actions>
-        </mat-card>
-      </div>
-
-      <!-- Dayburg Nanny -->
-      <div class="col-12 col-sm-6 col-md-4">
-        <mat-card class="service-card h-100 shadow-sm">
-          <img
-            mat-card-image
-            src="/day-burg.jpg"
-            alt="Dayburg Nanny"
-          />
-          <mat-card-content>
-            <h5 class="fw-bold my-2" style="color: #2E473B">Dayburg</h5>
-            <p class="text-muted">
-              Daytime childcare for working parents — safe, nurturing, and
-              perfectly aligned with your schedule.
-            </p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button
-              mat-button
-              style="color: #E97B32"
-              (click)="navigate('DAYBURG')"
-            >
-              Get Now →
-            </button>
-          </mat-card-actions>
-        </mat-card>
-      </div>
-
-      <!-- Emergency Nanny -->
-      <div class="col-12 col-sm-6 col-md-4">
-        <mat-card class="service-card h-100 shadow-sm">
-          <img
-            mat-card-image
-            src="/emergency.jpg"
-            alt="Emergency Nanny"
-          />
-          <mat-card-content>
-            <h5 class="fw-bold my-2" style="color: #2E473B">Emergency</h5>
-            <p class="text-muted">
-              Reliable, on-call childcare whenever you need urgent help.
-              Compassionate support within hours.
-            </p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button
-              mat-button
-              style="color: #E97B32"
-              (click)="navigate('EMERGENCY')"
-            >
-              Get Now →
-            </button>
-          </mat-card-actions>
-        </mat-card>
+    <div class="footer-links-col">
+      <h4>Follow Us</h4>
+      <div class="social-links">
+        <a href="https://www.instagram.com/yayaconnectapp_" target="_blank" rel="noopener noreferrer">
+          <img src="/instagram.png" alt="Instagram" class="social-icon" /> Instagram
+        </a>
+        <a href="https://www.linkedin.com/company/yayaconnectapp" target="_blank" rel="noopener noreferrer">
+          <img src="/linkedin.png" alt="LinkedIn" class="social-icon" /> LinkedIn
+        </a>
+        <a href="https://www.tiktok.com/@yayaconnectapp4" target="_blank" rel="noopener noreferrer">
+          <img src="/tiktok.png" alt="TikTok" class="social-icon" /> TikTok
+        </a>
+        <a href="https://x.com/yaya_app63108" target="_blank" rel="noopener noreferrer">
+          <img src="/twitter.png" alt="X" class="social-icon" /> X
+        </a>
+        <a href="https://www.facebook.com/profile.php?id=61585677827887" target="_blank" rel="noopener noreferrer">
+          <img src="/facebook.png" alt="Facebook" class="social-icon" /> Facebook
+        </a>
       </div>
     </div>
-  </section>
-</div>
-<footer class="app-footer pt-2">
-  <div class="row footer-contact text-large font-56 py-6">
-    Need help? Contact our customer support team via Call / SMS / WhatsApp on: +254-118-266-951
-  </div>
-  <div class="footer-content row py-6">
 
-    <div class="footer-links col-12 my-3 ">
-      <a href="https://www.instagram.com/yayaconnectapp_"  title="yayaconnectapp instagram icon" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram" >
-        <img
-          src="/instagram.png"
-          alt="yayaconnectapp instagram"
-          class="social-icon"
-        />
-        Instagram
-      </a>
-
-      <a href="https://www.linkedin.com/company/yayaconnectapp"  title="yayaconnectapp linkedin icon" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram" >
-        <img
-          src="/linkedin.png"
-          alt="yayaconnectapp linkedin"
-          class="social-icon"
-        />
-        LinkedIn
-      </a>
-
-      <a href="https://www.tiktok.com/@yayaconnectapp4"  title="yayaconnectapp tiktok icon" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram" >
-        <img
-          src="/tiktok.png"
-          alt="yayaconnectapp tiktok"
-          class="social-icon"
-        />
-        TikTok
-      </a>
-
-      <a href="https://x.com/yaya_app63108"  title="yayaconnectapp x icon" target="_blank" rel="noopener noreferrer" aria-label="Follow us on X" >
-        <img
-          src="/twitter.png"
-          alt="yayaconnectapp x"
-          class="social-icon"
-        />
-        X
-      </a>
-
-      <a href="https://www.facebook.com/profile.php?id=61585677827887"  title="yayaconnectapp facebook icon" target="_blank" rel="noopener noreferrer" aria-label="Follow us on facebook" >
-        <img
-          src="/facebook.png"
-          alt="yayaconnectapp facebook"
-          class="social-icon"
-        />
-        Facebook
-      </a>
-
-    </div>
-
-
-    <div class="footer-links">
+    <div class="footer-links-col">
+      <h4>Legal</h4>
       <a (click)="navigate('/terms-of-use')">Terms & Conditions</a>
-      <a (click)="navigate('/privacy-policy')">Privacy policy</a>
+      <a (click)="navigate('/privacy-policy')">Privacy Policy</a>
     </div>
-    <div class="footer-copy">
-      &copy; {{ currentYear }} yayaConnectApp.com . All rights reserved.
-    </div>
+  </div>
 
+  <div class="footer-bottom">
+    &copy; {{ currentYear }} yayaConnectApp.com. All rights reserved.
   </div>
 </footer>
