@@ -37,14 +37,6 @@ $dark: #1a3c34;
   text-decoration: none;
 }
 
-.logo-img {
-  height: 40px;
-  width: auto;
-  object-fit: contain;
-  filter: brightness(0) invert(1);
-  flex-shrink: 0;
-}
-
 .logo-text {
   font-size: 1.2rem;
   font-weight: 800;
@@ -129,7 +121,7 @@ $dark: #1a3c34;
 }
 
 @media (max-width: 480px) {
-  .logo-img {
-    height: 36px;
+  .logo-text {
+    font-size: 1rem;
   }
 }

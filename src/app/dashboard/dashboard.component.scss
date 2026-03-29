@@ -27,10 +27,12 @@ $sidebar-width: 240px;
   text-decoration: none;
 }
 
-.sidenav-logo {
-  height: 32px;
-  width: auto;
-  filter: brightness(0) invert(1);
+.sidenav-logo-text {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
 }
 
 .sidenav-title {

@@ -410,12 +410,13 @@ $surface: #f8fafc;
 }
 
 .footer-brand {
-  .footer-logo {
-    height: 48px;
-    width: auto;
+  .footer-logo-text {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
     margin-bottom: 0.75rem;
     display: block;
-    filter: brightness(0) invert(1);
   }
 
   p {

@@ -36,12 +36,13 @@ $orange: #e27220;
   max-width: 360px;
 }
 
-.brand-logo {
-  height: 56px;
-  width: auto;
+.brand-logo-text {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
   margin-bottom: 2rem;
   display: block;
-  filter: brightness(0) invert(1);
 }
 
 .brand-tagline {
