@@ -5,9 +5,8 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatSelectModule} from '@angular/material/select';
 import {HousehelpService} from './house-helps.service';
 import {AsyncPipe} from '@angular/common';
-import {Observable} from 'rxjs';
+import {Observable, of, shareReplay} from 'rxjs';
 import {tap, catchError} from 'rxjs/operators';
-import {of} from 'rxjs';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -61,10 +60,13 @@ export class HouseHelpsComponent implements OnInit {
 
   loadHouseHelps(): void {
     this.loading = true;
-    this.houseHelpsPage$ = this.househelpService.getHouseHelps(this.page, this.size, null).pipe(
+    const shared$ = this.househelpService.getHouseHelps(this.page, this.size, null).pipe(
       tap(() => this.loading = false),
-      catchError(err => { this.loading = false; return of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true }); })
-    ) as any;
+      catchError(() => { this.loading = false; return of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true }); }),
+      shareReplay(1)
+    );
+    this.houseHelpsPage$ = shared$ as any;
+    shared$.subscribe();
   }
 
   loadAgents(): void {

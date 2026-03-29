@@ -4,7 +4,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatButton} from '@angular/material/button';
 import {Router} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {Observable, of} from 'rxjs';
+import {Observable, of, shareReplay} from 'rxjs';
 import {tap, catchError} from 'rxjs/operators';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {HomeOwnerService} from './home-owners.service';
@@ -45,10 +45,13 @@ export class HomeOwnersComponent implements OnInit {
 
   loadHomeOwners(): void {
     this.loading = true;
-    this.homeOwnerPage$ = this.homeOwnerService.getHomeOwners(this.page, this.size, true).pipe(
+    const shared$ = this.homeOwnerService.getHomeOwners(this.page, this.size, true).pipe(
       tap(() => this.loading = false),
-      catchError(() => { this.loading = false; return of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true }); })
-    ) as any;
+      catchError(() => { this.loading = false; return of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true }); }),
+      shareReplay(1)
+    );
+    this.homeOwnerPage$ = shared$ as any;
+    shared$.subscribe();
   }
 
   activateHouseHelp(id:number|undefined, active:boolean):void{

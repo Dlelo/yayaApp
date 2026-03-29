@@ -8,7 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
 import { AsyncPipe } from '@angular/common';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { Observable, of } from 'rxjs';
+import { Observable, of, shareReplay } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { AgentService, Agent } from './agent.service';
 
@@ -75,10 +75,13 @@ export class AgentsComponent implements OnInit {
 
   loadAgents(): void {
     this.loading = true;
-    this.agentsPage$ = (this.agentService.getAgents(this.page, this.size) as any).pipe(
+    const shared$ = (this.agentService.getAgents(this.page, this.size) as any).pipe(
       tap(() => this.loading = false),
-      catchError(() => { this.loading = false; return of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true }); })
+      catchError(() => { this.loading = false; return of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0, first: true, last: true }); }),
+      shareReplay(1)
     );
+    this.agentsPage$ = shared$;
+    shared$.subscribe();
   }
 
   verifyAgent(agentProfileId: number): void {
