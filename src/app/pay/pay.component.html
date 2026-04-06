@@ -2,56 +2,56 @@
   <mat-card class="p-4 shadow-sm">
     <h2 class="mb-3 text-center">Complete Payment to Hire</h2>
 
-    <!-- ── PROCESSING ── -->
+    <!-- ══ PROCESSING ══════════════════════════════════════════════════════ -->
     @if (state === 'processing') {
       <div class="text-center my-5">
-        <mat-spinner diameter="50" class="mx-auto mb-3"></mat-spinner>
-        <p class="fw-semibold">STK Push sent!</p>
-        <p class="text-muted">Check your phone for the M-Pesa prompt and enter your PIN.</p>
-        <p class="text-muted small">Waiting for confirmation (up to 60 seconds)…</p>
+        <mat-spinner diameter="52" class="mx-auto mb-4"></mat-spinner>
+        <p class="fw-semibold fs-5">Waiting for M-Pesa confirmation…</p>
+        <p class="text-muted mb-1">Check your phone and enter your PIN to complete payment.</p>
+        <p class="text-muted small">This can take up to 60 seconds.</p>
       </div>
     }
 
-    <!-- ── STK FAILED — choose fallback ── -->
+    <!-- ══ STK FAILED → choose manual fallback ════════════════════════════ -->
     @else if (state === 'failed') {
       <div class="text-center my-3">
-        <mat-icon class="text-warning" style="font-size:40px;width:40px;height:40px;">warning</mat-icon>
-        <p class="mt-2 text-danger fw-semibold">{{ failureMessage }}</p>
-        <p class="text-muted">No worries — you can still complete payment manually.</p>
+        <mat-icon class="text-warning icon-lg">warning_amber</mat-icon>
+        <p class="mt-2 fw-semibold">M-Pesa push could not be completed.</p>
+        <p class="text-muted">No worries — you can pay manually right now.</p>
       </div>
 
-      <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center mt-3 mb-2">
+      <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center mt-3">
         <button mat-raised-button color="primary" (click)="chooseTill()">
-          <mat-icon class="me-1">phone_android</mat-icon>
+          <mat-icon class="me-1">storefront</mat-icon>
           Pay via Till Number
         </button>
-        <button mat-stroked-button color="primary" (click)="choosePaybill()">
+        <button mat-raised-button color="accent" (click)="choosePaybill()">
           <mat-icon class="me-1">receipt_long</mat-icon>
           Pay via PayBill
         </button>
       </div>
 
-      <div class="text-center mt-2">
-        <button mat-button (click)="retryStk()">
+      <div class="text-center mt-3">
+        <button mat-button color="primary" (click)="retryStk()">
           <mat-icon class="me-1">refresh</mat-icon>
-          Try STK Push again
+          Try M-Pesa push again
         </button>
       </div>
     }
 
-    <!-- ── MANUAL: TILL NUMBER ── -->
+    <!-- ══ MANUAL: TILL NUMBER ════════════════════════════════════════════ -->
     @else if (state === 'manual-till') {
       <mat-card class="instructions-card mb-4">
         <mat-card-content>
           <h4 class="text-success text-center mb-3">
-            <mat-icon class="align-middle me-2">phone_android</mat-icon>
-            Pay via M-Pesa Till Number
+            <mat-icon class="align-middle me-2">storefront</mat-icon>
+            Pay via Buy Goods (Till)
           </h4>
 
           <ol class="payment-steps">
             <li>
               <mat-icon class="step-icon">looks_one</mat-icon>
-              <span>Open M-Pesa on your phone</span>
+              <span>Open <strong>M-Pesa</strong> on your phone</span>
             </li>
             <li>
               <mat-icon class="step-icon">looks_two</mat-icon>
@@ -63,11 +63,11 @@
             </li>
             <li>
               <mat-icon class="step-icon">looks_4</mat-icon>
-              <span>Enter Till Number: <strong class="text-primary fs-5">{{ tillNumber }}</strong></span>
+              <span>Till Number: <strong class="text-primary fs-5">{{ tillNumber }}</strong></span>
             </li>
             <li>
               <mat-icon class="step-icon">looks_5</mat-icon>
-              <span>Enter Amount: <strong>KES {{ getTotalAmount() | number }}</strong></span>
+              <span>Amount: <strong>KES {{ getTotalAmount() | number }}</strong></span>
             </li>
             <li>
               <mat-icon class="step-icon">check_circle</mat-icon>
@@ -77,12 +77,12 @@
         </mat-card-content>
       </mat-card>
 
-      <div class="alert alert-success">
-        <mat-icon class="align-middle me-2">verified</mat-icon>
-        <small>After payment, keep your M-Pesa confirmation SMS for your records.</small>
+      <div class="alert alert-success d-flex align-items-center gap-2">
+        <mat-icon>verified</mat-icon>
+        <small>You will receive an M-Pesa SMS confirmation. Keep it for your records.</small>
       </div>
 
-      <div class="text-center mt-4 d-flex flex-column flex-sm-row gap-2 justify-content-center">
+      <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center mt-4">
         <button mat-raised-button color="primary" (click)="goToSuccess()">
           <mat-icon class="me-1">check_circle</mat-icon>
           I've Completed Payment
@@ -93,19 +93,19 @@
       </div>
     }
 
-    <!-- ── MANUAL: PAYBILL ── -->
+    <!-- ══ MANUAL: PAYBILL ════════════════════════════════════════════════ -->
     @else if (state === 'manual-paybill') {
       <mat-card class="instructions-card mb-4">
         <mat-card-content>
           <h4 class="text-success text-center mb-3">
             <mat-icon class="align-middle me-2">receipt_long</mat-icon>
-            Pay via M-Pesa PayBill
+            Pay via PayBill
           </h4>
 
           <ol class="payment-steps">
             <li>
               <mat-icon class="step-icon">looks_one</mat-icon>
-              <span>Open M-Pesa on your phone</span>
+              <span>Open <strong>M-Pesa</strong> on your phone</span>
             </li>
             <li>
               <mat-icon class="step-icon">looks_two</mat-icon>
@@ -117,15 +117,15 @@
             </li>
             <li>
               <mat-icon class="step-icon">looks_4</mat-icon>
-              <span>Enter Business Number: <strong>{{ paybillNumber }}</strong></span>
+              <span>Business Number: <strong class="text-primary fs-5">{{ paybillNumber }}</strong></span>
             </li>
             <li>
               <mat-icon class="step-icon">looks_5</mat-icon>
-              <span>Enter Account Number: <strong>{{ accountNumber }}</strong></span>
+              <span>Account Number: <strong>{{ accountNumber }}</strong></span>
             </li>
             <li>
               <mat-icon class="step-icon">looks_6</mat-icon>
-              <span>Enter Amount: <strong>KES {{ getTotalAmount() | number }}</strong></span>
+              <span>Amount: <strong>KES {{ getTotalAmount() | number }}</strong></span>
             </li>
             <li>
               <mat-icon class="step-icon">check_circle</mat-icon>
@@ -135,12 +135,12 @@
         </mat-card-content>
       </mat-card>
 
-      <div class="alert alert-success">
-        <mat-icon class="align-middle me-2">verified</mat-icon>
-        <small>After payment, keep your M-Pesa confirmation SMS for your records.</small>
+      <div class="alert alert-success d-flex align-items-center gap-2">
+        <mat-icon>verified</mat-icon>
+        <small>You will receive an M-Pesa SMS confirmation. Keep it for your records.</small>
       </div>
 
-      <div class="text-center mt-4 d-flex flex-column flex-sm-row gap-2 justify-content-center">
+      <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center mt-4">
         <button mat-raised-button color="primary" (click)="goToSuccess()">
           <mat-icon class="me-1">check_circle</mat-icon>
           I've Completed Payment
@@ -151,12 +151,12 @@
       </div>
     }
 
-    <!-- ── FORM ── -->
+    <!-- ══ FORM ═══════════════════════════════════════════════════════════ -->
     @else {
       <form [formGroup]="payForm" (ngSubmit)="pay()" class="mt-4">
         <div class="row g-3">
 
-          <!-- Plan Selection -->
+          <!-- Plan -->
           <div class="col-12">
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Select Plan</mat-label>
@@ -168,7 +168,7 @@
             </mat-form-field>
           </div>
 
-          <!-- Outside Nairobi surcharge notice -->
+          <!-- Outside-Nairobi surcharge notice -->
           @if (!houseHelpIsInNairobi) {
             <div class="col-12">
               <mat-card class="location-surcharge-card">
@@ -177,7 +177,7 @@
                   <div>
                     <strong>Outside Nairobi Surcharge</strong>
                     <p class="mb-0 text-muted small">
-                      An additional KES {{ houseHelpCountySurcharge }} transport fee applies for hires from {{ houseHelpCurrentCounty }} county.
+                      Additional KES {{ houseHelpCountySurcharge }} transport fee for hires from {{ houseHelpCurrentCounty }} county.
                     </p>
                   </div>
                 </mat-card-content>
@@ -185,25 +185,25 @@
             </div>
           }
 
-          <!-- Amount Breakdown -->
+          <!-- Amount breakdown -->
           @if (payForm.get('plan')?.value) {
             <div class="col-12">
               <mat-card class="amount-breakdown-card">
                 <mat-card-content>
                   <h6 class="mb-3 fw-bold">Payment Summary</h6>
                   <div class="breakdown-row">
-                    <span>Service Fee:</span>
+                    <span>Service Fee</span>
                     <span class="fw-bold">KES {{ getBasePlanAmount() | number }}</span>
                   </div>
                   @if (!houseHelpIsInNairobi) {
                     <div class="breakdown-row">
-                      <span>Transport Fee from {{ houseHelpLocation }}, {{ houseHelpCurrentCounty }}:</span>
+                      <span>Transport – {{ houseHelpLocation }}, {{ houseHelpCurrentCounty }}</span>
                       <span class="fw-bold text-warning">+ KES {{ houseHelpCountySurcharge | number }}</span>
                     </div>
                   }
                   <mat-divider class="my-2"></mat-divider>
                   <div class="breakdown-row total">
-                    <span>Total Amount:</span>
+                    <span>Total</span>
                     <span class="fw-bold text-primary fs-5">KES {{ getTotalAmount() | number }}</span>
                   </div>
                 </mat-card-content>
@@ -211,28 +211,31 @@
             </div>
           }
 
-          <!-- M-Pesa Number -->
+          <!-- Phone -->
           <div class="col-12">
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>M-Pesa Number</mat-label>
-              <input matInput formControlName="phone" placeholder="0712345678 or +254712345678" />
+              <input matInput formControlName="phone" placeholder="0712345678" />
+              <mat-hint>The number that will receive the M-Pesa prompt</mat-hint>
               <mat-error *ngIf="payForm.get('phone')?.hasError('required')">Phone number is required</mat-error>
-              <mat-error *ngIf="payForm.get('phone')?.hasError('pattern')">Invalid phone number format</mat-error>
+              <mat-error *ngIf="payForm.get('phone')?.hasError('pattern')">Invalid Safaricom number</mat-error>
             </mat-form-field>
           </div>
 
           <!-- Submit -->
           <div class="col-12 text-center">
-            <button
-              mat-raised-button
-              color="primary"
-              class="px-4"
-              type="submit"
-              [disabled]="payForm.invalid"
-            >
+            <button mat-raised-button color="primary" class="px-5" type="submit" [disabled]="payForm.invalid">
               <mat-icon class="me-1">send_to_mobile</mat-icon>
-              Send M-Pesa Push – KES {{ getTotalAmount() | number }}
+              Pay KES {{ getTotalAmount() | number }} via M-Pesa
             </button>
+          </div>
+
+          <!-- Manual payment links -->
+          <div class="col-12 text-center manual-links">
+            <span class="text-muted small">Prefer to pay manually?</span>
+            <button mat-button type="button" (click)="chooseTill()">Till Number</button>
+            <span class="text-muted small">or</span>
+            <button mat-button type="button" (click)="choosePaybill()">PayBill</button>
           </div>
 
         </div>

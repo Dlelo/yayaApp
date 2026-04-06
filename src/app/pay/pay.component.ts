@@ -16,6 +16,11 @@ import { CommonModule } from '@angular/common';
 import { environment } from '../../environments/environments';
 import { MatIcon } from '@angular/material/icon';
 
+// form        → user filling in plan + phone
+// processing  → STK push sent, polling for confirmation
+// failed      → STK push error or timeout → choose manual fallback
+// manual-till → step-by-step till number instructions
+// manual-paybill → step-by-step paybill instructions
 type PaymentState = 'form' | 'processing' | 'failed' | 'manual-till' | 'manual-paybill';
 
 @Component({
@@ -46,18 +51,17 @@ export class PayComponent implements OnInit, OnDestroy {
   houseHelpCountySurcharge: number = 0;
 
   state: PaymentState = 'form';
-  failureMessage: string = '';
 
-  paybillNumber: number = environment.paybillNumber;
-  accountNumber: number = environment.accountNumber;
-  tillNumber: number = environment.tillNumber;
+  paybillNumber = environment.paybillNumber;
+  accountNumber = environment.accountNumber;
+  tillNumber    = environment.tillNumber;
 
   private pollIntervalId: ReturnType<typeof setInterval> | null = null;
 
-  private readonly PLAN_PRICES = {
+  private readonly PLAN_PRICES: Record<string, number> = {
     'emergency': 500,
-    'day-burg': 2500,
-    'live-in': 2500
+    'day-burg':  2500,
+    'live-in':   2500,
   };
 
   constructor(
@@ -68,84 +72,81 @@ export class PayComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
   ) {
     this.payForm = this.fb.group({
-      plan: ['day-burg', Validators.required],
+      plan:  ['day-burg', Validators.required],
       location: ['nairobi', Validators.required],
       phone: ['', [
         Validators.required,
-        Validators.pattern(/^(\+254|254|0)[17]\d{8}$/)
-      ]]
+        Validators.pattern(/^(\+254|254|0)[17]\d{8}$/),
+      ]],
     });
   }
 
   ngOnInit() {
-    this.houseHelpName = this.route.snapshot.queryParams['name'] || 'House Help';
-    this.houseHelpId = this.route.snapshot.queryParams['id'] || '';
-    this.houseHelpLocation = this.route.snapshot.queryParams['location'] || '';
-    this.houseHelpIsInNairobi = this.route.snapshot.queryParams['inNairobi'] === 'true';
-    this.houseHelpCountySurcharge = this.route.snapshot.queryParams['countySurcharge'] || 0;
-    this.houseHelpCurrentCounty = this.route.snapshot.queryParams['currentCounty'] || '';
+    this.houseHelpName         = this.route.snapshot.queryParams['name']          || 'House Help';
+    this.houseHelpId           = this.route.snapshot.queryParams['id']            || '';
+    this.houseHelpLocation     = this.route.snapshot.queryParams['location']      || '';
+    this.houseHelpIsInNairobi  = this.route.snapshot.queryParams['inNairobi']     === 'true';
+    this.houseHelpCountySurcharge = Number(this.route.snapshot.queryParams['countySurcharge'] || 0);
+    this.houseHelpCurrentCounty   = this.route.snapshot.queryParams['currentCounty'] || '';
   }
 
   ngOnDestroy() {
-    this.stopPolling();
+    this.clearPoll();
   }
 
+  // ── amounts ────────────────────────────────────────────────────────────────
+
   getBasePlanAmount(): number {
-    const plan = this.payForm.get('plan')?.value;
-    return this.PLAN_PRICES[plan as keyof typeof this.PLAN_PRICES] || 0;
+    return this.PLAN_PRICES[this.payForm.get('plan')?.value] ?? 0;
   }
 
   getTotalAmount(): number {
-    return this.getBasePlanAmount() + Number(this.houseHelpCountySurcharge);
+    return this.getBasePlanAmount() + this.houseHelpCountySurcharge;
   }
+
+  // ── STK push ───────────────────────────────────────────────────────────────
 
   pay() {
     if (this.payForm.invalid || this.state !== 'form') return;
 
     this.state = 'processing';
 
-    let phone = this.payForm.value.phone;
-    if (phone.startsWith('0')) {
-      phone = '254' + phone.substring(1);
-    } else if (phone.startsWith('+254')) {
-      phone = phone.substring(1);
-    }
+    let phone: string = this.payForm.value.phone;
+    if (phone.startsWith('0'))    phone = '254' + phone.slice(1);
+    else if (phone.startsWith('+')) phone = phone.slice(1);
 
     const storedUser = localStorage.getItem('user');
-    const user = storedUser ? JSON.parse(storedUser) : null;
+    const email = storedUser ? JSON.parse(storedUser)?.email : null;
 
-    const paymentRequest = {
+    this.paymentService.initiateStkPush({
       phoneNumber: phone,
-      amount: this.getTotalAmount(),
-      email: user?.email,
+      amount:      this.getTotalAmount(),
+      email,
       accountReference: `HIRE-${this.houseHelpId}`,
-      transactionDesc: `Subscription for ${this.houseHelpName}`,
-      plan: this.payForm.value.plan,
-      location: this.payForm.value.location,
-      baseAmount: this.getBasePlanAmount(),
-      surcharge: this.houseHelpCountySurcharge,
-      isOutsideNairobi: !this.houseHelpIsInNairobi
-    };
-
-    this.paymentService.initiateStkPush(paymentRequest).subscribe({
+      transactionDesc:  `Subscription for ${this.houseHelpName}`,
+    } as any).subscribe({
       next: (response) => {
         const checkoutRequestId = response?.checkoutRequestId || response?.CheckoutRequestID;
         if (checkoutRequestId) {
-          this.snackBar.open('STK Push sent! Check your phone for the M-Pesa prompt.', 'OK', { duration: 5000 });
-          this.pollPaymentStatus(checkoutRequestId);
+          this.snackBar.open('M-Pesa prompt sent! Enter your PIN on your phone.', 'OK', { duration: 6000 });
+          this.startPolling(checkoutRequestId);
         } else {
-          this.onStkFailed('No checkout request ID returned. Please pay manually.');
+          // Push accepted but no ID — fall back silently
+          this.fallbackToManual();
         }
       },
-      error: (error) => {
-        this.onStkFailed(error.error?.message || 'Failed to initiate M-Pesa push.');
-      }
+      error: () => {
+        // Network error or Daraja credentials not yet configured
+        this.fallbackToManual();
+      },
     });
   }
 
-  private pollPaymentStatus(checkoutRequestId: string) {
+  // ── polling ────────────────────────────────────────────────────────────────
+
+  private startPolling(checkoutRequestId: string) {
     let attempts = 0;
-    const maxAttempts = 20; // 20 × 3s = 60 seconds
+    const maxAttempts = 20; // 20 × 3 s = 60 s
 
     this.pollIntervalId = setInterval(() => {
       attempts++;
@@ -153,49 +154,41 @@ export class PayComponent implements OnInit, OnDestroy {
       this.paymentService.checkPaymentStatus(checkoutRequestId).subscribe({
         next: (status) => {
           if (status.status === 'SUCCESS') {
-            this.stopPolling();
-            this.snackBar.open('Payment successful!', 'Close', { duration: 3000 });
+            this.clearPoll();
+            this.snackBar.open('Payment confirmed!', 'Close', { duration: 4000 });
             this.router.navigate(['/listings']);
           } else if (status.status === 'FAILED') {
-            this.stopPolling();
-            this.onStkFailed(status.failureReason || 'Payment was declined.');
+            this.clearPoll();
+            this.fallbackToManual();
           }
         },
-        error: () => { /* keep polling on transient errors */ }
+        error: () => { /* transient — keep polling */ },
       });
 
       if (attempts >= maxAttempts) {
-        this.stopPolling();
-        this.onStkFailed('Payment confirmation timed out. Please pay manually below.');
+        this.clearPoll();
+        this.fallbackToManual();
       }
     }, 3000);
   }
 
-  private onStkFailed(message: string) {
-    this.state = 'failed';
-    this.failureMessage = message;
-  }
-
-  private stopPolling() {
+  private clearPoll() {
     if (this.pollIntervalId !== null) {
       clearInterval(this.pollIntervalId);
       this.pollIntervalId = null;
     }
   }
 
-  chooseTill() {
-    this.state = 'manual-till';
+  // Transition to 'failed' — user chooses till or paybill from there
+  private fallbackToManual() {
+    this.clearPoll();
+    this.state = 'failed';
   }
 
-  choosePaybill() {
-    this.state = 'manual-paybill';
-  }
+  // ── navigation helpers ─────────────────────────────────────────────────────
 
-  retryStk() {
-    this.state = 'form';
-  }
-
-  goToSuccess() {
-    this.router.navigate(['/listings']);
-  }
+  chooseTill()    { this.state = 'manual-till'; }
+  choosePaybill() { this.state = 'manual-paybill'; }
+  retryStk()      { this.state = 'form'; }
+  goToSuccess()   { this.router.navigate(['/listings']); }
 }

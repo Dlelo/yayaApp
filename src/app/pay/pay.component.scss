@@ -3,6 +3,12 @@ mat-card {
   margin: 2rem auto;
 }
 
+.icon-lg {
+  font-size: 44px;
+  width: 44px;
+  height: 44px;
+}
+
 .instructions-card {
   background-color: #f8f9fa;
 
@@ -15,17 +21,12 @@ mat-card {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 8px 0;
+      padding: 10px 0;
       border-bottom: 1px solid #e9ecef;
 
-      &:last-child {
-        border-bottom: none;
-      }
+      &:last-child { border-bottom: none; }
 
-      .step-icon {
-        color: #4caf50;
-        flex-shrink: 0;
-      }
+      .step-icon { color: #4caf50; flex-shrink: 0; }
     }
   }
 }
@@ -39,12 +40,16 @@ mat-card {
     align-items: center;
     padding: 4px 0;
 
-    &.total {
-      padding-top: 8px;
-    }
+    &.total { padding-top: 8px; }
   }
 }
 
-.location-surcharge-card {
-  background-color: #fff8e1;
+.location-surcharge-card { background-color: #fff8e1; }
+
+.manual-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 4px;
 }
