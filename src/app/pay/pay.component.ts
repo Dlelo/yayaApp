@@ -5,9 +5,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
-import { AuthService } from '../auth/auth.service';
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaymentService } from './pay.service';
@@ -17,6 +16,7 @@ import { CommonModule } from '@angular/common';
 import { environment } from '../../environments/environments';
 import { MatIcon } from '@angular/material/icon';
 
+type PaymentState = 'form' | 'processing' | 'failed' | 'manual-till' | 'manual-paybill';
 
 @Component({
   selector: 'app-pay-hire',
@@ -36,8 +36,7 @@ import { MatIcon } from '@angular/material/icon';
     MatIcon,
   ],
 })
-
-export class PayComponent implements OnInit {
+export class PayComponent implements OnInit, OnDestroy {
   payForm: FormGroup;
   houseHelpName: string = '';
   houseHelpId: string = '';
@@ -45,21 +44,21 @@ export class PayComponent implements OnInit {
   houseHelpCurrentCounty: string = '';
   houseHelpIsInNairobi: boolean = false;
   houseHelpCountySurcharge: number = 0;
-  isProcessing: boolean = false;
-  isManualPayment: boolean = false; //remove after mpesa automation
+
+  state: PaymentState = 'form';
+  failureMessage: string = '';
+
   paybillNumber: number = environment.paybillNumber;
   accountNumber: number = environment.accountNumber;
+  tillNumber: number = environment.tillNumber;
 
-  user = localStorage.getItem('user');
+  private pollIntervalId: ReturnType<typeof setInterval> | null = null;
 
-  // Pricing constants
   private readonly PLAN_PRICES = {
     'emergency': 500,
     'day-burg': 2500,
     'live-in': 2500
   };
-  
-  private readonly OUTSIDE_NAIROBI_SURCHARGE = 1500;
 
   constructor(
     private fb: FormBuilder,
@@ -67,7 +66,6 @@ export class PayComponent implements OnInit {
     private router: Router,
     private paymentService: PaymentService,
     private snackBar: MatSnackBar,
-
   ) {
     this.payForm = this.fb.group({
       plan: ['day-burg', Validators.required],
@@ -88,49 +86,23 @@ export class PayComponent implements OnInit {
     this.houseHelpCurrentCounty = this.route.snapshot.queryParams['currentCounty'] || '';
   }
 
-  /**
-   * Called when location selection changes
-   */
-  onLocationChange(): void {
-    // Update the UI - getTotalAmount() will automatically recalculate
+  ngOnDestroy() {
+    this.stopPolling();
   }
 
-  /**
-   * Get base plan amount (without surcharge)
-   */
   getBasePlanAmount(): number {
     const plan = this.payForm.get('plan')?.value;
     return this.PLAN_PRICES[plan as keyof typeof this.PLAN_PRICES] || 0;
   }
 
-  /**
-   * Get total amount including location surcharge
-   */
   getTotalAmount(): number {
-    const baseAmount = this.getBasePlanAmount();
-    const surcharge = this.houseHelpCountySurcharge;
-    return baseAmount + Number(surcharge);
-  }
-
-  /**
-   * Legacy method - use getTotalAmount() instead
-   * Kept for backward compatibility
-   */
-  getAmount() {
-    return this.getTotalAmount();
-  }
-
-  goToSuccess() {
-    this.router.navigate(['/listings']);
+    return this.getBasePlanAmount() + Number(this.houseHelpCountySurcharge);
   }
 
   pay() {
-    if (this.payForm.invalid || this.isProcessing || this.isManualPayment) return;
+    if (this.payForm.invalid || this.state !== 'form') return;
 
-    // this.isProcessing = true;
-    this.isManualPayment = true;
-
-    const totalAmount = this.getTotalAmount();
+    this.state = 'processing';
 
     let phone = this.payForm.value.phone;
     if (phone.startsWith('0')) {
@@ -141,15 +113,13 @@ export class PayComponent implements OnInit {
 
     const storedUser = localStorage.getItem('user');
     const user = storedUser ? JSON.parse(storedUser) : null;
-    const email = user?.email;
 
     const paymentRequest = {
       phoneNumber: phone,
-      amount: totalAmount, // Now includes surcharge if applicable
-      email: email,
+      amount: this.getTotalAmount(),
+      email: user?.email,
       accountReference: `HIRE-${this.houseHelpId}`,
       transactionDesc: `Subscription for ${this.houseHelpName}`,
-      // Additional metadata
       plan: this.payForm.value.plan,
       location: this.payForm.value.location,
       baseAmount: this.getBasePlanAmount(),
@@ -157,84 +127,75 @@ export class PayComponent implements OnInit {
       isOutsideNairobi: !this.houseHelpIsInNairobi
     };
 
-    // TODO bring this back once MPESA goes live
-    // this.snackBar.open('Initiating payment...', 'Close', { duration: 3000 });
-
     this.paymentService.initiateStkPush(paymentRequest).subscribe({
       next: (response) => {
-        console.log(response)
-        this.isManualPayment = true;
-        this.isProcessing = false;
-
-        // TODO bring back after automation
-        // this.snackBar.open(
-        // 'Check your phone for M-Pesa prompt!',
-        // 'OK',
-        // { duration: 5000 }
-        // );
-        // Start checking payment status
-        // this.checkPaymentStatus(response?.CheckoutRequestID); 
+        const checkoutRequestId = response?.checkoutRequestId || response?.CheckoutRequestID;
+        if (checkoutRequestId) {
+          this.snackBar.open('STK Push sent! Check your phone for the M-Pesa prompt.', 'OK', { duration: 5000 });
+          this.pollPaymentStatus(checkoutRequestId);
+        } else {
+          this.onStkFailed('No checkout request ID returned. Please pay manually.');
+        }
       },
       error: (error) => {
-        this.isProcessing = false;
-        this.snackBar.open(
-          error.error?.message || 'Payment initiation failed',
-          'Close',
-          { duration: 5000 }
-        );
+        this.onStkFailed(error.error?.message || 'Failed to initiate M-Pesa push.');
       }
     });
   }
 
-  checkPaymentStatus(checkoutRequestId: string) {
+  private pollPaymentStatus(checkoutRequestId: string) {
     let attempts = 0;
-    const maxAttempts = this.isManualPayment ? 1 : 20; // Check for 20 seconds
+    const maxAttempts = 20; // 20 × 3s = 60 seconds
 
-    const intervalId = setInterval(() => {
+    this.pollIntervalId = setInterval(() => {
       attempts++;
 
       this.paymentService.checkPaymentStatus(checkoutRequestId).subscribe({
         next: (status) => {
           if (status.status === 'SUCCESS') {
-            clearInterval(intervalId);
-            this.isProcessing = false;
+            this.stopPolling();
             this.snackBar.open('Payment successful!', 'Close', { duration: 3000 });
-
-            // Navigate to success page or confirm hire
-            this.router.navigate(['/hire'], {
-              queryParams: {
-                houseHelpId: this.houseHelpId,
-                houseHelpName: this.houseHelpName
-              }
-            });
-          } else if (status.status === 'FAILED') {
-            clearInterval(intervalId);
-            this.isProcessing = false;
-            this.snackBar.open(
-              `Payment failed: ${status.failureReason}`,
-              'Close',
-              { duration: 5000 }
-            );
             this.router.navigate(['/listings']);
+          } else if (status.status === 'FAILED') {
+            this.stopPolling();
+            this.onStkFailed(status.failureReason || 'Payment was declined.');
           }
         },
-        error: () => {
-          // Continue checking on error
-        }
+        error: () => { /* keep polling on transient errors */ }
       });
 
-      // Stop after max attempts
       if (attempts >= maxAttempts) {
-        clearInterval(intervalId);
-        this.isProcessing = false;
-        this.snackBar.open(
-          'Payment verification timed out. Please check your M-Pesa messages.',
-          'Close',
-          { duration: 5000 }
-        );
+        this.stopPolling();
+        this.onStkFailed('Payment confirmation timed out. Please pay manually below.');
       }
-    }, 1000);
+    }, 3000);
   }
 
-  
+  private onStkFailed(message: string) {
+    this.state = 'failed';
+    this.failureMessage = message;
+  }
+
+  private stopPolling() {
+    if (this.pollIntervalId !== null) {
+      clearInterval(this.pollIntervalId);
+      this.pollIntervalId = null;
+    }
+  }
+
+  chooseTill() {
+    this.state = 'manual-till';
+  }
+
+  choosePaybill() {
+    this.state = 'manual-paybill';
+  }
+
+  retryStk() {
+    this.state = 'form';
+  }
+
+  goToSuccess() {
+    this.router.navigate(['/listings']);
+  }
 }

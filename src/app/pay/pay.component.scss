@@ -1,8 +1,50 @@
 mat-card {
-  max-width: 500px;
+  max-width: 520px;
   margin: 2rem auto;
 }
-.full-width {
-  width: 100%;
-  margin-bottom: 1rem;
+
+.instructions-card {
+  background-color: #f8f9fa;
+
+  ol.payment-steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid #e9ecef;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .step-icon {
+        color: #4caf50;
+        flex-shrink: 0;
+      }
+    }
+  }
+}
+
+.amount-breakdown-card {
+  background-color: #f0f7ff;
+
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+
+    &.total {
+      padding-top: 8px;
+    }
+  }
+}
+
+.location-surcharge-card {
+  background-color: #fff8e1;
 }

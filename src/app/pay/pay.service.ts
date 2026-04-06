@@ -13,11 +13,15 @@ export interface StkPushRequest {
 }
 
 export interface StkPushResponse {
-  merchantRequestId: string;
-  CheckoutRequestID: string;
-  responseCode: string;
-  responseDescription: string;
-  customerMessage: string;
+  message: string;
+  checkoutRequestId: string;
+  status: string;
+  // Daraja passthrough fields (present on success)
+  CheckoutRequestID?: string;
+  MerchantRequestID?: string;
+  ResponseCode?: string;
+  ResponseDescription?: string;
+  CustomerMessage?: string;
 }
 
 export interface PaymentStatus {
