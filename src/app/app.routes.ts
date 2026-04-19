@@ -100,6 +100,14 @@ export const routes: Routes = [
         canActivate: [RoleGuard],
         data: { roles: ['ROLE_ADMIN'] },
         loadComponent: () => import('./dashboard/reports/reports.component').then(m => m.ReportsComponent) },
+      {
+        path: 'agency',
+        loadComponent: () => import('./dashboard/agent-portal/agent-portal.component').then(m => m.AgentPortalComponent),
+      },
+      {
+        path: 'agency/:agencyId',
+        loadComponent: () => import('./dashboard/agent-portal/agent-portal.component').then(m => m.AgentPortalComponent),
+      },
        { path: '', component: OverviewComponent, pathMatch: 'full' },
     ]
   },

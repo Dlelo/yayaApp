@@ -100,4 +100,12 @@ export class HousehelpService {
     return this.http.patch(`${this.apiUrl}/${id}`, { hiringStatus });
   }
 
+  getAgents(): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/agent?size=100`);
+  }
+
+  assignToAgent(houseHelpId: number, agentId: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${houseHelpId}/assign-agent/${agentId}`, null);
+  }
+
 }

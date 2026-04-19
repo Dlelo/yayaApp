@@ -2,8 +2,11 @@
   <div class="dash-page-header">
     <div>
       <h1 class="dash-title">Agents</h1>
-      <p class="dash-subtitle">Platform agents managing house helps</p>
+      <p class="dash-subtitle">Platform agents managing househelps</p>
     </div>
+    <button mat-flat-button color="primary" (click)="openCreateDialog()">
+      <mat-icon>add</mat-icon> Add Agency
+    </button>
   </div>
 
   <div class="dash-card">
@@ -14,7 +17,7 @@
       <div class="table-wrap">
         <table class="dash-table">
           <thead>
-            <tr><th>#</th><th>Agent</th><th>Phone</th><th>Location</th><th>Status</th><th>Actions</th></tr>
+            <tr><th>#</th><th>Agent</th><th>Phone</th><th>Agency</th><th>Status</th><th>Actions</th></tr>
           </thead>
           <tbody>
             @for (s of shimmerRows; track s) {
@@ -47,7 +50,7 @@
               <th>#</th>
               <th>Agent</th>
               <th>Phone</th>
-              <th>Location</th>
+              <th>Agency</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -66,7 +69,16 @@
                   </div>
                 </td>
                 <td class="text-muted">{{ agent.agentProfile?.phoneNumber || agent.phoneNumber }}</td>
-                <td class="text-muted">{{ agent.agentProfile?.locationOfOperation || '—' }}</td>
+                <td>
+                  @if (agent.agentProfile?.agencyName) {
+                    <div>
+                      <div style="font-size:0.88rem">{{ agent.agentProfile!.agencyName }}</div>
+                      <div class="text-muted" style="font-size:0.75rem">{{ agent.agentProfile!.agentRole }}</div>
+                    </div>
+                  } @else {
+                    <span class="text-muted">—</span>
+                  }
+                </td>
                 <td>
                   @if (agent.agentProfile?.verified) {
                     <span class="status-badge status-badge--active">Verified</span>
@@ -79,6 +91,11 @@
                     @if (agent.agentProfile && !agent.agentProfile.verified) {
                       <button mat-stroked-button class="btn-action btn-verify" (click)="verifyAgent(agent.agentProfile.id)">
                         <mat-icon>verified</mat-icon> Verify
+                      </button>
+                    }
+                    @if (agent.agentProfile?.agencyId) {
+                      <button mat-stroked-button class="btn-action btn-view" (click)="openPortal(agent.agentProfile!.agencyId)">
+                        <mat-icon>business</mat-icon> Portal
                       </button>
                     }
                     <button mat-stroked-button class="btn-action" (click)="openEditDialog(agent)">
@@ -102,6 +119,45 @@
     }
   </div>
 </div>
+
+<!-- Create Agency Dialog -->
+<ng-template #createAgencyDialog>
+  <h2 mat-dialog-title style="font-weight:700;color:#1a3c34">Add Agency</h2>
+  <mat-dialog-content style="min-width:460px;padding-top:8px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <mat-form-field appearance="outline" style="grid-column:span 2">
+        <mat-label>Agency Name *</mat-label>
+        <input matInput [(ngModel)]="newAgency.name" placeholder="Business or agency name" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Phone Number</mat-label>
+        <input matInput [(ngModel)]="newAgency.phoneNumber" type="tel" placeholder="e.g. 0712345678" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput [(ngModel)]="newAgency.email" type="email" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Location of Operation</mat-label>
+        <input matInput [(ngModel)]="newAgency.locationOfOperation" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Home Location</mat-label>
+        <input matInput [(ngModel)]="newAgency.homeLocation" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" style="grid-column:span 2">
+        <mat-label>House Number</mat-label>
+        <input matInput [(ngModel)]="newAgency.houseNumber" />
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button mat-dialog-close>Cancel</button>
+    <button mat-flat-button color="primary" [disabled]="creatingAgency" (click)="createAgency()">
+      {{ creatingAgency ? 'Creating…' : 'Create Agency' }}
+    </button>
+  </mat-dialog-actions>
+</ng-template>
 
 <!-- Edit Agent Dialog -->
 <ng-template #editAgentDialog>

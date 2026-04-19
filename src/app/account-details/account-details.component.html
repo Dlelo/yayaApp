@@ -15,10 +15,7 @@
         <div class="hero-left">
           <div class="avatar">
             @if(avatarUrl$ | async; as avatarUrl){
-              <img
-                [src]="avatarUrl"
-                [alt]="user?.name"
-              />
+              <img [src]="avatarUrl" [alt]="user?.name" />
             } @else {
               <div class="avatar-initials">
                 <mat-icon>person</mat-icon>
@@ -73,7 +70,9 @@
         }
       </div>
 
-      <!-- Househelp view -->
+      <!-- ══════════════════════════════════════════
+           HOUSEHELP VIEW
+      ══════════════════════════════════════════ -->
       @if (user?.roles?.includes('HOUSEHELP')) {
         @if (houseHelpDetails$ | async; as hh) {
         <div class="grid two">
@@ -212,7 +211,6 @@
           </div>
         </div>
 
-        <!-- Leaflet pin location map -->
         @if(hh?.pinLocation?.latitude && hh?.pinLocation?.longitude){
           <div class="card">
             <div class="card-header">
@@ -231,7 +229,6 @@
           </div>
         }
 
-        <!-- Additional Documents -->
         @if(hh?.additionalDocuments?.length){
           <div class="card">
             <div class="card-header">
@@ -256,7 +253,6 @@
           </div>
         }
 
-        <!-- Security Clearance (Admin/Security only) -->
         @if(user?.roles?.includes('ADMIN') || user?.roles?.includes('SECURITY')){
           @if(hh?.securityCleared || hh?.securityClearanceComments){
             <div class="card">
@@ -330,10 +326,49 @@
             </div>
           </div>
         </div>
+
+        <!-- Hire requests received by this househelp -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">History</p>
+              <h2>Hire Requests</h2>
+            </div>
+          </div>
+          @if (houseHelpHireRequests$ | async; as requests) {
+            @if (requests.length) {
+              <div class="list">
+                @for (req of requests; track req.id) {
+                  <div class="list-row">
+                    <div>
+                      <p class="label">{{ req.homeOwnerName || 'Home Owner' }}</p>
+                      <p class="value text-muted">{{ req.createdAt?.slice(0, 10) || '—' }}</p>
+                    </div>
+                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.25rem;">
+                      <span class="chip"
+                            [class.success]="req.status === 'ACCEPTED'"
+                            [class.muted]="req.status === 'PENDING' || req.status === 'REJECTED'">
+                        {{ req.status }}
+                      </span>
+                      @if (req.startDate) {
+                        <span class="value text-muted" style="font-size:0.8rem;">Start: {{ req.startDate }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="empty">No hire requests yet.</p>
+            }
+          }
+        </div>
+
         }
       }
 
-      <!-- Homeowner view -->
+      <!-- ══════════════════════════════════════════
+           HOMEOWNER VIEW
+      ══════════════════════════════════════════ -->
       @if (user?.roles?.includes('HOMEOWNER')) {
         @if (homeOwnerDetails$ | async; as ho) {
         <div class="card">
@@ -363,7 +398,42 @@
           </div>
         </div>
 
-        <!-- Leaflet pin location map (homeowner) -->
+        <!-- Hire history for homeowner -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <p class="eyebrow">History</p>
+              <h2>Hire History</h2>
+            </div>
+          </div>
+          @if (hireHistory$ | async; as hires) {
+            @if (hires.length) {
+              <div class="list">
+                @for (hire of hires; track hire.id) {
+                  <div class="list-row">
+                    <div>
+                      <p class="label">{{ hire.houseHelpName || 'House Help' }}</p>
+                      <p class="value text-muted">{{ hire.createdAt?.slice(0, 10) || '—' }}</p>
+                    </div>
+                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.25rem;">
+                      <span class="chip"
+                            [class.success]="hire.status === 'ACCEPTED'"
+                            [class.muted]="hire.status === 'PENDING' || hire.status === 'REJECTED'">
+                        {{ hire.status }}
+                      </span>
+                      @if (hire.startDate) {
+                        <span class="value text-muted" style="font-size:0.8rem;">Start: {{ hire.startDate }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="empty">No hire history yet.</p>
+            }
+          }
+        </div>
+
         @if(ho?.pinLocation?.latitude && ho?.pinLocation?.longitude){
           <div class="card">
             <div class="card-header">
@@ -382,7 +452,6 @@
           </div>
         }
 
-        <!-- Additional Documents (homeowner) -->
         @if(ho?.additionalDocuments?.length){
           <div class="card">
             <div class="card-header">
@@ -407,7 +476,6 @@
           </div>
         }
 
-        <!-- Security Clearance (Admin/Security only) -->
         @if(user?.roles?.includes('ADMIN') || user?.roles?.includes('SECURITY')){
           @if(ho?.securityCleared || ho?.securityClearanceComments){
             <div class="card">

@@ -1,0 +1,627 @@
+<div class="dash-page">
+
+  <!-- Page header -->
+  <div class="dash-page-header">
+    <div>
+      <h1 class="dash-title">
+        @if (showAdminList) { Agencies } @else if (isAdminView) { Agency Portal } @else { My Agency }
+      </h1>
+      <p class="dash-subtitle">
+        @if (showAdminList) {
+          Manage all registered agencies
+        } @else if (isAdminView) {
+          Viewing agency: {{ agency()?.name }}
+        } @else {
+          Manage your agency, team, and earnings
+        }
+      </p>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="dash-card" style="padding:2rem;text-align:center;color:#666;">
+      <mat-icon style="font-size:2rem;opacity:0.4">hourglass_empty</mat-icon>
+      <p style="margin-top:0.5rem">Loading portal…</p>
+    </div>
+  } @else if (showAdminList) {
+
+    <!-- ══ ADMIN: all agencies list ══ -->
+    <div class="dash-card">
+      <div class="dash-card-header">
+        <div>
+          <p class="dash-eyebrow">Agencies</p>
+          <h2 class="dash-card-title">All Agencies</h2>
+        </div>
+        <button mat-flat-button color="primary" (click)="showCreateForm = !showCreateForm">
+          <mat-icon>add</mat-icon> New Agency
+        </button>
+      </div>
+
+      @if (showCreateForm) {
+        <div class="edit-form-panel">
+          <p class="edit-form-title">Create Agency</p>
+          <div class="edit-form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Business Name *</mat-label>
+              <input matInput [(ngModel)]="createData.name" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Phone</mat-label>
+              <input matInput [(ngModel)]="createData.phoneNumber" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput [(ngModel)]="createData.email" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Location of Operation</mat-label>
+              <input matInput [(ngModel)]="createData.locationOfOperation" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Home Location</mat-label>
+              <input matInput [(ngModel)]="createData.homeLocation" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>House Number</mat-label>
+              <input matInput [(ngModel)]="createData.houseNumber" />
+            </mat-form-field>
+          </div>
+          @if (createError) {
+            <p style="color:#dc2626;font-size:0.82rem;margin:0.5rem 0 0;">{{ createError }}</p>
+          }
+          <div style="display:flex;gap:0.5rem;margin-top:0.75rem;">
+            <button mat-flat-button color="primary" [disabled]="createSubmitting" (click)="submitCreateAgency()">
+              {{ createSubmitting ? 'Creating…' : 'Create' }}
+            </button>
+            <button mat-stroked-button (click)="showCreateForm = false; createError = ''">Cancel</button>
+          </div>
+        </div>
+      }
+
+      @if (allAgencies().length) {
+        <table class="dash-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Location</th>
+              <th>Members</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (ag of allAgencies(); track ag.id) {
+              <tr>
+                <td><strong>{{ ag.name }}</strong></td>
+                <td class="text-muted">{{ ag.phoneNumber || '—' }}</td>
+                <td class="text-muted">{{ ag.locationOfOperation || '—' }}</td>
+                <td>{{ ag.members.length }}</td>
+                <td>
+                  <span class="status-badge" [class]="ag.verified ? 'status-badge--active' : 'status-badge--inactive'">
+                    {{ ag.verified ? 'Verified' : 'Unverified' }}
+                  </span>
+                </td>
+                <td>
+                  <button mat-stroked-button (click)="viewAgency(ag.id)">
+                    <mat-icon style="font-size:16px;">open_in_new</mat-icon> View
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <p class="empty-state">No agencies yet. Create the first one above.</p>
+      }
+    </div>
+
+  } @else if (!agency()) {
+    <div class="dash-card" style="padding:2rem;text-align:center;color:#666;">
+      <mat-icon style="font-size:2rem;opacity:0.4">business</mat-icon>
+      <p style="margin-top:0.5rem">No agency found. Contact an admin to be linked to an agency.</p>
+    </div>
+  } @else {
+
+    <!-- ══════════════════════════════════════════
+         AGENCY PROFILE
+    ══════════════════════════════════════════ -->
+    <div class="dash-card">
+      <div class="dash-card-header">
+        <div>
+          <p class="dash-eyebrow">Profile</p>
+          <h2 class="dash-card-title">{{ agency()!.name }}</h2>
+        </div>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          @if (agency()!.verified) {
+            <span class="status-badge status-badge--active">
+              <mat-icon style="font-size:13px;vertical-align:middle">verified</mat-icon>
+              Verified
+            </span>
+          } @else {
+            <span class="status-badge status-badge--inactive">Unverified</span>
+          }
+          @if (canManageTeam()) {
+            <button mat-stroked-button (click)="openEditForm()">
+              <mat-icon>edit</mat-icon> Edit
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <p class="info-label">Business name</p>
+          <p class="info-value">{{ agency()!.name }}</p>
+        </div>
+        <div class="info-item">
+          <p class="info-label">Phone</p>
+          <p class="info-value">{{ agency()!.phoneNumber || '—' }}</p>
+        </div>
+        <div class="info-item">
+          <p class="info-label">Email</p>
+          <p class="info-value">{{ agency()!.email || '—' }}</p>
+        </div>
+        <div class="info-item">
+          <p class="info-label">Location of operation</p>
+          <p class="info-value">{{ agency()!.locationOfOperation || '—' }}</p>
+        </div>
+        <div class="info-item">
+          <p class="info-label">Home location</p>
+          <p class="info-value">{{ agency()!.homeLocation || '—' }}</p>
+        </div>
+        <div class="info-item">
+          <p class="info-label">House number</p>
+          <p class="info-value">{{ agency()!.houseNumber || '—' }}</p>
+        </div>
+      </div>
+
+      <!-- Inline edit form -->
+      @if (showEditForm) {
+        <div class="edit-form-panel">
+          <p class="edit-form-title">Edit Agency Details</p>
+          <div class="edit-form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Business Name</mat-label>
+              <input matInput [(ngModel)]="editData.name" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Phone</mat-label>
+              <input matInput [(ngModel)]="editData.phoneNumber" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput [(ngModel)]="editData.email" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Location of Operation</mat-label>
+              <input matInput [(ngModel)]="editData.locationOfOperation" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Home Location</mat-label>
+              <input matInput [(ngModel)]="editData.homeLocation" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>House Number</mat-label>
+              <input matInput [(ngModel)]="editData.houseNumber" />
+            </mat-form-field>
+          </div>
+          <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+            <button mat-flat-button color="primary" (click)="saveAgency()">Save</button>
+            <button mat-stroked-button (click)="showEditForm = false">Cancel</button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         MEMBERS
+    ══════════════════════════════════════════ -->
+    <div class="dash-card">
+      <div class="dash-card-header">
+        <div>
+          <p class="dash-eyebrow">Team</p>
+          <h2 class="dash-card-title">Agency Members</h2>
+        </div>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <span class="status-badge status-badge--pending">{{ agency()!.members.length }} member{{ agency()!.members.length !== 1 ? 's' : '' }}</span>
+          @if (canManageTeam()) {
+            <button mat-stroked-button (click)="showAddMemberForm = !showAddMemberForm">
+              <mat-icon>person_add</mat-icon> Add Member
+            </button>
+          }
+        </div>
+      </div>
+
+      @if (showAddMemberForm) {
+        <div class="edit-form-panel">
+          <p class="edit-form-title">Add Agent to Agency</p>
+
+          <!-- Step 1: Search -->
+          <div style="display:flex;gap:0.5rem;align-items:flex-start;margin-bottom:0.75rem;">
+            <mat-form-field appearance="outline" style="flex:1;margin-bottom:0">
+              <mat-label>Search by phone or name</mat-label>
+              <input matInput [(ngModel)]="memberSearchQuery"
+                     (keyup.enter)="searchMembers()"
+                     placeholder="e.g. 0712345678 or John" />
+            </mat-form-field>
+            <button mat-flat-button color="primary"
+                    style="margin-top:4px;"
+                    [disabled]="memberSearchLoading"
+                    (click)="searchMembers()">
+              <mat-icon>search</mat-icon>
+            </button>
+          </div>
+
+          <!-- Search results -->
+          @if (memberSearchResults.length) {
+            <div style="border:1px solid #e0e0e0;border-radius:6px;overflow:hidden;margin-bottom:0.75rem;">
+              @for (u of memberSearchResults; track u.id) {
+                <div style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0.75rem;cursor:pointer;border-bottom:1px solid #f0f0f0;"
+                     (click)="selectMemberUser(u)">
+                  <div class="user-avatar user-avatar--teal" style="flex-shrink:0">{{ u.name?.charAt(0)?.toUpperCase() || '?' }}</div>
+                  <div style="min-width:0;">
+                    <div style="font-weight:600;font-size:0.9rem">{{ u.name }}</div>
+                    <div class="text-muted" style="font-size:0.78rem">{{ u.phoneNumber }} · {{ u.roles?.join(', ') }}</div>
+                  </div>
+                  <mat-icon style="margin-left:auto;color:#00ACC1;flex-shrink:0">add_circle_outline</mat-icon>
+                </div>
+              }
+            </div>
+          }
+
+          @if (memberSearchError) {
+            <p style="color:#dc2626;font-size:0.82rem;margin:0 0 0.75rem;">{{ memberSearchError }}</p>
+          }
+
+          <!-- Step 2: Selected user + role confirm -->
+          @if (selectedMemberUser) {
+            <div style="background:#f0faf9;border:1px solid #00ACC1;border-radius:6px;padding:0.75rem;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.75rem;">
+              <div class="user-avatar user-avatar--teal">{{ selectedMemberUser.name?.charAt(0)?.toUpperCase() || '?' }}</div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-weight:600">{{ selectedMemberUser.name }}</div>
+                <div class="text-muted" style="font-size:0.78rem">{{ selectedMemberUser.phoneNumber }}</div>
+              </div>
+              <button mat-icon-button style="color:#999" (click)="selectedMemberUser = null">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+            <mat-form-field appearance="outline" style="width:100%;margin-bottom:0.5rem;">
+              <mat-label>Role in Agency</mat-label>
+              <input matInput [(ngModel)]="newMemberRole" placeholder="ADMIN or EMPLOYEE" />
+            </mat-form-field>
+          }
+
+          @if (addMemberError) {
+            <p style="color:#dc2626;font-size:0.82rem;margin:0.5rem 0 0;">{{ addMemberError }}</p>
+          }
+          <div style="display:flex;gap:0.5rem;margin-top:0.75rem;">
+            <button mat-flat-button color="primary"
+                    [disabled]="addMemberSubmitting || !selectedMemberUser"
+                    (click)="addMember()">
+              {{ addMemberSubmitting ? 'Adding…' : 'Add Member' }}
+            </button>
+            <button mat-stroked-button
+                    (click)="showAddMemberForm = false; addMemberError = ''; selectedMemberUser = null; memberSearchResults = []">
+              Cancel
+            </button>
+          </div>
+        </div>
+      }
+
+      @if (agency()!.members.length) {
+        <table class="dash-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Role</th>
+              <th>Status</th>
+              @if (canManageTeam()) { <th>Actions</th> }
+            </tr>
+          </thead>
+          <tbody>
+            @for (member of agency()!.members; track member.id) {
+              <tr>
+                <td>
+                  <div class="user-cell">
+                    <div class="user-avatar user-avatar--teal">{{ member.name?.charAt(0)?.toUpperCase() || '?' }}</div>
+                    <div>
+                      <div>{{ member.name }}</div>
+                      <div class="text-muted" style="font-size:0.78rem">{{ member.email }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="text-muted">{{ member.phoneNumber || '—' }}</td>
+                <td>
+                  <span class="status-badge status-badge--pending">{{ member.agentRole }}</span>
+                </td>
+                <td>
+                  <span class="status-badge" [class]="member.verified ? 'status-badge--active' : 'status-badge--inactive'">
+                    {{ member.verified ? 'Verified' : 'Unverified' }}
+                  </span>
+                </td>
+                @if (canManageTeam()) {
+                  <td>
+                    <button mat-stroked-button class="btn-action" style="color:#dc2626;border-color:#dc2626"
+                            (click)="removeMember(member.id, member.name)">
+                      <mat-icon>person_remove</mat-icon>
+                    </button>
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <p class="empty-state">No members yet.</p>
+      }
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         EARNINGS DASHBOARD
+    ══════════════════════════════════════════ -->
+    @if (earnings(); as e) {
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div>
+            <p class="dash-eyebrow">Finances</p>
+            <h2 class="dash-card-title">Earnings Dashboard</h2>
+          </div>
+          <span class="status-badge status-badge--pending">KES 500 per accepted hire</span>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-tile">
+            <p class="stat-label">Accepted Hires</p>
+            <p class="stat-value">{{ e.totalHires }}</p>
+          </div>
+          <div class="stat-tile">
+            <p class="stat-label">Total Earned</p>
+            <p class="stat-value">KES {{ e.totalEarned }}</p>
+          </div>
+          <div class="stat-tile">
+            <p class="stat-label">Withdrawn</p>
+            <p class="stat-value">KES {{ e.totalWithdrawn }}</p>
+          </div>
+          <div class="stat-tile stat-tile--highlight">
+            <p class="stat-label">Available Balance</p>
+            <p class="stat-value">KES {{ e.balanceRemaining }}</p>
+          </div>
+        </div>
+
+        @if (canRequestWithdrawal()) {
+          <div style="margin-top:1.25rem;">
+            <button mat-flat-button color="primary" (click)="showWithdrawalForm = !showWithdrawalForm">
+              <mat-icon>account_balance_wallet</mat-icon>
+              Request Withdrawal
+            </button>
+
+            @if (showWithdrawalForm) {
+              <div class="withdrawal-panel">
+                <p class="withdrawal-title">Withdrawal Request</p>
+                <p class="withdrawal-hint">Available: <strong>KES {{ e.balanceRemaining }}</strong></p>
+
+                @if (withdrawalError) {
+                  <p class="withdrawal-error">{{ withdrawalError }}</p>
+                }
+
+                <mat-form-field appearance="outline" style="width:100%;margin-bottom:0.5rem;">
+                  <mat-label>Amount (KES)</mat-label>
+                  <input matInput type="number" [(ngModel)]="withdrawalAmount" [max]="e.balanceRemaining" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" style="width:100%;margin-bottom:0.5rem;">
+                  <mat-label>M-Pesa Phone</mat-label>
+                  <input matInput type="tel" [(ngModel)]="withdrawalPhone" placeholder="e.g. 0712345678" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" style="width:100%;margin-bottom:0.75rem;">
+                  <mat-label>Notes (optional)</mat-label>
+                  <input matInput [(ngModel)]="withdrawalNotes" />
+                </mat-form-field>
+
+                <div style="display:flex;gap:0.5rem;">
+                  <button mat-flat-button color="primary" [disabled]="withdrawalSubmitting" (click)="submitWithdrawal()">
+                    Submit Request
+                  </button>
+                  <button mat-stroked-button (click)="showWithdrawalForm = false; withdrawalError = ''">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           WITHDRAWAL HISTORY
+      ══════════════════════════════════════════ -->
+      @if (e.withdrawals?.length) {
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div>
+              <p class="dash-eyebrow">Withdrawals</p>
+              <h2 class="dash-card-title">Withdrawal History</h2>
+            </div>
+          </div>
+          <table class="dash-table">
+            <thead>
+              <tr>
+                <th>Amount</th>
+                <th>M-Pesa Phone</th>
+                <th>Requested</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (wd of e.withdrawals; track wd.id) {
+                <tr>
+                  <td>KES {{ wd.amount }}</td>
+                  <td class="text-muted">{{ wd.mpesaPhone || '—' }}</td>
+                  <td class="text-muted">{{ wd.requestedAt?.slice(0, 10) || '—' }}</td>
+                  <td>
+                    <span class="status-badge" [class]="statusClass(wd.status)">
+                      {{ wd.status }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <!-- ══════════════════════════════════════════
+           HIRE REQUESTS — grouped by househelp
+      ══════════════════════════════════════════ -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div>
+            <p class="dash-eyebrow">Activity</p>
+            <h2 class="dash-card-title">Hire Requests</h2>
+          </div>
+          <span class="status-badge status-badge--pending">{{ e.hireRequests?.length || 0 }} total</span>
+        </div>
+
+        @if (e.hireRequests?.length) {
+          @for (entry of hiresByHouseHelpEntries; track entry[0]) {
+            <div class="househelp-group">
+              <div class="househelp-group-header">
+                <mat-icon>person</mat-icon>
+                <strong>{{ entry[0] }}</strong>
+                <span class="status-badge status-badge--pending" style="margin-left:auto;">
+                  {{ entry[1].length }} request{{ entry[1].length !== 1 ? 's' : '' }}
+                </span>
+              </div>
+
+              <div class="hire-requests-list">
+                @for (hr of entry[1]; track hr.id) {
+                  <div class="hire-request-row">
+                    <div class="hire-request-owner">
+                      <mat-icon style="font-size:16px;opacity:0.6">home</mat-icon>
+                      <span
+                        class="owner-link"
+                        (click)="navigateToAccount(hr.homeOwnerUserId)"
+                        [class.clickable]="!!hr.homeOwnerUserId">
+                        {{ hr.homeOwnerName || 'Home Owner' }}
+                      </span>
+                    </div>
+                    <div class="hire-request-meta">
+                      <span class="text-muted" style="font-size:0.8rem;">{{ hr.createdAt?.slice(0, 10) || '—' }}</span>
+                      <span class="status-badge" [class]="statusClass(hr.status)">{{ hr.status }}</span>
+                      @if (hr.status === 'ACCEPTED') {
+                        <span class="status-badge status-badge--active">+KES 500</span>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        } @else {
+          <p class="empty-state">No hire requests for your househelps yet.</p>
+        }
+      </div>
+    }
+
+    <!-- ══════════════════════════════════════════
+         HOUSEHELPS
+    ══════════════════════════════════════════ -->
+    <div class="dash-card">
+      <div class="dash-card-header">
+        <div>
+          <p class="dash-eyebrow">Househelps</p>
+          <h2 class="dash-card-title">Agency Househelps</h2>
+        </div>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <span class="status-badge status-badge--pending">{{ houseHelps().length }} total</span>
+          @if (canManageTeam()) {
+            <button mat-stroked-button (click)="showAddHouseHelpForm = !showAddHouseHelpForm">
+              <mat-icon>person_add</mat-icon> Add
+            </button>
+          }
+        </div>
+      </div>
+
+      @if (showAddHouseHelpForm) {
+        <div class="edit-form-panel">
+          <p class="edit-form-title">Register New Househelp</p>
+          <div class="edit-form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Full Name *</mat-label>
+              <input matInput [(ngModel)]="newHouseHelp.name" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Phone Number *</mat-label>
+              <input matInput [(ngModel)]="newHouseHelp.phoneNumber" type="tel" placeholder="e.g. 0712345678" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Email (optional)</mat-label>
+              <input matInput [(ngModel)]="newHouseHelp.email" type="email" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Password *</mat-label>
+              <input matInput [(ngModel)]="newHouseHelp.password" type="password" />
+            </mat-form-field>
+          </div>
+          @if (addHouseHelpError) {
+            <p style="color:#dc2626;font-size:0.82rem;margin:0.5rem 0 0;">{{ addHouseHelpError }}</p>
+          }
+          <div style="display:flex;gap:0.5rem;margin-top:0.75rem;">
+            <button mat-flat-button color="primary" [disabled]="addHouseHelpSubmitting" (click)="addHouseHelp()">
+              {{ addHouseHelpSubmitting ? 'Registering…' : 'Register' }}
+            </button>
+            <button mat-stroked-button (click)="showAddHouseHelpForm = false; addHouseHelpError = ''">Cancel</button>
+          </div>
+        </div>
+      }
+
+      @if (houseHelps().length) {
+        <table class="dash-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Status</th>
+              <th>Hiring</th>
+              <th>Profile</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (hh of houseHelps(); track hh.id) {
+              <tr>
+                <td>
+                  <div class="user-cell">
+                    <div class="user-avatar user-avatar--teal">{{ hh.name?.charAt(0)?.toUpperCase() || '?' }}</div>
+                    {{ hh.name }}
+                  </div>
+                </td>
+                <td class="text-muted">{{ hh.phone || '—' }}</td>
+                <td>
+                  <span class="status-badge" [class]="hh.verified ? 'status-badge--active' : 'status-badge--inactive'">
+                    {{ hh.verified ? 'Verified' : 'Unverified' }}
+                  </span>
+                </td>
+                <td>
+                  <span class="status-badge" [class]="hh.hiringStatus === 'AVAILABLE' ? 'status-badge--active' : 'status-badge--pending'">
+                    {{ hh.hiringStatus || '—' }}
+                  </span>
+                </td>
+                <td>
+                  <button mat-stroked-button (click)="navigateToAccount(hh.userId)" style="padding:0 8px;">
+                    <mat-icon style="font-size:16px;">open_in_new</mat-icon>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <p class="empty-state">No househelps assigned yet.</p>
+      }
+    </div>
+
+  }
+</div>

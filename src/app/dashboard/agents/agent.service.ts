@@ -23,28 +23,45 @@ export interface Agent {
   user: AgentUser;
 }
 
+export interface Agency {
+  id: number;
+  name: string;
+  phoneNumber?: string;
+  email?: string;
+  locationOfOperation?: string;
+  homeLocation?: string;
+  houseNumber?: string;
+  verified: boolean;
+}
+
 @Injectable()
 export class AgentService {
   private readonly apiUrl = `${environment.apiUrl}/agent`;
+  private readonly agencyUrl = `${environment.apiUrl}/agency`;
 
   constructor(private http: HttpClient) {}
 
-  getAgents(page: number = 0, size: number = 20): Observable<PageResponse<Agent>> {
+  getAgents(page: number = 0, size: number = 20): Observable<PageResponse<any>> {
     const params = new HttpParams()
       .set('page', page)
       .set('size', size);
-    return this.http.get<PageResponse<Agent>>(this.apiUrl, { params });
+    return this.http.get<PageResponse<any>>(this.apiUrl, { params });
   }
 
   verifyAgent(id: number): Observable<Agent> {
     return this.http.put<Agent>(`${this.apiUrl}/verify/${id}`, null);
   }
 
-  assignHouseHelp(agentId: number, househelpId: number): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${agentId}/househelps/${househelpId}`, null);
-  }
-
   updateAgent(id: number, data: Partial<Agent>): Observable<Agent> {
     return this.http.patch<Agent>(`${this.apiUrl}/${id}`, data);
+  }
+
+  /** Create a new Agency entity (business) */
+  createAgency(data: { name: string; phoneNumber?: string; email?: string; locationOfOperation?: string; homeLocation?: string; houseNumber?: string }): Observable<Agency> {
+    return this.http.post<Agency>(this.agencyUrl, data);
+  }
+
+  verifyAgency(id: number): Observable<Agency> {
+    return this.http.put<Agency>(`${this.agencyUrl}/${id}/verify`, null);
   }
 }

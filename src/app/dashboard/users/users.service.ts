@@ -50,5 +50,12 @@ export class UsersService {
     return this.http.patch(`${this.apiUrl}/roles/edit`, {userId,roles});
   }
 
+  getAgencies(): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/agency?size=100`);
+  }
+
+  addUserToAgency(agencyId: number, phone: string, role: string): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/agency/${agencyId}/members`, { phone, role });
+  }
 
 }

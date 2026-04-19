@@ -12,7 +12,7 @@ interface HireRequest {
   id: number;
   status: string;
   paid: boolean;
-  createdAt: string;
+  createdAt?: string;
   houseHelp: {
     id: number;
     name: string;

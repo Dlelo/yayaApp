@@ -47,29 +47,27 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
 
   myReviews: ReviewResponse[] = [];
 
-  /** Primary stream */
   userDetails$!: Observable<UserDetails>;
-
-  /** Derived streams */
   houseHelpDetails$!: Observable<HouseHelp>;
   homeOwnerDetails$!: Observable<HomeOwner>;
-
-  /** Avatar stream that supports auth-protected buckets */
   avatarUrl$!: Observable<string | null>;
 
-  // Store current blob URL for cleanup
+  /** Hire history for homeowner */
+  hireHistory$!: Observable<HireRequest[]>;
+
+  /** Hire requests received by a househelp (uses User ID since HireRequest.houseHelp is a User) */
+  houseHelpHireRequests$!: Observable<HireRequest[]>;
+
   private currentBlobUrl: string | null = null;
   private mapInstance: any = null;
 
   ngOnInit(): void {
     if (!this.userId) return;
 
-    /** Fetch user ONCE */
     this.userDetails$ = this.accountDetails
       .getUserById(Number(this.userId))
       .pipe(shareReplay(1));
 
-    /** HouseHelp details */
     this.houseHelpDetails$ = this.userDetails$.pipe(
       filter(user => user.roles.includes('HOUSEHELP')),
       filter(user => !!user.houseHelp?.id),
@@ -78,7 +76,6 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
       )
     );
 
-    /** HomeOwner details */
     this.homeOwnerDetails$ = this.userDetails$.pipe(
       filter(user => user.roles.includes('HOMEOWNER')),
       filter(user => !!user.homeOwner?.id),
@@ -87,7 +84,24 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
       )
     );
 
-    /** Load reviews + map when user is a house help */
+    this.hireHistory$ = this.homeOwnerDetails$.pipe(
+      switchMap(ho =>
+        this.accountDetails.getHomeOwnerHireHistory(ho.id).pipe(
+          catchError(() => of([]))
+        )
+      )
+    );
+
+    // HireRequest.houseHelp stores User ID, so pass the user's own ID
+    this.houseHelpHireRequests$ = this.userDetails$.pipe(
+      filter(user => user.roles.includes('HOUSEHELP')),
+      switchMap(user =>
+        this.accountDetails.getHouseHelpHireRequests(user.id).pipe(
+          catchError(() => of([]))
+        )
+      )
+    );
+
     this.houseHelpDetails$.subscribe(hh => {
       if (hh?.id) {
         this.reviewService.getHouseHelpReviews(hh.id).subscribe({
@@ -100,18 +114,12 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
       }
     });
 
-    /** Map for homeowner */
     this.homeOwnerDetails$.subscribe(ho => {
       if (ho?.pinLocation?.latitude && ho?.pinLocation?.longitude) {
         setTimeout(() => this.initMap(ho.pinLocation!.latitude, ho.pinLocation!.longitude, ho.pinLocation!.placeName), 200);
       }
     });
 
-    /**
-     * Resolve avatar image (handles both public CDN and private buckets)
-     * For public CDN URLs: returns URL directly
-     * For private/auth-protected URLs: fetches as blob
-     */
     this.avatarUrl$ = this.userDetails$.pipe(
       map(user =>
         user?.houseHelp?.profilePictureDocument ||
@@ -119,20 +127,9 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
         null
       ),
       switchMap(url => {
-        // No URL provided
         if (!url) return of(null);
-        
-        // Already a blob or data URL
-        if (url.startsWith('data:') || url.startsWith('blob:')) {
-          return of(url);
-        }
-        
-        // Public CDN URL - use directly (faster, no extra request)
-        if (url.includes('cdn.digitaloceanspaces.com')) {
-          return of(url);
-        }
-        
-        // Private/auth-protected URL - fetch as blob
+        if (url.startsWith('data:') || url.startsWith('blob:')) return of(url);
+        if (url.includes('cdn.digitaloceanspaces.com')) return of(url);
         return this.accountDetails.fetchPrivateImage(url).pipe(
           catchError(err => {
             console.error('Failed to load avatar', err);
@@ -140,11 +137,8 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
           })
         );
       }),
-      // Store blob URL for cleanup
       map(url => {
-        if (url && url.startsWith('blob:')) {
-          this.currentBlobUrl = url;
-        }
+        if (url && url.startsWith('blob:')) this.currentBlobUrl = url;
         return url;
       }),
       shareReplay(1)
@@ -196,9 +190,6 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
   }
 
   viewDocument(documentUrl: string | null): void {
-    // Open document in new tab
-    if (documentUrl) {
-      window.open(documentUrl, '_blank');
-    }
+    if (documentUrl) window.open(documentUrl, '_blank');
   }
 }

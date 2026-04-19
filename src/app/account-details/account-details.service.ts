@@ -8,7 +8,7 @@ import { environment } from '../../environments/environments';
   providedIn: 'root'
 })
 export class AccountDetailsService {
-  private apiUrl = environment.apiUrl; // e.g., 'http://localhost:8080/api'
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private http: HttpClient,
@@ -27,41 +27,51 @@ export class AccountDetailsService {
     return this.http.get(`${this.apiUrl}/homeowner/${homeOwnerId}`);
   }
 
+  /** Hire history for a homeowner (by homeOwner entity ID) */
+  getHomeOwnerHireHistory(homeOwnerId: number): Observable<HireRequest[]> {
+    return this.http.get<HireRequest[]>(`${this.apiUrl}/hire-requests/homeowner/${homeOwnerId}`);
+  }
+
+  /** Hire requests received by a househelp (by houseHelp entity ID) */
+  getHouseHelpHireRequests(houseHelpId: number): Observable<HireRequest[]> {
+    return this.http.get<HireRequest[]>(`${this.apiUrl}/hire-requests/househelp/${houseHelpId}`);
+  }
+
+  /** Househelps assigned to an agent */
+  getAgentHouseHelps(agentId: number): Observable<AgentHouseHelp[]> {
+    return this.http.get<AgentHouseHelp[]>(`${this.apiUrl}/agent/${agentId}/househelps`);
+  }
+
+  /** Earnings summary including hire requests and withdrawal history */
+  getAgentEarnings(agentId: number): Observable<AgentEarnings> {
+    return this.http.get<AgentEarnings>(`${this.apiUrl}/agent/${agentId}/earnings`);
+  }
+
+  /** Submit a withdrawal request */
+  requestWithdrawal(agentId: number, amount: number, mpesaPhone: string, notes?: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/agent/${agentId}/withdrawal`, { amount, mpesaPhone, notes });
+  }
+
   /**
-   * Fetch image from URL and convert to blob URL
-   * This works for both public and private (auth-protected) images
-   * 
-   * @param imageUrl - The URL of the image to fetch
-   * @returns Observable of blob URL or null if fetch fails
+   * Fetch image from URL and convert to blob URL.
    */
   fetchPrivateImage(imageUrl: string): Observable<string | null> {
-    // If it's already a blob or data URL, return as-is
     if (imageUrl.startsWith('blob:') || imageUrl.startsWith('data:')) {
       return of(imageUrl);
     }
 
-    // Fetch the image as a blob with credentials (for auth-protected resources)
     return this.http.get(imageUrl, {
       responseType: 'blob',
-      withCredentials: true // Include credentials for private buckets
+      withCredentials: true
     }).pipe(
-      map(blob => {
-        // Create a blob URL from the response
-        const objectUrl = URL.createObjectURL(blob);
-        return objectUrl;
-      }),
+      map(blob => URL.createObjectURL(blob)),
       catchError(error => {
         console.error('Failed to fetch image:', imageUrl, error);
-        // Return null on error (will show placeholder)
         return of(null);
       })
     );
   }
 
-  /**
-   * Fetch image and return as SafeUrl (alternative approach)
-   * Use this if you need Angular's DomSanitizer
-   */
   fetchPrivateImageSafe(imageUrl: string): Observable<SafeUrl | null> {
     if (imageUrl.startsWith('blob:') || imageUrl.startsWith('data:')) {
       return of(this.sanitizer.bypassSecurityTrustUrl(imageUrl));
@@ -82,10 +92,6 @@ export class AccountDetailsService {
     );
   }
 
-  /**
-   * Revoke blob URL to free memory
-   * Call this in ngOnDestroy to prevent memory leaks
-   */
   revokeBlobUrl(blobUrl: string): void {
     if (blobUrl && blobUrl.startsWith('blob:')) {
       URL.revokeObjectURL(blobUrl);

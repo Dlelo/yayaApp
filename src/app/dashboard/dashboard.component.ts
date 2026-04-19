@@ -32,6 +32,7 @@ export class DashboardComponent implements OnInit {
   roles = this.loginService.userRoles;
 
   navLinks = [
+    { path: 'agency', label: 'My Agency', icon: 'business', roles: ['ROLE_AGENT', 'ROLE_ADMIN'] },
     { path: 'agents', label: 'Agents', icon: 'group', roles: ['ROLE_ADMIN','ROLE_SECURITY', 'ROLE_SALES'] },
     { path: 'houseHelps', label: 'House Helps', icon: 'home', roles: ['ROLE_ADMIN','ROLE_SECURITY', 'ROLE_SALES'] },
     { path: 'homeOwners', label: 'Home Owners', icon: 'person', roles: ['ROLE_ADMIN','ROLE_SECURITY', 'ROLE_SALES'] },
