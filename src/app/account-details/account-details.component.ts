@@ -343,6 +343,10 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
     this.router.navigate(['/change-password']);
   }
 
+  goToMyHires(): void {
+    this.router.navigate(['/my-hires']);
+  }
+
   viewDocument(documentUrl: string | null): void {
     if (documentUrl) window.open(documentUrl, '_blank');
   }

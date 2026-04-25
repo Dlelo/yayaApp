@@ -30,13 +30,6 @@
             </button>
           }
 
-          @if(roles().includes('ROLE_HOMEOWNER')) {
-            <button mat-button class="nav-btn" (click)="navigate('/my-hires')">
-              <mat-icon>history</mat-icon>
-              My Hires
-            </button>
-          }
-
           @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_SALES') || roles().includes('ROLE_SECURITY')) {
             <button mat-button class="nav-btn" (click)="navigate('/dashboard')">
               <mat-icon>dashboard</mat-icon>

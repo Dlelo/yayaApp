@@ -1,342 +1,366 @@
 @if (houseHelpDetails$ | async; as houseHelp) {
-  <div class="profile-wrapper">
+  @let stars = getStarsForRating(ratingSummary().average);
+  @let nameVal = houseHelp?.user?.name || 'House Help';
+  @let avatar = houseHelp?.profilePictureDocument;
 
-    <!-- LEFT COLUMN -->
-    <mat-card class="left-card">
-      <div class="image-wrapper">
-        @if(houseHelp.profilePictureDocument){
-          <img
-            [src]="houseHelp.profilePictureDocument"
-            [alt]="houseHelp.user?.name"
-            class="profile-image"
-          />
-        } @else {
-          <div class="profile-placeholder">
-            <mat-icon>person</mat-icon>
-          </div>
-        }
-      </div>
+  <div class="hh-page">
 
-      <h2 class="name">{{ houseHelp?.user?.name }}</h2>
+    <!-- ═══════ HERO ═══════ -->
+    <header class="hh-hero">
+      <div class="hh-hero__cover"></div>
 
-      <!-- Rating Summary -->
-      <div class="rating-summary">
-        <div class="stars-display">
-          @for(star of getStarArray(5); track star) {
-            <mat-icon [ngClass]="star <= ratingSummary().average ? 'star-filled' : 'star-empty'">
-              {{ star <= ratingSummary().average ? 'star' : 'star_outline' }}
-            </mat-icon>
+      <div class="hh-hero__inner">
+        <div class="hh-avatar">
+          @if (avatar) {
+            <img [src]="avatar" [alt]="nameVal" />
+          } @else {
+            <span class="hh-avatar__initials">{{ (nameVal[0] || '?').toUpperCase() }}</span>
+          }
+          @if (houseHelp?.securityCleared) {
+            <span class="hh-avatar__verified" title="Security cleared">
+              <mat-icon>verified</mat-icon>
+            </span>
           }
         </div>
-        <span class="rating-text">
-          {{ ratingSummary().average > 0 ? ratingSummary().average : 'No ratings' }}
-          @if(ratingSummary().count > 0) {
-            <span class="review-count">({{ ratingSummary().count }} reviews)</span>
-          }
-        </span>
-      </div>
 
-      <div class="meta-badges">
-        <div class="meta-badge" [ngClass]="houseHelp?.securityCleared ? 'badge-verified' : 'badge-unverified'">
-          <mat-icon>{{ houseHelp?.securityCleared ? 'verified' : 'shield' }}</mat-icon>
-          {{ houseHelp?.securityCleared ? 'Security Verified' : 'Unverified' }}
-        </div>
+        <div class="hh-ident">
+          <h1 class="hh-name">{{ nameVal }}</h1>
 
-        @if(houseHelp?.houseHelpType) {
-          <div class="meta-badge badge-type">
-            <mat-icon>schedule</mat-icon>
-            {{ houseHelp.houseHelpType.replace('_', ' ') }}
+          <div class="hh-rating-row">
+            <div class="hh-stars">
+              @for (s of getStarArray(5); track s) {
+                <mat-icon [ngClass]="s <= stars.full ? 'star-filled' : 'star-empty'">
+                  {{ s <= stars.full ? 'star' : 'star_outline' }}
+                </mat-icon>
+              }
+            </div>
+            <span class="hh-rating-num">
+              @if (ratingSummary().count > 0) {
+                <strong>{{ ratingSummary().average | number:'1.1-1' }}</strong>
+                <span class="hh-rating-count">· {{ ratingSummary().count }} review{{ ratingSummary().count === 1 ? '' : 's' }}</span>
+              } @else {
+                <span class="hh-rating-count">No reviews yet</span>
+              }
+            </span>
           </div>
-        }
-      </div>
 
-      <div class="meta-list">
-        <div class="meta-item">
-          <mat-icon>church</mat-icon>
-          <span>{{ houseHelp?.religion ?? 'Not specified' }}</span>
-        </div>
-        <div class="meta-item">
-          <mat-icon>monitor_weight</mat-icon>
-          <span>{{ houseHelp?.weight ? houseHelp.weight + ' kg' : '-' }}</span>
-        </div>
-        <div class="meta-item">
-          <mat-icon>height</mat-icon>
-          <span>{{ houseHelp?.height ? houseHelp.height + ' cm' : '-' }}</span>
-        </div>
-      </div>
-
-      <button
-        mat-flat-button
-        class="hire-btn"
-        (click)="navigateToHire()"
-      >
-        <mat-icon>handshake</mat-icon>
-        Hire Now
-      </button>
-    </mat-card>
-
-    <!-- RIGHT COLUMN -->
-    <div class="right-content">
-
-      <!-- INFO GRID -->
-      <div class="info-grid">
-        <div class="info-card">
-          <mat-icon class="info-icon">cake</mat-icon>
-          <span class="label">Age</span>
-          <strong>{{ houseHelp?.age ?? '-' }}</strong>
-        </div>
-
-        <div class="info-card">
-          <mat-icon class="info-icon">work_history</mat-icon>
-          <span class="label">Experience</span>
-          <strong>{{ houseHelp?.yearsOfExperience ? houseHelp.yearsOfExperience + '+ yrs' : '-' }}</strong>
-        </div>
-
-        <div class="info-card">
-          <mat-icon class="info-icon">school</mat-icon>
-          <span class="label">Education</span>
-          <strong>{{ houseHelp?.levelOfEducation ?? '-' }}</strong>
-        </div>
-
-        <div class="info-card">
-          <mat-icon class="info-icon">payments</mat-icon>
-          <span class="label">Salary Range</span>
-          <strong>
-            {{ houseHelp.preferences?.minSalary ? (houseHelp.preferences.minSalary + ' KSh') : '-' }}
-            –
-            {{ houseHelp.preferences?.maxSalary ? (houseHelp.preferences.maxSalary + ' KSh') : '-' }}
-          </strong>
-        </div>
-
-        <div class="info-card">
-          <mat-icon class="info-icon">child_care</mat-icon>
-          <span class="label">Children</span>
-          <strong>{{ houseHelp?.numberOfChildren ?? '-' }}</strong>
-        </div>
-
-        <div class="info-card">
-          <mat-icon class="info-icon">location_on</mat-icon>
-          <span class="label">Location</span>
-          <strong>{{ houseHelp?.currentLocation ?? '-' }}</strong>
-        </div>
-
-        <div class="info-card">
-          <mat-icon class="info-icon">home</mat-icon>
-          <span class="label">Home Area</span>
-          <strong>{{ houseHelp?.homeLocation ?? '-' }}</strong>
-        </div>
-
-        <div class="info-card">
-          <mat-icon class="info-icon">event_available</mat-icon>
-          <span class="label">Availability</span>
-          <strong>{{ houseHelp?.availability ?? '-' }}</strong>
-        </div>
-      </div>
-
-      <!-- ABOUT -->
-      <mat-card class="section-card">
-        <div class="section-header">
-          <mat-icon>info</mat-icon>
-          <h3>About</h3>
-        </div>
-        <p class="about-text">
-          {{ houseHelp?.experienceSummary ?? 'No description provided.' }}
-        </p>
-      </mat-card>
-
-      <!-- SKILLS -->
-      @if(houseHelp.skills && houseHelp.skills.length > 0) {
-        <mat-card class="section-card">
-          <div class="section-header">
-            <mat-icon>build</mat-icon>
-            <h3>Skills</h3>
-          </div>
-          <div class="chips-grid">
-            @for (skill of houseHelp.skills; track $index) {
-              <span class="chip chip-primary">
-                <mat-icon>check_circle</mat-icon>
-                {{ skill.replace('_', ' ') }}
+          <div class="hh-trust-row">
+            <span class="hh-trust" [ngClass]="houseHelp?.securityCleared ? 'is-on' : 'is-off'">
+              <mat-icon>{{ houseHelp?.securityCleared ? 'verified' : 'shield' }}</mat-icon>
+              {{ houseHelp?.securityCleared ? 'Security cleared' : 'Pending verification' }}
+            </span>
+            @if (houseHelp?.houseHelpType) {
+              <span class="hh-trust is-type">
+                <mat-icon>schedule</mat-icon>{{ houseHelp.houseHelpType.replace('_', ' ') }}
+              </span>
+            }
+            @if (houseHelp?.active !== false) {
+              <span class="hh-trust is-on">
+                <mat-icon>check_circle</mat-icon>Available
               </span>
             }
           </div>
-        </mat-card>
-      }
-
-      <!-- PREFERENCES -->
-      @if(houseHelp.preferences) {
-        <mat-card class="section-card">
-          <div class="section-header">
-            <mat-icon>tune</mat-icon>
-            <h3>Work Preferences</h3>
-          </div>
-          <div class="pref-grid">
-
-            @if(houseHelp.preferences.preferredLocation) {
-              <div class="pref-item">
-                <mat-icon>place</mat-icon>
-                <div>
-                  <span class="pref-label">Preferred Locations</span>
-                  <span class="pref-value">{{ houseHelp.preferences.preferredLocation }}</span>
-                </div>
-              </div>
-            }
-
-            @if(houseHelp.preferences.preferredReligion) {
-              <div class="pref-item">
-                <mat-icon>church</mat-icon>
-                <div>
-                  <span class="pref-label">Preferred Religion</span>
-                  <span class="pref-value">{{ houseHelp.preferences.preferredReligion }}</span>
-                </div>
-              </div>
-            }
-
-            <div class="pref-item">
-              <mat-icon>pets</mat-icon>
-              <div>
-                <span class="pref-label">Okay with Pets</span>
-                <span class="pref-value" [ngClass]="houseHelp.preferences?.okayWithPets ? 'text-success' : 'text-danger'">
-                  {{ houseHelp.preferences?.okayWithPets === true ? 'Yes' : houseHelp.preferences?.okayWithPets === false ? 'No' : '-' }}
-                </span>
-              </div>
-            </div>
-
-            @if(houseHelp.preferences.preferredChildAgeRanges?.length) {
-              <div class="pref-item">
-                <mat-icon>child_care</mat-icon>
-                <div>
-                  <span class="pref-label">Child Age Ranges</span>
-                  <div class="chips-row">
-                    @for(age of houseHelp.preferences.preferredChildAgeRanges; track $index) {
-                      <span class="chip chip-sm">{{ age.replace('_', ' ') }}</span>
-                    }
-                  </div>
-                </div>
-              </div>
-            }
-
-            @if(houseHelp.preferences.preferredSkills?.length) {
-              <div class="pref-item">
-                <mat-icon>build</mat-icon>
-                <div>
-                  <span class="pref-label">Preferred Skills</span>
-                  <div class="chips-row">
-                    @for(skill of houseHelp.preferences.preferredSkills; track $index) {
-                      <span class="chip chip-sm">{{ skill.replace('_', ' ') }}</span>
-                    }
-                  </div>
-                </div>
-              </div>
-            }
-
-            @if(houseHelp.preferences.preferredLanguages?.length) {
-              <div class="pref-item">
-                <mat-icon>language</mat-icon>
-                <div>
-                  <span class="pref-label">Preferred Languages</span>
-                  <div class="chips-row">
-                    @for(lang of houseHelp.preferences.preferredLanguages; track $index) {
-                      <span class="chip chip-sm">{{ lang }}</span>
-                    }
-                  </div>
-                </div>
-              </div>
-            }
-
-          </div>
-        </mat-card>
-      }
-
-      <!-- REVIEWS SECTION -->
-      <mat-card class="section-card reviews-card">
-        <div class="section-header">
-          <mat-icon>rate_review</mat-icon>
-          <h3>Reviews</h3>
-          @if(ratingSummary().count > 0) {
-            <div class="overall-rating">
-              <span class="big-rating">{{ ratingSummary().average }}</span>
-              <div class="stars-inline">
-                @for(star of getStarArray(5); track star) {
-                  <mat-icon class="star-sm" [ngClass]="star <= ratingSummary().average ? 'star-filled' : 'star-empty'">
-                    {{ star <= ratingSummary().average ? 'star' : 'star_outline' }}
-                  </mat-icon>
-                }
-              </div>
-              <span class="review-count-text">{{ ratingSummary().count }} reviews</span>
-            </div>
-          }
         </div>
 
-        <!-- Review List -->
-        @if(reviews().length > 0) {
-          <div class="reviews-list">
-            @for(review of reviews(); track review.id) {
-              <div class="review-item">
-                <div class="review-avatar">{{ review.reviewerName.charAt(0).toUpperCase() }}</div>
-                <div class="review-body">
-                  <div class="review-top">
-                    <strong class="reviewer-name">{{ review.reviewerName }}</strong>
-                    <div class="review-stars">
-                      @for(star of getStarArray(5); track star) {
-                        <mat-icon class="star-xs" [ngClass]="star <= review.rating ? 'star-filled' : 'star-empty'">
-                          {{ star <= review.rating ? 'star' : 'star_outline' }}
-                        </mat-icon>
-                      }
-                    </div>
-                    <span class="review-date">{{ review.createdAt | date:'mediumDate' }}</span>
-                  </div>
-                  @if(review.comment) {
-                    <p class="review-comment">{{ review.comment }}</p>
+        <div class="hh-hero__cta">
+          <button mat-flat-button class="hh-cta hh-cta--primary" (click)="navigateToPay('/pay')">
+            <mat-icon>handshake</mat-icon>
+            Hire {{ nameVal.split(' ')[0] }}
+          </button>
+          <p class="hh-cta__hint">Secure payment via M-Pesa</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- ═══════ KEY STATS STRIP ═══════ -->
+    <section class="hh-stats">
+      <div class="hh-stat">
+        <mat-icon>work_history</mat-icon>
+        <div>
+          <p class="hh-stat__label">Experience</p>
+          <p class="hh-stat__value">
+            {{ houseHelp?.yearsOfExperience ? houseHelp.yearsOfExperience + ' yrs' : '—' }}
+          </p>
+        </div>
+      </div>
+      <div class="hh-stat">
+        <mat-icon>cake</mat-icon>
+        <div>
+          <p class="hh-stat__label">Age</p>
+          <p class="hh-stat__value">{{ houseHelp?.age || '—' }}</p>
+        </div>
+      </div>
+      <div class="hh-stat">
+        <mat-icon>school</mat-icon>
+        <div>
+          <p class="hh-stat__label">Education</p>
+          <p class="hh-stat__value">{{ houseHelp?.levelOfEducation || '—' }}</p>
+        </div>
+      </div>
+      <div class="hh-stat">
+        <mat-icon>place</mat-icon>
+        <div>
+          <p class="hh-stat__label">Location</p>
+          <p class="hh-stat__value">{{ houseHelp?.currentLocation || '—' }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ MAIN GRID ═══════ -->
+    <div class="hh-grid">
+
+      <!-- LEFT: details -->
+      <div class="hh-col-main">
+
+        <!-- ABOUT -->
+        <section class="hh-panel">
+          <header class="hh-panel__head">
+            <mat-icon class="hh-panel__icon">info</mat-icon>
+            <h3>About {{ nameVal.split(' ')[0] }}</h3>
+          </header>
+          <p class="hh-about">
+            {{ houseHelp?.experienceSummary || 'No description provided yet.' }}
+          </p>
+        </section>
+
+        <!-- SKILLS -->
+        @if (houseHelp.skills?.length) {
+          <section class="hh-panel">
+            <header class="hh-panel__head">
+              <mat-icon class="hh-panel__icon">build</mat-icon>
+              <h3>Skills</h3>
+              <span class="hh-panel__count">{{ houseHelp.skills.length }}</span>
+            </header>
+            <div class="hh-chips">
+              @for (skill of houseHelp.skills; track $index) {
+                <span class="hh-chip">
+                  <mat-icon>check_circle</mat-icon>{{ skill.replace('_', ' ') }}
+                </span>
+              }
+            </div>
+          </section>
+        }
+
+        <!-- LANGUAGES -->
+        @if (houseHelp.languages?.length) {
+          <section class="hh-panel">
+            <header class="hh-panel__head">
+              <mat-icon class="hh-panel__icon">language</mat-icon>
+              <h3>Languages</h3>
+            </header>
+            <div class="hh-chips">
+              @for (lang of houseHelp.languages; track lang) {
+                <span class="hh-chip hh-chip--soft">{{ lang.replace('_', ' ') }}</span>
+              }
+            </div>
+          </section>
+        }
+
+        <!-- PERSONAL -->
+        <section class="hh-panel">
+          <header class="hh-panel__head">
+            <mat-icon class="hh-panel__icon">person</mat-icon>
+            <h3>Personal</h3>
+          </header>
+          <div class="hh-kv">
+            <div><span>Religion</span><strong>{{ houseHelp?.religion || '—' }}</strong></div>
+            <div><span>Children</span><strong>{{ houseHelp?.numberOfChildren ?? '—' }}</strong></div>
+            <div><span>Height</span><strong>{{ houseHelp?.height ? houseHelp.height + ' cm' : '—' }}</strong></div>
+            <div><span>Weight</span><strong>{{ houseHelp?.weight ? houseHelp.weight + ' kg' : '—' }}</strong></div>
+            <div><span>Home area</span><strong>{{ houseHelp?.homeLocation || '—' }}</strong></div>
+            <div><span>Availability</span><strong>{{ houseHelp?.availability || '—' }}</strong></div>
+          </div>
+        </section>
+
+        <!-- WORK PREFERENCES -->
+        @if (houseHelp.preferences) {
+          <section class="hh-panel">
+            <header class="hh-panel__head">
+              <mat-icon class="hh-panel__icon">tune</mat-icon>
+              <h3>Work preferences</h3>
+            </header>
+            <div class="hh-kv">
+              @if (houseHelp.preferences.preferredLocation) {
+                <div><span>Preferred locations</span><strong>{{ houseHelp.preferences.preferredLocation }}</strong></div>
+              }
+              @if (houseHelp.preferences.preferredReligion) {
+                <div><span>Preferred religion</span><strong>{{ houseHelp.preferences.preferredReligion }}</strong></div>
+              }
+              <div>
+                <span>Okay with pets</span>
+                <strong [ngClass]="houseHelp.preferences?.okayWithPets ? 'is-yes' : 'is-no'">
+                  {{ houseHelp.preferences?.okayWithPets ? 'Yes' : 'No' }}
+                </strong>
+              </div>
+              @if (houseHelp.preferences.preferredMaxChildren) {
+                <div><span>Max children</span><strong>{{ houseHelp.preferences.preferredMaxChildren }}</strong></div>
+              }
+            </div>
+
+            @if (houseHelp.preferences.preferredChildAgeRanges?.length) {
+              <div class="hh-pref-group">
+                <p class="hh-pref-group__label">Comfortable with child ages</p>
+                <div class="hh-chips">
+                  @for (age of houseHelp.preferences.preferredChildAgeRanges; track $index) {
+                    <span class="hh-chip hh-chip--sm">{{ age.replace('_', ' ') }}</span>
                   }
                 </div>
               </div>
             }
-          </div>
-        } @else {
-          <div class="no-reviews">
-            <mat-icon>reviews</mat-icon>
-            <p>No reviews yet. Be the first to review!</p>
-          </div>
+          </section>
         }
 
-        <!-- Leave a Review (homeowners only) -->
-        @if(isHomeOwner) {
-          <div class="add-review">
-            <h4>Leave a Review</h4>
-            <div class="star-picker">
-              <span class="star-label">Your rating:</span>
-              @for(star of getStarArray(5); track star) {
-                <mat-icon
-                  class="star-pick"
-                  [ngClass]="star <= (hoverRating || newRating) ? 'star-filled' : 'star-empty'"
-                  (click)="setRating(star)"
-                  (mouseenter)="hoverRating = star"
-                  (mouseleave)="hoverRating = 0"
-                >star</mat-icon>
-              }
-              @if(newRating > 0) {
-                <span class="selected-rating">{{ newRating }}/5</span>
-              }
+        <!-- REVIEWS -->
+        <section class="hh-panel hh-reviews">
+          <header class="hh-panel__head">
+            <mat-icon class="hh-panel__icon">rate_review</mat-icon>
+            <h3>Reviews</h3>
+            @if (ratingSummary().count > 0) {
+              <span class="hh-panel__count">{{ ratingSummary().count }}</span>
+            }
+          </header>
+
+          @if (ratingSummary().count > 0) {
+            <div class="hh-rating-summary">
+              <div class="hh-rating-summary__big">
+                <span class="hh-rating-summary__num">{{ ratingSummary().average | number:'1.1-1' }}</span>
+                <div class="hh-rating-summary__stars">
+                  @for (s of getStarArray(5); track s) {
+                    <mat-icon [ngClass]="s <= stars.full ? 'star-filled' : 'star-empty'">
+                      {{ s <= stars.full ? 'star' : 'star_outline' }}
+                    </mat-icon>
+                  }
+                </div>
+                <span class="hh-rating-summary__total">Based on {{ ratingSummary().count }} review{{ ratingSummary().count === 1 ? '' : 's' }}</span>
+              </div>
             </div>
+          }
 
-            <mat-form-field appearance="outline" class="review-textarea">
-              <mat-label>Share your experience (optional)</mat-label>
-              <textarea matInput rows="3" [(ngModel)]="newComment" placeholder="Describe your experience..."></textarea>
-            </mat-form-field>
+          @if (reviews().length > 0) {
+            <ul class="hh-review-list">
+              @for (review of reviews(); track review.id) {
+                <li class="hh-review">
+                  <div class="hh-review__avatar">{{ review.reviewerName.charAt(0).toUpperCase() }}</div>
+                  <div class="hh-review__body">
+                    <div class="hh-review__head">
+                      <strong>{{ review.reviewerName }}</strong>
+                      <span class="hh-review__date">{{ review.createdAt | date:'mediumDate' }}</span>
+                    </div>
+                    <div class="hh-review__stars">
+                      @for (s of getStarArray(5); track s) {
+                        <mat-icon [ngClass]="s <= review.rating ? 'star-filled' : 'star-empty'">
+                          {{ s <= review.rating ? 'star' : 'star_outline' }}
+                        </mat-icon>
+                      }
+                    </div>
+                    @if (review.comment) {
+                      <p class="hh-review__comment">{{ review.comment }}</p>
+                    }
+                  </div>
+                </li>
+              }
+            </ul>
+          } @else {
+            <div class="hh-empty">
+              <mat-icon>reviews</mat-icon>
+              <p>No reviews yet — be the first after you hire {{ nameVal.split(' ')[0] }}.</p>
+            </div>
+          }
 
-            <button
-              mat-flat-button
-              class="submit-review-btn"
-              (click)="submitReview()"
-              [disabled]="submittingReview || newRating === 0"
-            >
-              <mat-icon>send</mat-icon>
-              {{ submittingReview ? 'Submitting...' : 'Submit Review' }}
-            </button>
-          </div>
-        }
-      </mat-card>
+          @if (isHomeOwner) {
+            <div class="hh-leave-review">
+              <h4>Leave a review</h4>
+              <div class="hh-star-picker">
+                <span class="hh-star-picker__label">Your rating:</span>
+                @for (s of getStarArray(5); track s) {
+                  <mat-icon
+                    class="hh-star-picker__star"
+                    [ngClass]="s <= (hoverRating || newRating) ? 'star-filled' : 'star-empty'"
+                    (click)="setRating(s)"
+                    (mouseenter)="hoverRating = s"
+                    (mouseleave)="hoverRating = 0"
+                  >star</mat-icon>
+                }
+                @if (newRating > 0) {
+                  <span class="hh-star-picker__num">{{ newRating }}/5</span>
+                }
+              </div>
+              <mat-form-field appearance="outline" class="hh-leave-review__textarea">
+                <mat-label>Share your experience (optional)</mat-label>
+                <textarea matInput rows="3" [(ngModel)]="newComment" placeholder="Describe your experience…"></textarea>
+              </mat-form-field>
+              <button
+                mat-flat-button
+                class="hh-cta hh-cta--review"
+                (click)="submitReview()"
+                [disabled]="submittingReview || newRating === 0"
+              >
+                <mat-icon>send</mat-icon>
+                {{ submittingReview ? 'Submitting…' : 'Submit review' }}
+              </button>
+            </div>
+          }
+        </section>
+      </div>
 
+      <!-- RIGHT: sticky CTA card -->
+      <aside class="hh-col-side">
+        <div class="hh-cta-card">
+          @if (houseHelp.preferences?.minSalary || houseHelp.preferences?.maxSalary) {
+            <div class="hh-salary">
+              <span class="hh-salary__label">Salary expectation</span>
+              <span class="hh-salary__amount">
+                @if (houseHelp.preferences.minSalary && houseHelp.preferences.maxSalary) {
+                  KES {{ houseHelp.preferences.minSalary | number:'1.0-0' }} – {{ houseHelp.preferences.maxSalary | number:'1.0-0' }}
+                } @else if (houseHelp.preferences.minSalary) {
+                  From KES {{ houseHelp.preferences.minSalary | number:'1.0-0' }}
+                } @else {
+                  Up to KES {{ houseHelp.preferences.maxSalary | number:'1.0-0' }}
+                }
+              </span>
+              <span class="hh-salary__per">per month · negotiable</span>
+            </div>
+          }
+
+          <ul class="hh-side-checks">
+            <li>
+              <mat-icon [ngClass]="houseHelp?.securityCleared ? 'is-yes' : 'is-no'">
+                {{ houseHelp?.securityCleared ? 'check_circle' : 'help_outline' }}
+              </mat-icon>
+              <span>{{ houseHelp?.securityCleared ? 'Security cleared' : 'Awaiting security check' }}</span>
+            </li>
+            <li>
+              <mat-icon class="is-yes">check_circle</mat-icon>
+              <span>Real-name account verified</span>
+            </li>
+            <li>
+              <mat-icon class="is-yes">check_circle</mat-icon>
+              <span>Reviews from real homeowners</span>
+            </li>
+          </ul>
+
+          <button mat-flat-button class="hh-cta hh-cta--primary hh-cta--lg" (click)="navigateToPay('/pay')">
+            <mat-icon>handshake</mat-icon>Hire {{ nameVal.split(' ')[0] }}
+          </button>
+          <p class="hh-cta__hint">Secure payment via M-Pesa · {{ nameVal.split(' ')[0] }} will be notified.</p>
+        </div>
+      </aside>
     </div>
+
+    <!-- ═══════ Sticky bottom CTA (mobile/tablet) ═══════ -->
+    <div class="hh-sticky-cta">
+      <div class="hh-sticky-cta__info">
+        <strong>{{ nameVal }}</strong>
+        @if (houseHelp.preferences?.minSalary) {
+          <span class="hh-sticky-cta__price">
+            From KES {{ houseHelp.preferences.minSalary | number:'1.0-0' }}/mo
+          </span>
+        }
+      </div>
+      <button mat-flat-button class="hh-cta hh-cta--primary" (click)="navigateToPay('/pay')">
+        <mat-icon>handshake</mat-icon>Hire {{ nameVal.split(' ')[0] }}
+      </button>
+    </div>
+
   </div>
 }

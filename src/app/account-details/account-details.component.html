@@ -66,6 +66,11 @@
               <mat-icon>edit</mat-icon>Edit profile
             </button>
           }
+          @if (isOwnAccount() && isHomeOwner()) {
+            <button mat-button class="btn-edit" (click)="goToMyHires()">
+              <mat-icon>history</mat-icon>My hire requests
+            </button>
+          }
           @if (isOwnAccount()) {
             <button mat-button class="btn-edit" (click)="changePassword()">
               <mat-icon>key</mat-icon>Change password

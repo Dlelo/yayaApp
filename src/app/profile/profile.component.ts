@@ -7,7 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { LoginService } from '../login/login.service';
 import { AccountDetailsService } from '../account-details/account-details.service';
 import { catchError, Observable, of, shareReplay, switchMap, take } from 'rxjs';
-import { AsyncPipe, DatePipe, NgClass } from '@angular/common';
+import { AsyncPipe, DatePipe, DecimalPipe, NgClass } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
@@ -24,6 +24,7 @@ import { ReviewService, ReviewResponse, RatingSummary } from '../review/review.s
     MatIconButton,
     AsyncPipe,
     DatePipe,
+    DecimalPipe,
     NgClass,
     MatFormFieldModule,
     MatInput,
