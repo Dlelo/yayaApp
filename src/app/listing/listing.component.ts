@@ -39,6 +39,10 @@ export class ListingsComponent implements OnInit {
 
   houseHelps$!: Observable<any>;
   recommendations = signal<HouseHelpMatch[]>([]);
+  recommendationsLoading = signal(false);
+  recommendationsError = signal<string | null>(null);
+  /** When true, the API returns every evaluated candidate (passed + excluded) with reasons. */
+  showAllCandidates = signal(false);
   activeTab = signal<'browse' | 'recommended'>('browse');
 
   page: number = 0;
@@ -74,10 +78,36 @@ export class ListingsComponent implements OnInit {
   }
 
   loadRecommendations(): void {
-    this.recommendationsService.getRecommendations().subscribe({
-      next: data => this.recommendations.set(data),
-      error: () => {}
+    this.recommendationsLoading.set(true);
+    this.recommendationsError.set(null);
+    this.recommendationsService.getRecommendations(this.showAllCandidates()).subscribe({
+      next: data => {
+        this.recommendations.set(data ?? []);
+        this.recommendationsLoading.set(false);
+      },
+      error: (err) => {
+        this.recommendationsLoading.set(false);
+        if (err?.status === 401 || err?.status === 403) {
+          this.recommendationsError.set('Sign in as a homeowner to see recommendations.');
+        } else if (err?.status === 404) {
+          this.recommendationsError.set('Complete your homeowner profile to unlock recommendations.');
+        } else {
+          this.recommendationsError.set('Could not load recommendations. Please try again.');
+        }
+      }
     });
+  }
+
+  goToPreferences(): void {
+    const userId = this.loginService.userId();
+    if (userId) {
+      this.router.navigate(['/edit-account', userId]);
+    }
+  }
+
+  toggleShowAllCandidates(): void {
+    this.showAllCandidates.update(v => !v);
+    this.loadRecommendations();
   }
 
   load(type: string) {

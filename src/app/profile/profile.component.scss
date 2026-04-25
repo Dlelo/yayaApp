@@ -61,21 +61,44 @@ $shadow: 0 1px 2px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.05);
 }
 
 .hh-ident { padding-bottom: .5rem; min-width: 0; }
+
 .hh-name {
-  margin: 0 0 .25rem;
-  font-size: 1.7rem; font-weight: 800;
-  color: $ink; letter-spacing: -.015em;
+  margin: 0 0 .375rem;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: $ink;
+  letter-spacing: -.015em;
+  line-height: 1.1;
 }
 
+/* Rating sits below the name on its own line. */
 .hh-rating-row {
-  display: flex; align-items: center; gap: .5rem; margin-bottom: .5rem;
-  font-size: .9rem; color: $muted;
-  strong { color: $ink; font-weight: 700; }
-  .hh-rating-count { color: $muted; }
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin: 0 0 .75rem;
+  font-size: .95rem;
+  color: $muted;
+
+  strong {
+    color: $ink;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  .hh-rating-count {
+    color: $muted;
+    font-size: .85rem;
+  }
 }
 .hh-stars {
-  display: inline-flex; gap: 1px;
-  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+  display: inline-flex;
+  gap: 1px;
+  align-items: center;
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
 }
 .star-filled { color: #fbbf24; }
 .star-empty  { color: #cbd5e1; }

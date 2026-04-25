@@ -85,6 +85,98 @@ $dark: #1a3c34;
   justify-content: center;
 }
 
+/* Recommendations loading spinner */
+.empty-state .spin {
+  animation: hh-spin 1s linear infinite;
+  color: #00ACC1;
+}
+@keyframes hh-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Buttons inside the empty/error state — constrain icon size so the leading
+   icon doesn't overflow the button. Material defaults to 24px which is taller
+   than a standard mat-flat-button. */
+.empty-state button mat-icon {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+  line-height: 18px;
+  margin-right: 4px;
+}
+
+/* Debug toggle inside the recommendations intro */
+.debug-toggle {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  padding: .35rem .75rem;
+  background: #fff;
+  border: 1px solid #bae6fd;
+  color: #00838F;
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+  &:hover { background: #e0f2fe; }
+}
+
+/* Excluded candidate card (debug view) */
+.househelp-card.is-excluded {
+  opacity: .65;
+  filter: grayscale(.4);
+
+  .view-profile-btn {
+    background: #f1f5f9 !important;
+    color: #94a3b8 !important;
+    cursor: not-allowed;
+  }
+}
+.match-score-badge.match-excluded {
+  background: #fee2e2 !important;
+  color: #b91c1c !important;
+  border: 1px solid #fecaca;
+}
+
+.reasons-block {
+  margin-top: .75rem;
+  padding-top: .625rem;
+  border-top: 1px dashed #e5e7eb;
+
+  &__label {
+    margin: 0 0 .25rem;
+    font-size: .68rem;
+    font-weight: 700;
+    color: #6b7280;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+}
+.reasons-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+
+  li {
+    font-size: .75rem;
+    line-height: 1.35;
+    padding: .15rem .4rem;
+    border-radius: 4px;
+    color: #475569;
+    background: #f8fafc;
+
+    &.is-positive { color: #15803d; background: rgba(22, 163, 74, .08); }
+    &.is-negative { color: #b91c1c; background: rgba(220, 38, 38, .06); }
+  }
+}
+
 /* Recommendations section */
 .recommendations-section {
   .section-intro {
