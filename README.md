@@ -58,6 +58,8 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 
 The Android and iOS apps share this Angular codebase via [Capacitor 7](https://capacitorjs.com/). The web build is unaffected — same source, two outputs.
 
+> 📦 **Releasing to Google Play / App Store?** See [`DEPLOY.md`](./DEPLOY.md) for the end-to-end signing, build, and submission playbook.
+
 ### Build pipeline
 
 - **Web (SSR):** `npm run build` → outputs to `dist/yaya/browser` + `dist/yaya/server`

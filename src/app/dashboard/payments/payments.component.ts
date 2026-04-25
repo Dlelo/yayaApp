@@ -33,6 +33,9 @@ export class PaymentsComponent implements OnInit {
   error: string | null = null;
   selectedPayment: Payment | null = null;
 
+  /** Tab filter applied client-side on the loaded page. */
+  activeTab: 'all' | 'success' = 'all';
+
   constructor(
     private paymentService: PaymentService,
     private dialog: MatDialog,
@@ -100,5 +103,20 @@ export class PaymentsComponent implements OnInit {
     this.paymentService.archivePayment(payment.id).subscribe({
       next: () => this.loadPayments(this.currentPage, this.pageSize)
     });
+  }
+
+  setTab(tab: 'all' | 'success'): void {
+    this.activeTab = tab;
+  }
+
+  /** Rows shown in the table — filtered by the active tab. */
+  get filteredPayments(): Payment[] {
+    return this.activeTab === 'success'
+      ? this.payments.filter(p => p.status === PaymentStatus.SUCCESS)
+      : this.payments;
+  }
+
+  get successCount(): number {
+    return this.payments.filter(p => p.status === PaymentStatus.SUCCESS).length;
   }
 }

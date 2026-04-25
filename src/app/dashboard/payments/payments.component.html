@@ -8,6 +8,32 @@
 
   <div class="dash-card">
 
+    <!-- Tab bar -->
+    <div class="dash-tabs" role="tablist">
+      <button
+        type="button"
+        role="tab"
+        class="dash-tab"
+        [class.is-active]="activeTab === 'all'"
+        (click)="setTab('all')"
+      >
+        <mat-icon>receipt_long</mat-icon>
+        All payments
+        <span class="dash-tab__count">{{ totalElements }}</span>
+      </button>
+      <button
+        type="button"
+        role="tab"
+        class="dash-tab"
+        [class.is-active]="activeTab === 'success'"
+        (click)="setTab('success')"
+      >
+        <mat-icon>check_circle</mat-icon>
+        Successful
+        <span class="dash-tab__count">{{ successCount }}</span>
+      </button>
+    </div>
+
     @if (loading) {
       <div class="table-meta">
         <span class="shimmer shimmer-text" style="width:120px;display:inline-block"></span>
@@ -38,14 +64,24 @@
           <mat-icon>refresh</mat-icon> Retry
         </button>
       </div>
-    } @else if (payments.length === 0) {
+    } @else if (filteredPayments.length === 0) {
       <div class="empty-state">
         <mat-icon>receipt_long</mat-icon>
-        <p>No payments found</p>
+        <p>
+          @if (activeTab === 'success') {
+            No successful payments on this page
+          } @else {
+            No payments found
+          }
+        </p>
       </div>
     } @else {
       <div class="table-meta">
-        <span class="table-count">{{ totalElements }} total payments</span>
+        @if (activeTab === 'success') {
+          <span class="table-count">{{ successCount }} successful (of {{ payments.length }} on page)</span>
+        } @else {
+          <span class="table-count">{{ totalElements }} total payments</span>
+        }
       </div>
 
       <div class="table-wrap">
@@ -63,7 +99,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (payment of payments; track payment.id; let i = $index) {
+            @for (payment of filteredPayments; track payment.id; let i = $index) {
               <tr>
                 <td class="row-num">{{ i + 1 + (currentPage * pageSize) }}</td>
                 <td>
@@ -83,15 +119,22 @@
                 </td>
                 <td class="text-muted">{{ payment.provider }}</td>
                 <td>
-                  <span class="status-badge"
-                    [class.status-badge--active]="payment.status === 'SUCCESS'"
-                    [class.status-badge--inactive]="payment.status === 'FAILED'"
-                    [class.status-badge--pending]="payment.status === 'PENDING'">
-                    <mat-icon style="font-size:13px;width:13px;height:13px;margin-right:3px;vertical-align:middle">
-                      {{ getStatusIcon(payment.status) }}
-                    </mat-icon>
-                    {{ payment.status }}
-                  </span>
+                  <div class="status-cell">
+                    <span class="status-badge"
+                      [class.status-badge--active]="payment.status === 'SUCCESS'"
+                      [class.status-badge--inactive]="payment.status === 'FAILED'"
+                      [class.status-badge--pending]="payment.status === 'PENDING'">
+                      <mat-icon style="font-size:13px;width:13px;height:13px;margin-right:3px;vertical-align:middle">
+                        {{ getStatusIcon(payment.status) }}
+                      </mat-icon>
+                      {{ payment.status }}
+                    </span>
+                    @if (payment.archived) {
+                      <span class="archived-badge" title="Archived">
+                        <mat-icon>archive</mat-icon>Archived
+                      </span>
+                    }
+                  </div>
                 </td>
                 <td class="text-muted">{{ payment.createdAt | date:'mediumDate' }}</td>
                 <td>
@@ -104,9 +147,11 @@
                     <button mat-stroked-button class="btn-action btn-view" (click)="viewDetails(payment)">
                       <mat-icon>visibility</mat-icon> View
                     </button>
-                    <button mat-stroked-button class="btn-action btn-danger" (click)="archivePayment(payment)" title="Archive">
-                      <mat-icon>archive</mat-icon>
-                    </button>
+                    @if (!payment.archived) {
+                      <button mat-stroked-button class="btn-action btn-danger" (click)="archivePayment(payment)" title="Archive">
+                        <mat-icon>archive</mat-icon>
+                      </button>
+                    }
                   </div>
                 </td>
               </tr>
