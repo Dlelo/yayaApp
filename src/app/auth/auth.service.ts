@@ -1,22 +1,20 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { StorageService } from '../core/storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly TOKEN_KEY = 'authToken';
+  private readonly storage = inject(StorageService);
 
   getToken(): string | null {
-    return typeof window !== 'undefined' ? localStorage.getItem(this.TOKEN_KEY) : null;
+    return this.storage.get(this.TOKEN_KEY);
   }
 
   setToken(token: string): void {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(this.TOKEN_KEY, token);
-    }
+    this.storage.set(this.TOKEN_KEY, token);
   }
 
   clearToken(): void {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(this.TOKEN_KEY);
-    }
+    this.storage.remove(this.TOKEN_KEY);
   }
 }

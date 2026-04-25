@@ -1,0 +1,14 @@
+node_modules
+.angular
+.idea
+.vscode
+.git
+.gitignore
+dist
+android
+ios
+**/.DS_Store
+.env
+.env.*
+README.md
+Dockerfile

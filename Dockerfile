@@ -1,25 +1,20 @@
-# Stage 1: Build Angular (cached better)
+# ─── build stage ─────────────────────────────────────────────────
+# Angular CLI + @angular/build live in devDependencies, so we need the full
+# install (no --omit=dev) for the build to succeed.
 FROM node:20 AS build
 WORKDIR /app
 
-# Copy only dependency files first
 COPY package.json package-lock.json ./
+RUN npm ci
 
-# Use clean, fast installs
-RUN npm ci --omit=dev
-
-# Copy source AFTER dependencies are cached
 COPY . .
-
-# Build Angular (Browser + SSR)
 RUN npm run build
 
-
-# Stage 2: Run SSR server
+# ─── runtime stage (SSR) ─────────────────────────────────────────
 FROM node:20-slim
 WORKDIR /app
+ENV NODE_ENV=production PORT=4000
 
-# Only copy final distributables
 COPY --from=build /app/dist/yaya ./
 
 EXPOSE 4000

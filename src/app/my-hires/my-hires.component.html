@@ -1,0 +1,97 @@
+<div class="my-hires-page">
+  <div class="page-header">
+    <div>
+      <h2>My hire requests</h2>
+      <p class="subtitle">
+        Track every request you have sent and leave a review when work is done.
+      </p>
+    </div>
+    <button
+      mat-icon-button
+      class="refresh-btn"
+      aria-label="Refresh"
+      (click)="refresh()"
+      [disabled]="loading() || refreshing()"
+    >
+      @if (refreshing()) {
+        <mat-spinner diameter="20"></mat-spinner>
+      } @else {
+        <mat-icon>refresh</mat-icon>
+      }
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="state-center">
+      <mat-spinner diameter="36"></mat-spinner>
+    </div>
+  } @else if (error()) {
+    <mat-card class="state-card">
+      <mat-icon class="state-icon error">error_outline</mat-icon>
+      <p>{{ error() }}</p>
+      <button mat-stroked-button color="primary" (click)="refresh()">Try again</button>
+    </mat-card>
+  } @else if (empty()) {
+    <mat-card class="state-card">
+      <mat-icon class="state-icon">history_toggle_off</mat-icon>
+      <h3>No hire requests yet</h3>
+      <p>Start by browsing house helps and sending your first request.</p>
+      <button mat-flat-button color="primary" (click)="goFindHelp()">Find a house help</button>
+    </mat-card>
+  } @else {
+    <div class="hire-list">
+      @for (hire of hires(); track trackById($index, hire)) {
+        <mat-card class="hire-card">
+          <div class="hire-top">
+            <div class="hire-id">
+              <mat-icon>person</mat-icon>
+              <div>
+                <div class="name">{{ hire.houseHelpName }}</div>
+                <div class="meta">Sent {{ hire.createdAt | date: 'mediumDate' }}</div>
+              </div>
+            </div>
+            <span class="status-pill" [class]="statusClass(hire.status)">{{ hire.status }}</span>
+          </div>
+
+          <div class="hire-body">
+            <div class="row">
+              <mat-icon>event</mat-icon>
+              <span>Start: {{ hire.startDate | date: 'mediumDate' }}</span>
+            </div>
+            @if (hire.message) {
+              <div class="row message">
+                <mat-icon>chat</mat-icon>
+                <span>{{ hire.message }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="hire-actions">
+            @if (canReview(hire.status)) {
+              <a
+                mat-flat-button
+                color="primary"
+                [routerLink]="['/review', hire.houseHelpId]"
+                [queryParams]="{ name: hire.houseHelpName }"
+              >
+                <mat-icon>star_rate</mat-icon>
+                Review
+              </a>
+            }
+            @if (canCall(hire.status)) {
+              <button mat-stroked-button color="primary" (click)="call(hire)">
+                <mat-icon>call</mat-icon>
+                Call
+              </button>
+            }
+            <button mat-button (click)="share(hire)">
+              <mat-icon>share</mat-icon>
+              Share
+            </button>
+            <a mat-button [routerLink]="['/profile', hire.houseHelpId]">Profile</a>
+          </div>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

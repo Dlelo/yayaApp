@@ -14,9 +14,16 @@ import {AuthGuard} from './auth.guard';
 import {RoleGuard} from './role.guard';
 import {TermsOfUseComponent} from './terms-of-use/terms-of-use.component';
 import {PrivacyPolicyComponent} from './privacy-policy/privacy-policy.component';
+import { MyHiresComponent } from './my-hires/my-hires.component';
+import { WriteReviewComponent } from './write-review/write-review.component';
+import { MobileMenuComponent } from './mobile-shell/mobile-menu.component';
+import { homeRedirectGuard } from './core/home-redirect.guard';
+import { profileCompleteGuard } from './core/profile-complete.guard';
+import { ForgotPasswordComponent } from './password/forgot-password.component';
+import { ChangePasswordComponent } from './password/change-password.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
+  { path: '', component: HomeComponent, canActivate: [homeRedirectGuard] },
   {
     path: 'listing',
     pathMatch: 'full',
@@ -29,16 +36,35 @@ export const routes: Routes = [
     data: { roles: ['ROLE_HOMEOWNER','ROLE_ADMIN', 'ROLE_AGENT', 'ROLE_SECURITY', 'ROLE_SALES'] },
   },
   { path: 'register', component: RegisterHousehelpComponent },
-  { path: 'login', component:LoginComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'change-password', component: ChangePasswordComponent, canActivate: [AuthGuard] },
   {
     path: 'profile/:id',
     component: ProfileComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, profileCompleteGuard]
   },
 
   { path: 'hire',
     component: HireRequestComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ROLE_HOMEOWNER', 'ROLE_ADMIN', 'ROLE_AGENT'] },
+  },
+  {
+    path: 'my-hires',
+    component: MyHiresComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ROLE_HOMEOWNER'] },
+  },
+  {
+    path: 'review/:id',
+    component: WriteReviewComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ROLE_HOMEOWNER'] },
+  },
+  {
+    path: 'menu',
+    component: MobileMenuComponent,
   },
   {
     path: 'pay',

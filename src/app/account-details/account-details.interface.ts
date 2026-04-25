@@ -32,6 +32,28 @@ interface HouseHelp {
   contactPersonsPhoneNumber:string;
   pinLocation?: GeoLocation;
   additionalDocuments?: string[];
+  currentCounty?: string;
+  homeCounty?: string;
+  availability?: string;
+  experienceSummary?: string;
+  preferences?: HouseHelpPreferences;
+  lastModifiedBy?: number | null;
+  lastModifiedAt?: string | null;
+}
+
+interface HouseHelpPreferences {
+  houseHelpType?: string | string[] | null;
+  minExperience?: number | null;
+  preferredLocation?: string;
+  preferredSkills?: string[];
+  preferredLanguages?: string[];
+  preferredChildAgeRanges?: (string | number)[];
+  preferredMaxChildren?: number | null;
+  preferredServices?: string[];
+  preferredReligion?: string;
+  okayWithPets?: boolean;
+  minSalary?: number | null;
+  maxSalary?: number | null;
 }
 
 interface HomeOwner {
@@ -48,6 +70,29 @@ interface HomeOwner {
   profilePictureDocument: string;
   pinLocation?: GeoLocation;
   additionalDocuments?: string[];
+  nationalId?: string;
+  preferences?: HomeOwnerPreferences;
+  lastModifiedBy?: number | null;
+  lastModifiedAt?: string | null;
+}
+
+interface HomeOwnerPreferences {
+  houseHelpType?: string | string[] | null;
+  minExperience?: number | null;
+  location?: string;
+  preferredSkills?: string[];
+  preferredLanguages?: string[];
+  minMatchScore?: number | null;
+  childrenAgeRanges?: (string | number)[];
+  numberOfChildren?: number | null;
+  requiredServices?: string[];
+  hasPets?: boolean;
+  religionPreference?: string;
+  requiresSecurityCleared?: boolean;
+  preferredMaxAge?: number | null;
+  preferredMinAge?: number | null;
+  minSalary?: number | null;
+  maxSalary?: number | null;
 }
 
 interface AgentProfile {
@@ -77,6 +122,8 @@ interface UserDetails {
     expiry: string;
   };
   active:boolean;
+  createdById?: number;
+  createdByName?: string;
 }
 
 interface HireRequest {
@@ -133,4 +180,20 @@ interface AgentEarnings {
   balanceRemaining: number;
   hireRequests: AgentHireRequest[];
   withdrawals: WithdrawalRequest[];
+}
+
+interface PaymentRecord {
+  id: number;
+  transactionId: string;
+  amount: number;
+  provider: string;
+  status: 'PENDING' | 'SUCCESS' | 'FAILED' | 'CANCELLED';
+  createdAt?: string;
+  userId?: number;
+  userEmail?: string;
+  userName?: string;
+  baseFee?: number;
+  surchargeFee?: number;
+  surchargeReason?: string;
+  archived?: boolean;
 }

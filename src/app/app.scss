@@ -6,6 +6,16 @@ $dark: #1a3c34;
   flex: 1 1 auto;
 }
 
+.app-content {
+  &.is-native {
+    /* Reserve space at top for status bar and bottom for the tab bar
+       (which is fixed-position on native). */
+    padding-top: env(safe-area-inset-top, 0);
+    padding-bottom: calc(56px + env(safe-area-inset-bottom, 0));
+    min-height: 100vh;
+  }
+}
+
 /* Toolbar */
 .app-toolbar {
   height: 64px !important;

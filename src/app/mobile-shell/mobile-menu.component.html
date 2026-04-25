@@ -1,0 +1,80 @@
+<div class="menu-page">
+  <header class="menu-header">
+    <div class="avatar">
+      <mat-icon>{{ isLoggedIn() ? 'account_circle' : 'person_outline' }}</mat-icon>
+    </div>
+    <div class="ident">
+      @if (isLoggedIn()) {
+        <div class="email">{{ email() }}</div>
+        <div class="role-row">
+          @for (r of roles(); track r) {
+            <span class="role-pill">{{ r.replace('ROLE_', '') }}</span>
+          }
+        </div>
+      } @else {
+        <div class="email">Welcome</div>
+        <div class="muted">Sign in to manage your account.</div>
+      }
+    </div>
+  </header>
+
+  <section class="menu-section">
+    @if (isLoggedIn()) {
+      <a class="menu-item" [routerLink]="accountPath()">
+        <mat-icon class="leading">badge</mat-icon>
+        <div class="label">My account</div>
+        <mat-icon class="trailing">chevron_right</mat-icon>
+      </a>
+      <a class="menu-item" [routerLink]="editPath()">
+        <mat-icon class="leading">edit</mat-icon>
+        <div class="label">Edit profile</div>
+        <mat-icon class="trailing">chevron_right</mat-icon>
+      </a>
+      @if (isHomeOwner()) {
+        <a class="menu-item" routerLink="/my-hires">
+          <mat-icon class="leading">history</mat-icon>
+          <div class="label">My hire requests</div>
+          <mat-icon class="trailing">chevron_right</mat-icon>
+        </a>
+      }
+      <a class="menu-item" routerLink="/change-password">
+        <mat-icon class="leading">key</mat-icon>
+        <div class="label">Change password</div>
+        <mat-icon class="trailing">chevron_right</mat-icon>
+      </a>
+    } @else {
+      <button class="menu-item" (click)="signIn()">
+        <mat-icon class="leading">login</mat-icon>
+        <div class="label">Sign in</div>
+        <mat-icon class="trailing">chevron_right</mat-icon>
+      </button>
+    }
+  </section>
+
+  <section class="menu-section">
+    <a class="menu-item" routerLink="/listing">
+      <mat-icon class="leading">search</mat-icon>
+      <div class="label">Find a house help</div>
+      <mat-icon class="trailing">chevron_right</mat-icon>
+    </a>
+    <a class="menu-item" routerLink="/terms-of-use">
+      <mat-icon class="leading">description</mat-icon>
+      <div class="label">Terms of use</div>
+      <mat-icon class="trailing">chevron_right</mat-icon>
+    </a>
+    <a class="menu-item" routerLink="/privacy-policy">
+      <mat-icon class="leading">privacy_tip</mat-icon>
+      <div class="label">Privacy policy</div>
+      <mat-icon class="trailing">chevron_right</mat-icon>
+    </a>
+  </section>
+
+  @if (isLoggedIn()) {
+    <section class="menu-section">
+      <button class="menu-item danger" (click)="signOut()">
+        <mat-icon class="leading">logout</mat-icon>
+        <div class="label">Sign out</div>
+      </button>
+    </section>
+  }
+</div>

@@ -218,7 +218,14 @@ export class EditAccountDetailsComponent implements OnInit {
       attribution: '&copy; OpenStreetMap contributors',
     }).addTo(this.map);
 
-    this.marker = L.marker(initialLatLng, { draggable: true }).addTo(this.map);
+    const locked = this.isPinLocked();
+
+    this.marker = L.marker(initialLatLng, { draggable: !locked }).addTo(this.map);
+
+    if (locked) {
+      this.marker.bindTooltip('Pin location is locked', { permanent: false }).openTooltip();
+      return;
+    }
 
     this.marker.on('dragend', () => {
       const pos = this.marker.getLatLng();
@@ -374,6 +381,39 @@ export class EditAccountDetailsComponent implements OnInit {
     if (this.isHomeOwner && user.homeOwner) {
       this.additionalDocUrls = user.homeOwner?.additionalDocuments || [];
     }
+
+    this.lockImmutableFields();
+  }
+
+  /** Fields that, once set, cannot be edited again. */
+  private lockImmutableFields(): void {
+    const groupName = this.isHouseHelp ? 'houseHelp' : 'homeOwner';
+    const controlNames = ['nationalId', 'homeLocation', 'pinLocation'];
+
+    for (const name of controlNames) {
+      const ctrl = this.form.get(`${groupName}.${name}`);
+      if (!ctrl) continue;
+      if (this.hasInitialValue(ctrl.value)) {
+        ctrl.disable({ emitEvent: false });
+      }
+    }
+  }
+
+  private hasInitialValue(v: unknown): boolean {
+    if (v === null || v === undefined) return false;
+    if (typeof v === 'string') return v.trim().length > 0;
+    if (typeof v === 'object') {
+      // pinLocation { latitude, longitude } counts as set when both coords exist
+      const obj = v as { latitude?: number; longitude?: number };
+      return obj.latitude != null && obj.longitude != null;
+    }
+    return true;
+  }
+
+  isPinLocked(): boolean {
+    if (!this.form) return false;
+    const groupName = this.isHouseHelp ? 'houseHelp' : 'homeOwner';
+    return this.form.get(`${groupName}.pinLocation`)?.disabled ?? false;
   }
 
   private loadExistingProfilePicture(user: any): void {
@@ -409,7 +449,9 @@ export class EditAccountDetailsComponent implements OnInit {
   save(id:number): void {
     if (this.form.invalid || !this.userId) return;
 
-     const formValue = this.form.value;
+    // Use getRawValue() so disabled (locked) fields are still sent in the payload
+    // — otherwise the backend would receive `undefined` for nationalId/homeLocation/pinLocation.
+    const formValue = this.form.getRawValue();
 
     if(this.isHouseHelp){
 

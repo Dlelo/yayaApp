@@ -5,9 +5,17 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --configuration production",
+    "build:mobile": "ng build --configuration mobile && node -e \"const fs=require('fs');const p='dist/yaya/browser';if(fs.existsSync(p+'/index.csr.html')){fs.copyFileSync(p+'/index.csr.html', p+'/index.html');}\"",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:yaya": "node dist/yaya/server/server.mjs"
+    "serve:ssr:yaya": "node dist/yaya/server/server.mjs",
+    "cap:sync": "npm run build:mobile && cap sync",
+    "cap:add:android": "cap add android",
+    "cap:add:ios": "cap add ios",
+    "cap:open:android": "cap open android",
+    "cap:open:ios": "cap open ios",
+    "mobile:android": "npm run build:mobile && cap sync android && cap run android",
+    "mobile:ios": "npm run build:mobile && cap sync ios && cap run ios"
   },
   "prettier": {
     "printWidth": 100,
@@ -23,6 +31,16 @@
   },
   "private": true,
   "dependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/app": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/haptics": "^7.0.0",
+    "@capacitor/ios": "^7.0.0",
+    "@capacitor/network": "^7.0.0",
+    "@capacitor/preferences": "^7.0.0",
+    "@capacitor/share": "^7.0.0",
+    "@capacitor/splash-screen": "^7.0.0",
+    "@capacitor/status-bar": "^7.0.0",
     "@angular/animations": "20.3.0",
     "@angular/cdk": "20.2.3",
     "@angular/common": "20.3.0",
@@ -45,6 +63,7 @@
   "devDependencies": {
     "@angular/build": "20.3.1",
     "@angular/cli": "20.3.1",
+    "@capacitor/cli": "^7.0.0",
     "@angular/compiler-cli": "20.3.0",
     "@types/express": "5.0.1",
     "@types/google-libphonenumber": "^7.4.30",

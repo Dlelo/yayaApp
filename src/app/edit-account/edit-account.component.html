@@ -6,6 +6,35 @@
         <h2>Update {{userDetails.name}} account details</h2>
       </div>
 
+      <!-- Locked personal info — set at registration, cannot be changed here -->
+      <div class="locked-section mb-4">
+        <div class="locked-header">
+          <mat-icon>lock</mat-icon>
+          <span>Personal info — locked once set</span>
+        </div>
+        <div class="locked-grid">
+          <div class="locked-field">
+            <label>First name</label>
+            <input type="text" [value]="(userDetails.name || '').split(' ')[0] || '—'" disabled readonly />
+          </div>
+          <div class="locked-field">
+            <label>Last name</label>
+            <input type="text" [value]="(userDetails.name || '').split(' ').slice(1).join(' ') || '—'" disabled readonly />
+          </div>
+          <div class="locked-field">
+            <label>Email</label>
+            <input type="text" [value]="userDetails.email || '—'" disabled readonly />
+          </div>
+          <div class="locked-field">
+            <label>Phone number</label>
+            <input type="text" [value]="userDetails.phoneNumber || '—'" disabled readonly />
+          </div>
+        </div>
+        <p class="locked-hint">
+          To change any of these, contact customer support on <strong>+254-118-266-951</strong>.
+        </p>
+      </div>
+
       @if(form){
         <form [formGroup]="form" class="row g-3">
 
@@ -96,9 +125,20 @@
             </div>
 
             <div class="col-md-12 mt-3">
-              <label class="map-label">Pin Your Location</label>
-              <p class="map-hint">Click on the map or drag the pin to set your location</p>
-              <div id="map" class="location-map"></div>
+              <label class="map-label">
+                Pin Your Location
+                @if (isPinLocked()) {
+                  <span class="lock-badge"><mat-icon>lock</mat-icon>Locked</span>
+                }
+              </label>
+              <p class="map-hint">
+                @if (isPinLocked()) {
+                  This pin was already set and cannot be moved. Contact support if it needs to change.
+                } @else {
+                  Click on the map or drag the pin to set your location.
+                }
+              </p>
+              <div id="map" class="location-map" [class.locked]="isPinLocked()"></div>
             </div>
           </div>
 

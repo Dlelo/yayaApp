@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environments';
 import { AuthService } from '../auth/auth.service';
+import { StorageService } from '../core/storage.service';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 
@@ -22,6 +23,7 @@ export class LoginService {
   private http = inject(HttpClient);
   private router = inject(Router);
   private authService: AuthService = inject(AuthService);
+  private storage = inject(StorageService);
 
   private currentUserSignal = signal<UserInfo | null>(null);
 
@@ -52,8 +54,6 @@ export class LoginService {
   }
 
   private storeUserData(token: string): void {
-    if (!this.isBrowser()) return;
-
     // Save token
     this.authService.setToken(token);
 
@@ -67,7 +67,7 @@ export class LoginService {
         role: decoded?.roles,
       };
 
-      localStorage.setItem('user', JSON.stringify(userInfo));
+      this.storage.set('user', JSON.stringify(userInfo));
       this.currentUserSignal.set(userInfo);
     } catch (error) {
       console.error('Failed to decode token:', error);
@@ -85,29 +85,21 @@ export class LoginService {
   }
 
   private loadUserFromStorage(): void {
-    if (!this.isBrowser()) return;
-
-    const userStr = localStorage.getItem('user');
+    const userStr = this.storage.get('user');
     if (userStr) {
       try {
         const user: UserInfo = JSON.parse(userStr);
         this.currentUserSignal.set(user);
       } catch (error) {
-        console.error('Error parsing user data from localStorage:', error);
+        console.error('Error parsing user data from storage:', error);
         this.clearStorage();
       }
     }
   }
 
-  private isBrowser(): boolean {
-    return typeof window !== 'undefined' && typeof localStorage !== 'undefined';
-  }
-
   private clearStorage(): void {
-    if (this.isBrowser()) {
-      this.authService.clearToken();
-      localStorage.removeItem('user');
-    }
+    this.authService.clearToken();
+    this.storage.remove('user');
   }
 
   getCurrentUser(): UserInfo | null {

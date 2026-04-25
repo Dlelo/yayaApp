@@ -152,6 +152,24 @@ $orange: #e27220;
   width: 100%;
 }
 
+.forgot-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.forgot-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: $cyan;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .submit-btn {
   background: $cyan !important;
   color: #fff !important;

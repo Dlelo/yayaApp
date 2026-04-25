@@ -1,33 +1,56 @@
-<div class="container my-4">
-  <mat-card class="p-4 shadow-sm">
-    <h2 class="mb-3 text-center">Hire Request</h2>
-    <p class="lead text-center">
-      You are about to hire <strong>{{ houseHelpName }}</strong>.
-    </p>
-
-    <div class="d-flex flex-column align-items-center gap-3 mt-4">
-      @if (isSubscribed) {
-        <button
-          mat-raised-button
-          color="primary"
-          class="px-4"
-          (click)="confirmHire()"
-        >
-          Confirm Hire
-        </button>
-      } @else {
-        <p class="text-muted text-center">
-          You need to subscribe before hiring a househelp.
-        </p>
-        <button
-          mat-raised-button
-          color="accent"
-          class="px-4"
-          (click)="redirectToPay()"
-        >
-          Subscribe & Pay
-        </button>
-      }
+<div class="hire-page">
+  <mat-card class="hire-card">
+    <div class="hire-header">
+      <mat-icon class="hire-icon">handshake</mat-icon>
+      <h2>Hire Request</h2>
+      <p class="subtitle">
+        You are requesting to hire <strong>{{ houseHelpName }}</strong>.
+      </p>
     </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="hire-form">
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Preferred start date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          [min]="minDate"
+          formControlName="startDate"
+          readonly
+        />
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        @if (form.controls['startDate'].hasError('required') && form.controls['startDate'].touched) {
+          <mat-error>Please pick a start date.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Message to the house help</mat-label>
+        <textarea
+          matInput
+          formControlName="message"
+          rows="5"
+          placeholder="Tell them about your home, working hours, expectations..."
+        ></textarea>
+        <mat-hint align="end">{{ form.controls['message'].value?.length || 0 }}/500</mat-hint>
+        @if (form.controls['message'].hasError('required') && form.controls['message'].touched) {
+          <mat-error>Please write a short message.</mat-error>
+        }
+        @if (form.controls['message'].hasError('minlength')) {
+          <mat-error>Message must be at least 10 characters.</mat-error>
+        }
+      </mat-form-field>
+
+      <button
+        mat-flat-button
+        color="primary"
+        class="submit-btn"
+        type="submit"
+        [disabled]="submitting()"
+      >
+        {{ submitting() ? 'Sending…' : 'Send hire request' }}
+      </button>
+    </form>
   </mat-card>
 </div>

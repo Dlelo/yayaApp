@@ -1,0 +1,69 @@
+<div class="review-page">
+  <mat-card class="review-card">
+    <div class="review-header">
+      <mat-icon class="review-icon">rate_review</mat-icon>
+      <h2>Review {{ houseHelpName }}</h2>
+      <p class="subtitle">Share an honest experience to help other homeowners.</p>
+    </div>
+
+    <div
+      class="stars"
+      role="radiogroup"
+      aria-label="Rating"
+      (mouseleave)="clearHover()"
+    >
+      @for (i of stars; track i) {
+        <button
+          type="button"
+          class="star-btn"
+          [attr.aria-label]="i + ' star'"
+          [attr.aria-checked]="rating() === i"
+          role="radio"
+          (click)="setRating(i)"
+          (mouseenter)="onHover(i)"
+        >
+          <mat-icon [class.filled]="starState(i) === 'filled'">
+            {{ starState(i) === 'filled' ? 'star' : 'star_border' }}
+          </mat-icon>
+        </button>
+      }
+    </div>
+    <div class="rating-text">
+      @if (rating() === 0) { Tap a star to rate }
+      @else if (rating() === 1) { Poor }
+      @else if (rating() === 2) { Fair }
+      @else if (rating() === 3) { Good }
+      @else if (rating() === 4) { Very good }
+      @else { Excellent }
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="review-form">
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Your review</mat-label>
+        <textarea
+          matInput
+          formControlName="comment"
+          rows="5"
+          placeholder="Describe punctuality, communication, quality of work..."
+        ></textarea>
+        <mat-hint align="end">{{ form.controls['comment'].value?.length || 0 }}/500</mat-hint>
+        @if (form.controls['comment'].hasError('required') && form.controls['comment'].touched) {
+          <mat-error>Please write a short review.</mat-error>
+        }
+        @if (form.controls['comment'].hasError('minlength')) {
+          <mat-error>Review must be at least 10 characters.</mat-error>
+        }
+      </mat-form-field>
+
+      <button
+        mat-flat-button
+        color="primary"
+        class="submit-btn"
+        type="submit"
+        [disabled]="submitting()"
+      >
+        {{ submitting() ? 'Submitting…' : 'Submit review' }}
+      </button>
+    </form>
+  </mat-card>
+</div>

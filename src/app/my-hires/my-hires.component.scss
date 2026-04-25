@@ -1,0 +1,151 @@
+.my-hires-page {
+  padding: 1rem;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+
+  h2 {
+    margin: 0;
+    color: #1a3c34;
+    font-weight: 700;
+  }
+  .subtitle {
+    margin: 0.25rem 0 0;
+    color: #6b7280;
+  }
+
+  .refresh-btn {
+    flex-shrink: 0;
+    color: #00ACC1;
+  }
+}
+
+.state-center {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+.state-card {
+  text-align: center;
+  padding: 2rem 1.25rem;
+  border-radius: 16px;
+
+  .state-icon {
+    font-size: 56px;
+    width: 56px;
+    height: 56px;
+    color: #00ACC1;
+    &.error {
+      color: #d32f2f;
+    }
+  }
+  h3 {
+    margin: 0.5rem 0 0.25rem;
+  }
+  p {
+    color: #6b7280;
+    margin-bottom: 1rem;
+  }
+}
+
+.hire-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.hire-card {
+  padding: 1rem;
+  border-radius: 14px;
+  border-left: 4px solid #00ACC1;
+}
+
+.hire-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+
+  .hire-id {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+
+    mat-icon {
+      color: #00ACC1;
+    }
+    .name {
+      font-weight: 600;
+      color: #1a3c34;
+    }
+    .meta {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+  }
+}
+
+.status-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+
+  &.status-pending {
+    background: #fff3e0;
+    color: #e27220;
+  }
+  &.status-accepted {
+    background: #e0f7fa;
+    color: #00838f;
+  }
+  &.status-completed {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  &.status-rejected,
+  &.status-cancelled {
+    background: #ffebee;
+    color: #c62828;
+  }
+}
+
+.hire-body {
+  margin: 0.75rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    color: #374151;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+    &.message span {
+      white-space: pre-wrap;
+    }
+  }
+}
+
+.hire-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}

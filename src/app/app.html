@@ -1,53 +1,68 @@
-<mat-toolbar class="app-toolbar" color="primary">
-  <div class="toolbar-inner">
-    <!-- Logo -->
-    <div class="logo-wrap" (click)="navigate('/')">
-      <span class="logo-text">yayaConnectApp</span>
+@if (!isNative) {
+  <mat-toolbar class="app-toolbar" color="primary">
+    <div class="toolbar-inner">
+      <!-- Logo -->
+      <div class="logo-wrap" (click)="navigate('/')">
+        <span class="logo-text">yayaConnectApp</span>
+      </div>
+
+      <span class="spacer"></span>
+
+      <!-- Nav Links -->
+      <nav class="nav-links">
+        <button mat-button class="nav-btn" (click)="navigate('/')">
+          <mat-icon>home</mat-icon>
+          Home
+        </button>
+
+        @if(isLoggedIn()) {
+          @if(userId(); as userId) {
+            <button mat-button class="nav-btn" (click)="navigate(`account/${userId}`)">
+              <mat-icon>account_circle</mat-icon>
+              Account
+            </button>
+          }
+
+          @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_HOMEOWNER') || roles().includes('ROLE_SALES') || roles().includes('ROLE_SECURITY')) {
+            <button mat-button class="nav-btn" (click)="navigate('/listing')">
+              <mat-icon>people</mat-icon>
+              Browse
+            </button>
+          }
+
+          @if(roles().includes('ROLE_HOMEOWNER')) {
+            <button mat-button class="nav-btn" (click)="navigate('/my-hires')">
+              <mat-icon>history</mat-icon>
+              My Hires
+            </button>
+          }
+
+          @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_SALES') || roles().includes('ROLE_SECURITY')) {
+            <button mat-button class="nav-btn" (click)="navigate('/dashboard')">
+              <mat-icon>dashboard</mat-icon>
+              Dashboard
+            </button>
+          }
+
+          <button mat-stroked-button class="logout-btn" (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            Sign Out
+          </button>
+        } @else {
+          <button mat-button class="nav-btn" (click)="navigate('/login')">Sign In</button>
+          <button mat-flat-button class="signup-btn" (click)="navigate('/register')">
+            Get Started
+          </button>
+        }
+      </nav>
     </div>
+  </mat-toolbar>
+}
 
-    <span class="spacer"></span>
+<app-offline-banner></app-offline-banner>
 
-    <!-- Nav Links -->
-    <nav class="nav-links">
-      <button mat-button class="nav-btn" (click)="navigate('/')">
-        <mat-icon>home</mat-icon>
-        Home
-      </button>
+<main class="app-content" [class.is-native]="isNative">
+  <router-outlet></router-outlet>
+</main>
 
-      @if(isLoggedIn()) {
-        @if(userId(); as userId) {
-          <button mat-button class="nav-btn" (click)="navigate(`account/${userId}`)">
-            <mat-icon>account_circle</mat-icon>
-            Account
-          </button>
-        }
-
-        @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_HOMEOWNER') || roles().includes('ROLE_SALES') || roles().includes('ROLE_SECURITY')) {
-          <button mat-button class="nav-btn" (click)="navigate('/listing')">
-            <mat-icon>people</mat-icon>
-            Browse
-          </button>
-        }
-
-        @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_SALES') || roles().includes('ROLE_SECURITY')) {
-          <button mat-button class="nav-btn" (click)="navigate('/dashboard')">
-            <mat-icon>dashboard</mat-icon>
-            Dashboard
-          </button>
-        }
-
-        <button mat-stroked-button class="logout-btn" (click)="logout()">
-          <mat-icon>logout</mat-icon>
-          Sign Out
-        </button>
-      } @else {
-        <button mat-button class="nav-btn" (click)="navigate('/login')">Sign In</button>
-        <button mat-flat-button class="signup-btn" (click)="navigate('/register')">
-          Get Started
-        </button>
-      }
-    </nav>
-  </div>
-</mat-toolbar>
-
-<router-outlet></router-outlet>
+<app-mobile-tab-bar></app-mobile-tab-bar>

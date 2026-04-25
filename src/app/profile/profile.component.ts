@@ -158,4 +158,19 @@ export class ProfileComponent implements OnInit {
       this.router.navigate([route]);
     }
   }
+
+  navigateToHire(): void {
+    this.houseHelpDetails$.pipe(take(1)).subscribe(houseHelp => {
+      if (!houseHelp) {
+        this.snackBar.open('Unable to load house help details', 'Close', { duration: 3000 });
+        return;
+      }
+      this.router.navigate(['/hire'], {
+        queryParams: {
+          houseHelpId: houseHelp.id,
+          name: houseHelp.user?.name || 'House Help',
+        },
+      });
+    });
+  }
 }

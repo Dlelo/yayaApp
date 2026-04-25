@@ -46,8 +46,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "8kB",
+                  "maximumError": "16kB"
                 }
               ],
               "outputHashing": "all"
@@ -56,6 +56,30 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "mobile": {
+              "outputMode": "static",
+              "ssr": false,
+              "prerender": false,
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/app/app.routes.server.ts",
+                  "with": "src/app/app.routes.server.mobile.ts"
+                }
+              ],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "3mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "8kB",
+                  "maximumError": "16kB"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"

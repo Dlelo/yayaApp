@@ -37,6 +37,11 @@ export class AccountDetailsService {
     return this.http.get<HireRequest[]>(`${this.apiUrl}/hire-requests/househelp/${houseHelpId}`);
   }
 
+  /** Payment history for a user (newest first). Self-or-admin scoped server-side. */
+  getUserPayments(userId: number): Observable<PaymentRecord[]> {
+    return this.http.get<PaymentRecord[]>(`${this.apiUrl}/payments/user/${userId}`);
+  }
+
   /** Househelps assigned to an agent */
   getAgentHouseHelps(agentId: number): Observable<AgentHouseHelp[]> {
     return this.http.get<AgentHouseHelp[]>(`${this.apiUrl}/agent/${agentId}/househelps`);
