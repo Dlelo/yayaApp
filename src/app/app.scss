@@ -118,9 +118,12 @@ $dark: #1a3c34;
   }
 }
 
-/* Hamburger trigger — hidden on desktop, shown below 900px. */
+/* Hamburger trigger — hidden on desktop, shown below 1024px. */
 .hamburger {
   display: none;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
   background: rgba(255,255,255,0.15);
   border: 0;
   color: #fff;
@@ -146,7 +149,10 @@ $dark: #1a3c34;
 .mobile-drawer {
   display: none;
   position: fixed;
-  top: 64px;
+  /* Anchor at top: 0 and translate by full self-height so the drawer is
+     guaranteed to sit fully above the viewport when closed, regardless of
+     how many menu items it contains. */
+  top: 0;
   left: 0;
   right: 0;
   z-index: 999;
@@ -155,10 +161,19 @@ $dark: #1a3c34;
   padding: 0.75rem;
   background: $dark;
   box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-  transform: translateY(-110%);
-  transition: transform 0.22s ease;
+  transform: translateY(-100%);
+  /* Delay visibility flip until the slide-out finishes so we keep a clean exit. */
+  transition: transform 0.22s ease, visibility 0s 0.22s;
+  visibility: hidden;
+  pointer-events: none;
 
-  &.is-open { transform: translateY(0); }
+  &.is-open {
+    /* Slide into view, parked just below the 64px toolbar. */
+    transform: translateY(64px);
+    visibility: visible;
+    pointer-events: auto;
+    transition: transform 0.22s ease, visibility 0s 0s;
+  }
 
   .nav-btn,
   .logout-btn,
@@ -185,9 +200,9 @@ $dark: #1a3c34;
   z-index: 998;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   /* Hide the inline desktop nav, expose the hamburger + drawer. */
-  .nav-links--desktop { display: none !important; }
+  .nav-links.nav-links--desktop { display: none !important; }
   .hamburger { display: inline-flex; }
   .mobile-drawer { display: flex; }
 }
