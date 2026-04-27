@@ -35,9 +35,19 @@ export class App {
   userId = this.loginService.userId;
   roles = this.loginService.userRoles;
   readonly isNative = this.platform.isNative();
+  /** Toggles the mobile/tablet hamburger drawer in the desktop toolbar. */
+  readonly navOpen = signal(false);
 
   navigate(path: string) {
     this.router.navigate([path]);
+  }
+
+  toggleNav(): void {
+    this.navOpen.update(v => !v);
+  }
+
+  closeNav(): void {
+    this.navOpen.set(false);
   }
 
   logout(): void {

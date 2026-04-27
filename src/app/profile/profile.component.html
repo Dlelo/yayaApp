@@ -192,6 +192,12 @@
                   {{ houseHelp.preferences?.okayWithPets ? 'Yes' : 'No' }}
                 </strong>
               </div>
+              <div>
+                <span>Okay with uniform</span>
+                <strong [ngClass]="houseHelp.preferences?.okayWithUniform ? 'is-yes' : 'is-no'">
+                  {{ houseHelp.preferences?.okayWithUniform ? 'Yes' : 'No' }}
+                </strong>
+              </div>
               @if (houseHelp.preferences.preferredMaxChildren) {
                 <div><span>Max children</span><strong>{{ houseHelp.preferences.preferredMaxChildren }}</strong></div>
               }

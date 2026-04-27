@@ -2,54 +2,69 @@
   <mat-toolbar class="app-toolbar" color="primary">
     <div class="toolbar-inner">
       <!-- Logo -->
-      <div class="logo-wrap" (click)="navigate('/')">
+      <div class="logo-wrap" (click)="navigate('/'); navOpen.set(false)">
         <span class="logo-text">yayaConnectApp</span>
       </div>
 
       <span class="spacer"></span>
 
+      <!-- Hamburger trigger (visible only on small screens via CSS) -->
+      <button
+        type="button"
+        class="hamburger"
+        [attr.aria-expanded]="navOpen()"
+        aria-label="Toggle navigation"
+        (click)="toggleNav()"
+      >
+        <mat-icon>{{ navOpen() ? 'close' : 'menu' }}</mat-icon>
+      </button>
+
       <!-- Nav Links -->
-      <nav class="nav-links">
-        <button mat-button class="nav-btn" (click)="navigate('/')">
+      <nav class="nav-links" [class.is-open]="navOpen()">
+        <button mat-button class="nav-btn" (click)="navigate('/'); navOpen.set(false)">
           <mat-icon>home</mat-icon>
           Home
         </button>
 
         @if(isLoggedIn()) {
           @if(userId(); as userId) {
-            <button mat-button class="nav-btn" (click)="navigate(`account/${userId}`)">
+            <button mat-button class="nav-btn" (click)="navigate(`account/${userId}`); navOpen.set(false)">
               <mat-icon>account_circle</mat-icon>
               Account
             </button>
           }
 
           @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_HOMEOWNER') || roles().includes('ROLE_SALES') || roles().includes('ROLE_SECURITY')) {
-            <button mat-button class="nav-btn" (click)="navigate('/listing')">
+            <button mat-button class="nav-btn" (click)="navigate('/listing'); navOpen.set(false)">
               <mat-icon>people</mat-icon>
               Browse
             </button>
           }
 
           @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_SALES') || roles().includes('ROLE_SECURITY')) {
-            <button mat-button class="nav-btn" (click)="navigate('/dashboard')">
+            <button mat-button class="nav-btn" (click)="navigate('/dashboard'); navOpen.set(false)">
               <mat-icon>dashboard</mat-icon>
               Dashboard
             </button>
           }
 
-          <button mat-stroked-button class="logout-btn" (click)="logout()">
+          <button mat-stroked-button class="logout-btn" (click)="logout(); navOpen.set(false)">
             <mat-icon>logout</mat-icon>
             Sign Out
           </button>
         } @else {
-          <button mat-button class="nav-btn" (click)="navigate('/login')">Sign In</button>
-          <button mat-flat-button class="signup-btn" (click)="navigate('/register')">
+          <button mat-button class="nav-btn" (click)="navigate('/login'); navOpen.set(false)">Sign In</button>
+          <button mat-flat-button class="signup-btn" (click)="navigate('/register'); navOpen.set(false)">
             Get Started
           </button>
         }
       </nav>
     </div>
   </mat-toolbar>
+
+  @if (navOpen()) {
+    <div class="nav-backdrop" (click)="navOpen.set(false)"></div>
+  }
 }
 
 <app-offline-banner></app-offline-banner>

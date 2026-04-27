@@ -52,6 +52,7 @@ interface HouseHelpPreferences {
   preferredServices?: string[];
   preferredReligion?: string;
   okayWithPets?: boolean;
+  okayWithUniform?: boolean;
   minSalary?: number | null;
   maxSalary?: number | null;
 }
@@ -89,6 +90,7 @@ interface HomeOwnerPreferences {
   hasPets?: boolean;
   religionPreference?: string;
   requiresSecurityCleared?: boolean;
+  requiresUniform?: boolean;
   preferredMaxAge?: number | null;
   preferredMinAge?: number | null;
   minSalary?: number | null;
