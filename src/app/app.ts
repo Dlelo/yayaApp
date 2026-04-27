@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,6 +19,7 @@ import { OfflineBannerComponent } from './mobile-shell/offline-banner.component'
     MatButtonModule,
     MatIconModule,
     RouterModule,
+    NgTemplateOutlet,
     MobileTabBarComponent,
     OfflineBannerComponent,
   ],

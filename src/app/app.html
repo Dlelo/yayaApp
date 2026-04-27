@@ -2,13 +2,18 @@
   <mat-toolbar class="app-toolbar" color="primary">
     <div class="toolbar-inner">
       <!-- Logo -->
-      <div class="logo-wrap" (click)="navigate('/'); navOpen.set(false)">
+      <div class="logo-wrap" (click)="navigate('/'); closeNav()">
         <span class="logo-text">yayaConnectApp</span>
       </div>
 
       <span class="spacer"></span>
 
-      <!-- Hamburger trigger (visible only on small screens via CSS) -->
+      <!-- Inline nav (desktop only) -->
+      <nav class="nav-links nav-links--desktop">
+        <ng-container *ngTemplateOutlet="navContent"></ng-container>
+      </nav>
+
+      <!-- Hamburger trigger (mobile only) -->
       <button
         type="button"
         class="hamburger"
@@ -18,53 +23,58 @@
       >
         <mat-icon>{{ navOpen() ? 'close' : 'menu' }}</mat-icon>
       </button>
-
-      <!-- Nav Links -->
-      <nav class="nav-links" [class.is-open]="navOpen()">
-        <button mat-button class="nav-btn" (click)="navigate('/'); navOpen.set(false)">
-          <mat-icon>home</mat-icon>
-          Home
-        </button>
-
-        @if(isLoggedIn()) {
-          @if(userId(); as userId) {
-            <button mat-button class="nav-btn" (click)="navigate(`account/${userId}`); navOpen.set(false)">
-              <mat-icon>account_circle</mat-icon>
-              Account
-            </button>
-          }
-
-          @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_HOMEOWNER') || roles().includes('ROLE_SALES') || roles().includes('ROLE_SECURITY')) {
-            <button mat-button class="nav-btn" (click)="navigate('/listing'); navOpen.set(false)">
-              <mat-icon>people</mat-icon>
-              Browse
-            </button>
-          }
-
-          @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_SALES') || roles().includes('ROLE_SECURITY')) {
-            <button mat-button class="nav-btn" (click)="navigate('/dashboard'); navOpen.set(false)">
-              <mat-icon>dashboard</mat-icon>
-              Dashboard
-            </button>
-          }
-
-          <button mat-stroked-button class="logout-btn" (click)="logout(); navOpen.set(false)">
-            <mat-icon>logout</mat-icon>
-            Sign Out
-          </button>
-        } @else {
-          <button mat-button class="nav-btn" (click)="navigate('/login'); navOpen.set(false)">Sign In</button>
-          <button mat-flat-button class="signup-btn" (click)="navigate('/register'); navOpen.set(false)">
-            Get Started
-          </button>
-        }
-      </nav>
     </div>
   </mat-toolbar>
 
+  <!-- Mobile drawer — sibling of the toolbar so the sticky/fixed stacking
+       context doesn't trap it. -->
+  <nav class="mobile-drawer" [class.is-open]="navOpen()" aria-label="Mobile navigation">
+    <ng-container *ngTemplateOutlet="navContent"></ng-container>
+  </nav>
   @if (navOpen()) {
-    <div class="nav-backdrop" (click)="navOpen.set(false)"></div>
+    <div class="nav-backdrop" (click)="closeNav()"></div>
   }
+
+  <!-- Shared nav content used by both the inline desktop nav and the drawer. -->
+  <ng-template #navContent>
+    <button mat-button class="nav-btn" (click)="navigate('/'); closeNav()">
+      <mat-icon>home</mat-icon>
+      Home
+    </button>
+
+    @if(isLoggedIn()) {
+      @if(userId(); as userId) {
+        <button mat-button class="nav-btn" (click)="navigate('account/' + userId); closeNav()">
+          <mat-icon>account_circle</mat-icon>
+          Account
+        </button>
+      }
+
+      @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_HOMEOWNER') || roles().includes('ROLE_SALES') || roles().includes('ROLE_SECURITY')) {
+        <button mat-button class="nav-btn" (click)="navigate('/listing'); closeNav()">
+          <mat-icon>people</mat-icon>
+          Browse
+        </button>
+      }
+
+      @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_SALES') || roles().includes('ROLE_SECURITY')) {
+        <button mat-button class="nav-btn" (click)="navigate('/dashboard'); closeNav()">
+          <mat-icon>dashboard</mat-icon>
+          Dashboard
+        </button>
+      }
+
+      <button mat-stroked-button class="logout-btn" (click)="logout(); closeNav()">
+        <mat-icon>logout</mat-icon>
+        Sign Out
+      </button>
+    } @else {
+      <button mat-button class="nav-btn" (click)="navigate('/login'); closeNav()">Sign In</button>
+      <button mat-flat-button class="signup-btn" (click)="navigate('/register'); closeNav()">
+        Get Started
+      </button>
+    }
+  </ng-template>
 }
 
 <app-offline-banner></app-offline-banner>

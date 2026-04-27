@@ -121,11 +121,11 @@ $dark: #1a3c34;
 /* Hamburger trigger — hidden on desktop, shown below 900px. */
 .hamburger {
   display: none;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.15);
   border: 0;
   color: #fff;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 8px;
   cursor: pointer;
   align-items: center;
@@ -133,43 +133,32 @@ $dark: #1a3c34;
   transition: background 0.15s ease;
 
   mat-icon {
-    font-size: 24px;
-    width: 24px;
-    height: 24px;
+    font-size: 26px;
+    width: 26px;
+    height: 26px;
   }
 
-  &:hover { background: rgba(255,255,255,0.2); }
+  &:hover { background: rgba(255,255,255,0.25); }
 }
 
-/* Backdrop while the drawer is open. */
-.nav-backdrop {
+/* Mobile slide-down drawer. Sibling of the toolbar so the sticky/fixed
+   stacking context doesn't trap it. Hidden by default on every breakpoint. */
+.mobile-drawer {
+  display: none;
   position: fixed;
-  inset: 64px 0 0;
-  background: rgba(15, 23, 42, 0.45);
-  z-index: 99;
-}
+  top: 64px;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: $dark;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  transform: translateY(-110%);
+  transition: transform 0.22s ease;
 
-@media (max-width: 900px) {
-  .hamburger { display: inline-flex; }
-
-  /* Collapse the inline nav into a drop-down panel anchored under the toolbar. */
-  .nav-links {
-    position: fixed;
-    top: 64px;
-    right: 0;
-    left: 0;
-    z-index: 101;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.25rem;
-    padding: 0.75rem;
-    background: $dark;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-    transform: translateY(-110%);
-    transition: transform 0.2s ease;
-
-    &.is-open { transform: translateY(0); }
-  }
+  &.is-open { transform: translateY(0); }
 
   .nav-btn,
   .logout-btn,
@@ -186,6 +175,21 @@ $dark: #1a3c34;
   .logout-btn mat-icon {
     display: inline-flex;
   }
+}
+
+/* Backdrop while the drawer is open. */
+.nav-backdrop {
+  position: fixed;
+  inset: 64px 0 0;
+  background: rgba(15, 23, 42, 0.45);
+  z-index: 998;
+}
+
+@media (max-width: 900px) {
+  /* Hide the inline desktop nav, expose the hamburger + drawer. */
+  .nav-links--desktop { display: none !important; }
+  .hamburger { display: inline-flex; }
+  .mobile-drawer { display: flex; }
 }
 
 @media (max-width: 480px) {
