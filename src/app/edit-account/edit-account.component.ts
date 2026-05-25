@@ -310,6 +310,7 @@ export class EditAccountDetailsComponent implements OnInit {
           homeCounty: [user.houseHelp?.homeCounty || ''],
           currentLocation: [user.houseHelp?.currentLocation || ''],
           homeLocation: [user.houseHelp?.homeLocation || ''],
+          exactHomeLocation: [user.houseHelp?.exactHomeLocation || ''],
           contactPersons: [user.houseHelp?.contactPersons || ''],
           availability: [user.houseHelp?.availability || ''],
           experienceSummary: [user.houseHelp?.experienceSummary || ''],

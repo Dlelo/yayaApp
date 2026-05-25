@@ -12,6 +12,7 @@ interface HouseHelp {
   currentLocation: string;
   goodConduct: string;
   homeLocation: string;
+  exactHomeLocation?: string;
   languages: string[];
   levelOfEducation: string;
   medicalReport: string | null;
