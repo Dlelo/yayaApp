@@ -311,6 +311,8 @@ export class EditAccountDetailsComponent implements OnInit {
           currentLocation: [user.houseHelp?.currentLocation || ''],
           homeLocation: [user.houseHelp?.homeLocation || ''],
           exactHomeLocation: [user.houseHelp?.exactHomeLocation || ''],
+          chiefName: [user.houseHelp?.chiefName || ''],
+          chiefPhoneNumber: [user.houseHelp?.chiefPhoneNumber || ''],
           contactPersons: [user.houseHelp?.contactPersons || ''],
           availability: [user.houseHelp?.availability || ''],
           experienceSummary: [user.houseHelp?.experienceSummary || ''],

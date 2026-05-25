@@ -317,11 +317,11 @@
               <span class="hh-salary__label">Salary expectation</span>
               <span class="hh-salary__amount">
                 @if (houseHelp.preferences.minSalary && houseHelp.preferences.maxSalary) {
-                  KES {{ houseHelp.preferences.minSalary | number:'1.0-0' }} – {{ houseHelp.preferences.maxSalary | number:'1.0-0' }}
+                  KES {{ houseHelp.preferences.minSalary | number:'1.0-0' }}K – {{ houseHelp.preferences.maxSalary | number:'1.0-0' }}K
                 } @else if (houseHelp.preferences.minSalary) {
-                  From KES {{ houseHelp.preferences.minSalary | number:'1.0-0' }}
+                  From KES {{ houseHelp.preferences.minSalary | number:'1.0-0' }}K
                 } @else {
-                  Up to KES {{ houseHelp.preferences.maxSalary | number:'1.0-0' }}
+                  Up to KES {{ houseHelp.preferences.maxSalary | number:'1.0-0' }}K
                 }
               </span>
               <span class="hh-salary__per">per month · negotiable</span>

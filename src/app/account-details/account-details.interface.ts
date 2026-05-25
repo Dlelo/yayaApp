@@ -13,6 +13,8 @@ interface HouseHelp {
   goodConduct: string;
   homeLocation: string;
   exactHomeLocation?: string;
+  chiefName?: string;
+  chiefPhoneNumber?: string;
   languages: string[];
   levelOfEducation: string;
   medicalReport: string | null;
