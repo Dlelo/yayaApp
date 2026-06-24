@@ -64,6 +64,7 @@ export class RegisterHousehelpComponent {
     lastName: new FormControl('', [Validators.required, Validators.minLength(2)]),
     email: new FormControl('', [Validators.email]),
     phoneNumber: new FormControl('', [Validators.required, phoneNumberValidator]),
+    idNumber: new FormControl(''),
     password: new FormControl('', [Validators.required, Validators.minLength(6)]),
     confirmPassword: new FormControl('', [Validators.required]),
     termsAccepted: new FormControl(false, [Validators.requiredTrue]),
@@ -75,11 +76,12 @@ export class RegisterHousehelpComponent {
       return;
     }
 
-    const { firstName, lastName, email, phoneNumber, password } = this.form.value;
+    const { firstName, lastName, email, phoneNumber, idNumber, password } = this.form.value;
     const payload = {
       name: `${firstName!.trim()} ${lastName!.trim()}`,
       email: email ?? '',
       phoneNumber: phoneNumber!,
+      idNumber: idNumber?.trim() || undefined,
       password: password!,
     };
 
