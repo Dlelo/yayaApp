@@ -85,8 +85,10 @@ export class SearchService {
 
   // Backend: GET /househelp/{id}/pdf — returns PDF blob; auth or guest paymentRef query param
   downloadProfilePdf(houseHelpId: number, paymentRef?: string): Observable<Blob> {
-    const params = paymentRef ? { paymentRef } : {};
-    return this.http.get(`${this.base}/${houseHelpId}/pdf`, { responseType: 'blob', params });
+    const url = paymentRef
+      ? `${this.base}/${houseHelpId}/pdf?paymentRef=${encodeURIComponent(paymentRef)}`
+      : `${this.base}/${houseHelpId}/pdf`;
+    return this.http.get(url, { responseType: 'blob' });
   }
 
   // Backend: POST /guest/consent — logs name, nationalId, phone, userAgent, lat/lng, timestamp (no auth)
