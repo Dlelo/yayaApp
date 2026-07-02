@@ -345,10 +345,33 @@
             </li>
           </ul>
 
+          <!-- Phone number — KES 500 one-time unlock -->
+          @if (phoneNumber()) {
+            <div class="hh-phone-unlocked">
+              <mat-icon>phone</mat-icon>
+              <div>
+                <span class="hh-phone-label">Phone Number</span>
+                <a class="hh-phone-val" [href]="'tel:' + phoneNumber()">{{ phoneNumber() }}</a>
+              </div>
+            </div>
+          } @else {
+            <button mat-stroked-button class="hh-cta hh-cta--phone" (click)="openPhoneUnlock()">
+              <mat-icon>phone_locked</mat-icon>
+              View Phone — KSh 500
+            </button>
+            <p class="hh-cta__hint">One-time M-Pesa unlock · National ID never disclosed</p>
+          }
+
           <button mat-flat-button class="hh-cta hh-cta--primary hh-cta--lg" (click)="navigateToPay('/pay')">
             <mat-icon>handshake</mat-icon>Hire {{ nameVal.split(' ')[0] }}
           </button>
           <p class="hh-cta__hint">Secure payment via M-Pesa · {{ nameVal.split(' ')[0] }} will be notified.</p>
+
+          <!-- PDF download — KES 250 -->
+          <button mat-stroked-button class="hh-cta hh-cta--pdf" (click)="openPdfDownload()">
+            <mat-icon>picture_as_pdf</mat-icon>
+            Download PDF — KSh 250
+          </button>
         </div>
       </aside>
     </div>

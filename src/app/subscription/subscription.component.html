@@ -1,0 +1,87 @@
+<div class="sub-page">
+
+  <!-- INFO STATE -->
+  @if (state() === 'info' || state() === 'payment') {
+    <div class="sub-hero">
+      <div class="sub-hero-inner">
+        <div class="plan-badge">Homeowner Plus</div>
+        <h1 class="plan-price">KSh 999 <span>/year</span></h1>
+        <p class="plan-tagline">Unlimited access to verified house help profiles — no per-search fees.</p>
+
+        <ul class="plan-features">
+          <li><mat-icon>all_inclusive</mat-icon> Unlimited profile unlocks</li>
+          <li><mat-icon>emergency</mat-icon> Emergency nanny access</li>
+          <li><mat-icon>verified_user</mat-icon> Full contact & verification details</li>
+          <li><mat-icon>download</mat-icon> Download PDF profiles</li>
+          <li><mat-icon>support_agent</mat-icon> Priority support</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sub-form-wrap">
+      @if (state() === 'info') {
+        <div class="plan-card">
+          <h2>Subscribe Now</h2>
+          <p>Pay once a year and search as much as you need. No hidden fees.</p>
+          <button mat-flat-button class="subscribe-btn" (click)="startPayment()">
+            <mat-icon>payment</mat-icon> Subscribe for KSh 999/year
+          </button>
+          <p class="or-text">— or pay KSh 500 per profile on the search page —</p>
+          <button mat-stroked-button (click)="goToSearch()">Browse House Help</button>
+        </div>
+      }
+
+      @if (state() === 'payment') {
+        <div class="plan-card">
+          <h2>Enter M-Pesa Number</h2>
+          <p>A payment prompt of <strong>KSh 999</strong> will be sent to your phone.</p>
+          <mat-form-field appearance="outline" class="full-field">
+            <mat-label>M-Pesa Phone Number</mat-label>
+            <mat-icon matPrefix>phone</mat-icon>
+            <input matInput [formControl]="phoneControl" placeholder="07XXXXXXXX or +254XXXXXXXXX" />
+            @if (phoneControl.hasError('required') && phoneIsTouched) {
+              <mat-error>Phone number is required</mat-error>
+            }
+            @if (phoneControl.hasError('pattern')) {
+              <mat-error>Enter a valid Kenyan phone number</mat-error>
+            }
+          </mat-form-field>
+          @if (errorMsg()) {
+            <p class="error-msg">{{ errorMsg() }}</p>
+          }
+          <div class="btn-row">
+            <button mat-stroked-button (click)="state.set('info')">Back</button>
+            <button mat-flat-button class="subscribe-btn" [disabled]="phoneControl.invalid" (click)="pay()">
+              <mat-icon>payment</mat-icon> Pay KSh 999
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- PROCESSING STATE -->
+  @if (state() === 'processing') {
+    <div class="sub-processing">
+      <mat-spinner diameter="56"></mat-spinner>
+      <h2>Waiting for M-Pesa Confirmation</h2>
+      <p>Check your phone and enter your PIN. This may take up to 60 seconds.</p>
+    </div>
+  }
+
+  <!-- ACTIVE STATE -->
+  @if (state() === 'active') {
+    <div class="sub-active">
+      <div class="active-icon"><mat-icon>verified</mat-icon></div>
+      <h2>Homeowner Plus Active</h2>
+      @if (subscriptionStatus()?.endDate) {
+        <p class="expiry">Expires: {{ subscriptionStatus()!.endDate | slice:0:10 }}</p>
+      }
+      <p>You have unlimited access to all house help profiles.</p>
+      <button mat-flat-button class="subscribe-btn" (click)="goToSearch()">
+        <mat-icon>search</mat-icon> Browse House Help
+      </button>
+    </div>
+  }
+
+</div>

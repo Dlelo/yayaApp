@@ -1,3 +1,31 @@
+<!-- Terms & Conditions Modal (shown before first search) -->
+@if (showTermsModal) {
+  <div class="terms-overlay">
+    <div class="terms-modal">
+      <mat-icon class="terms-icon">gavel</mat-icon>
+      <h2>Before You Search</h2>
+      <p>
+        House help profiles are shared to help families find verified domestic workers.
+        By continuing, you agree to our
+        <a href="/terms-of-use" target="_blank">Terms of Use</a> and
+        <a href="/privacy-policy" target="_blank">Privacy Policy</a>.
+      </p>
+      <ul class="terms-points">
+        <li><mat-icon>check</mat-icon> Contact details are for legitimate hiring only</li>
+        <li><mat-icon>check</mat-icon> Do not share or sell any information obtained here</li>
+        <li><mat-icon>check</mat-icon> Personal data is protected under Kenya's Data Protection Act</li>
+        <li><mat-icon>check</mat-icon> Misuse of data may result in legal action</li>
+      </ul>
+      <div class="terms-actions">
+        <button mat-stroked-button (click)="declineTerms()">Decline</button>
+        <button mat-flat-button class="accept-btn" (click)="acceptTerms()">
+          <mat-icon>check_circle</mat-icon> I Agree — Search Now
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
 <!-- Hero Section -->
 <section class="hero-section">
   <div class="hero-content">
@@ -45,6 +73,33 @@
           <span>Quick placement</span>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- Search Section -->
+<section class="search-section">
+  <div class="search-container">
+    <h2 class="search-title">What kind of help are you looking for?</h2>
+
+    <div class="search-bar">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        class="search-input"
+        [(ngModel)]="searchQuery"
+        placeholder="e.g. Nanny, Cook, Housekeeper..."
+        (keyup.enter)="search()"
+      />
+      <button mat-flat-button class="search-btn" (click)="search()">Search</button>
+    </div>
+
+    <div class="category-chips">
+      @for (cat of categories; track cat.label) {
+        <button class="category-chip" (click)="searchByCategory(cat)">
+          <mat-icon>{{ cat.icon }}</mat-icon>
+          {{ cat.label }}
+        </button>
+      }
     </div>
   </div>
 </section>

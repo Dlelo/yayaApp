@@ -57,6 +57,13 @@
         </button>
       }
 
+      @if(roles().includes('ROLE_HOMEOWNER')) {
+        <button mat-button class="nav-btn" (click)="navigate('/subscription'); closeNav()">
+          <mat-icon>star</mat-icon>
+          Subscribe
+        </button>
+      }
+
       @if(roles().includes('ROLE_ADMIN') || roles().includes('ROLE_AGENT') || roles().includes('ROLE_SALES') || roles().includes('ROLE_SECURITY')) {
         <button mat-button class="nav-btn" (click)="navigate('/dashboard'); closeNav()">
           <mat-icon>dashboard</mat-icon>

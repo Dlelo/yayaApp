@@ -32,8 +32,7 @@ export const routes: Routes = [
   {
     path: 'listing/:type',
     component: ListingsComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['ROLE_HOMEOWNER','ROLE_ADMIN', 'ROLE_AGENT', 'ROLE_SECURITY', 'ROLE_SALES'] },
+    // No AuthGuard — search results are public; login is only required for contact details
   },
   { path: 'register', component: RegisterHousehelpComponent },
   { path: 'login', component: LoginComponent },
@@ -138,5 +137,10 @@ export const routes: Routes = [
     ]
   },
 
+  {
+    path: 'subscription',
+    loadComponent: () => import('./subscription/subscription.component').then(m => m.SubscriptionComponent),
+    canActivate: [AuthGuard],
+  },
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];

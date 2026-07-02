@@ -1,11 +1,13 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { MatCard } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { LoginService } from '../login/login.service';
 import { AccountDetailsService } from '../account-details/account-details.service';
+import { SearchService } from '../search/search.service';
+import { UnlockDialogComponent } from '../search/unlock-dialog.component';
 import { catchError, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { AsyncPipe, DatePipe, DecimalPipe, NgClass } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,9 +21,7 @@ import { ReviewService, ReviewResponse, RatingSummary } from '../review/review.s
   standalone: true,
   imports: [
     MatIconModule,
-    MatCard,
     MatButton,
-    MatIconButton,
     AsyncPipe,
     DatePipe,
     DecimalPipe,
@@ -29,6 +29,7 @@ import { ReviewService, ReviewResponse, RatingSummary } from '../review/review.s
     MatFormFieldModule,
     MatInput,
     FormsModule,
+    MatDialogModule,
   ],
   styleUrls: ['./profile.component.scss']
 })
@@ -37,6 +38,8 @@ export class ProfileComponent implements OnInit {
   private readonly router: Router = inject(Router);
   private readonly loginService = inject(LoginService);
   private readonly accountDetails = inject(AccountDetailsService);
+  private readonly searchService = inject(SearchService);
+  private readonly dialog = inject(MatDialog);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly snackBar = inject(MatSnackBar);
   private readonly reviewService = inject(ReviewService);
@@ -45,6 +48,7 @@ export class ProfileComponent implements OnInit {
   reviews = signal<ReviewResponse[]>([]);
   ratingSummary = signal<RatingSummary>({ average: 0, count: 0 });
   houseHelpId = signal<number | null>(null);
+  phoneNumber = signal<string>('');
 
   // Review form state
   newRating = 0;
@@ -65,6 +69,7 @@ export class ProfileComponent implements OnInit {
         const id = Number(idParam);
         this.houseHelpId.set(id);
         this.loadReviews(id);
+        this.checkPhoneStatus(id);
         return this.accountDetails.getHouseHelpDetails(id).pipe(
           catchError(() => of(null))
         );
@@ -129,6 +134,57 @@ export class ProfileComponent implements OnInit {
         const msg = err?.error?.message || 'Failed to submit review. You may have already reviewed this person.';
         this.snackBar.open(msg, 'Close', { duration: 4000 });
       }
+    });
+  }
+
+  private checkPhoneStatus(id: number) {
+    this.searchService.getUnlockStatus(id).subscribe({
+      next: (status) => {
+        if (status.unlocked || status.hasSubscription) this.loadPhoneNumber(id);
+      },
+      error: () => {},
+    });
+  }
+
+  private loadPhoneNumber(id: number) {
+    this.searchService.getPhoneNumber(id).subscribe({
+      next: (res) => this.phoneNumber.set(res.phoneNumber),
+      error: () => {},
+    });
+  }
+
+  openPhoneUnlock() {
+    const id = this.houseHelpId();
+    if (!id) return;
+    this.houseHelpDetails$.pipe(take(1)).subscribe(houseHelp => {
+      const ref = this.dialog.open(UnlockDialogComponent, {
+        data: {
+          houseHelpId: id,
+          previewName: houseHelp?.user?.name?.split(' ')[0] || 'House Help',
+          type: 'phone',
+        },
+        width: '480px',
+        maxWidth: '95vw',
+      });
+      ref.afterClosed().subscribe((phone: string | null) => {
+        if (phone) this.phoneNumber.set(phone);
+      });
+    });
+  }
+
+  openPdfDownload() {
+    const id = this.houseHelpId();
+    if (!id) return;
+    this.houseHelpDetails$.pipe(take(1)).subscribe(houseHelp => {
+      this.dialog.open(UnlockDialogComponent, {
+        data: {
+          houseHelpId: id,
+          previewName: houseHelp?.user?.name?.split(' ')[0] || 'House Help',
+          type: 'pdf',
+        },
+        width: '480px',
+        maxWidth: '95vw',
+      });
     });
   }
 

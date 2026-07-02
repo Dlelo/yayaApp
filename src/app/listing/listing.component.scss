@@ -573,3 +573,123 @@ $dark: #1a3c34;
     padding: 0.5rem 0.75rem;
   }
 }
+
+// ── T&C overlay ───────────────────────────────────────────────────────────────
+.terms-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.terms-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2.5rem;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0,0,0,.2);
+
+  .terms-icon {
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
+    color: #6366f1;
+    margin-bottom: 1rem;
+  }
+
+  h2 { margin-bottom: .75rem; color: #1e293b; }
+  p { color: #475569; margin-bottom: 1.5rem; line-height: 1.6; a { color: #6366f1; } }
+}
+
+.accept-btn {
+  background: #6366f1;
+  color: #fff;
+  padding: .6rem 2rem;
+  font-size: 1rem;
+  border-radius: 8px;
+}
+
+// ── Subscription badge & upgrade ─────────────────────────────────────────────
+.sub-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  background: #dcfce7;
+  color: #16a34a;
+  padding: .3rem .85rem;
+  border-radius: 20px;
+  font-size: .8rem;
+  font-weight: 600;
+  margin-top: .5rem;
+
+  mat-icon { font-size: .9rem; width: .9rem; height: .9rem; }
+}
+
+.upgrade-btn {
+  margin-top: .5rem;
+  font-size: .8rem;
+  border-color: #6366f1;
+  color: #6366f1;
+}
+
+// ── Card action buttons ───────────────────────────────────────────────────────
+.card-actions {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+  padding: .5rem .75rem .75rem;
+}
+
+.contact-btn {
+  background: #6366f1;
+  color: #fff;
+  font-size: .8rem;
+  flex: 1;
+}
+
+.view-profile-btn {
+  font-size: .8rem;
+  flex: 1;
+}
+
+// ── Verification badges on card ───────────────────────────────────────────────
+.badge-security {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.badge-verified {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+// ── Guest consent / access banners ───────────────────────────────────────────
+.guest-gate-banner {
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  background: #fef9c3; border: 1px solid #fde047;
+  border-radius: 12px; padding: .875rem 1.25rem; margin-bottom: 1.25rem;
+
+  > mat-icon { color: #ca8a04; flex-shrink: 0; }
+}
+.guest-gate-text {
+  flex: 1; min-width: 200px;
+  strong { display: block; font-size: .9rem; color: #78350f; }
+  p { margin: .2rem 0 0; font-size: .82rem; color: #92400e; }
+}
+.guest-gate-btn { background: #ca8a04 !important; color: #fff !important; flex-shrink: 0; border-radius: 8px !important; }
+
+.guest-access-banner {
+  display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
+  background: #f0fdf4; border: 1px solid #bbf7d0;
+  border-radius: 12px; padding: .7rem 1.25rem; margin-bottom: 1.25rem;
+  font-size: .875rem; color: #15803d;
+
+  > mat-icon { color: #16a34a; }
+}
+.login-link { margin-left: auto; font-size: .8rem; color: #6366f1; text-decoration: none;
+  &:hover { text-decoration: underline; } }
