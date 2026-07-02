@@ -2,8 +2,8 @@
 
   <!-- Page Header -->
   <div class="page-header">
-    <h1>Verify Househelp Details</h1>
-    <p>Search by National ID or phone number to verify a house help</p>
+    <h1>Find House Help</h1>
+    <p>Browse verified, professional domestic workers</p>
     @if (isLoggedIn && isHomeOwner) {
       @if (subscriptionStatus()?.active) {
         <span class="sub-badge"><mat-icon>verified</mat-icon> Homeowner Plus — Unlimited Phone Views</span>
@@ -197,53 +197,52 @@
 
   <!-- BROWSE TAB -->
   @if(activeTab() === 'browse') {
-    <!-- SEARCH BAR -->
-    <div class="search-bar-wrap">
-      <mat-icon class="search-icon">search</mat-icon>
-      <input
-        class="search-input"
-        type="text"
-        placeholder="Search by National ID or phone number"
-        [(ngModel)]="searchQuery"
-        (keyup.enter)="applySearch()"
-      />
-      @if (searchQuery) {
-        <button mat-icon-button class="clear-icon-btn" (click)="clearSearch()" title="Clear search">
-          <mat-icon>close</mat-icon>
-        </button>
-      }
-      <button mat-flat-button class="search-btn" (click)="applySearch()">
-        <mat-icon>search</mat-icon> Search
-      </button>
-    </div>
+    <!-- FILTERS -->
+    <mat-card class="filter-card">
+      <div class="filter-grid">
 
-    <!-- HOW IT WORKS -->
-    <div class="how-it-works">
-      <h3 class="hiw-title">How it works</h3>
-      <div class="hiw-steps">
-        <div class="hiw-step">
-          <span class="hiw-num">1</span>
-          <div>
-            <strong>Search</strong>
-            <p>Enter the househelp's National ID or phone number to find their profile.</p>
-          </div>
+        <div class="filter-field">
+          <label>Min Experience (years)</label>
+          <input
+            type="number"
+            class="filter-input"
+            placeholder="e.g. 2"
+            [(ngModel)]="filters.experience"
+          />
         </div>
-        <div class="hiw-step">
-          <span class="hiw-num">2</span>
-          <div>
-            <strong>Verify</strong>
-            <p>Check their verification badges — Identity, Good Conduct, and Security Clearance.</p>
-          </div>
+
+        <div class="filter-field">
+          <label>Location</label>
+          <input
+            type="text"
+            class="filter-input"
+            placeholder="e.g. Nairobi"
+            [(ngModel)]="filters.location"
+          />
         </div>
-        <div class="hiw-step">
-          <span class="hiw-num">3</span>
-          <div>
-            <strong>Access details</strong>
-            <p>Pay KSh {{ isLoggedIn ? '500 to view phone number' : '250 to view full profile' }} via M-Pesa. National ID is never disclosed.</p>
-          </div>
+
+        <div class="filter-field">
+          <label>Availability Type</label>
+          <select class="filter-select" [(ngModel)]="filters.houseHelpType">
+            <option [ngValue]="null">All Types</option>
+            <option value="DAYBURG">Dayburg</option>
+            <option value="LIVE_IN">Live-in</option>
+            <option value="EMERGENCY">Emergency</option>
+          </select>
         </div>
+
+        <div class="filter-actions">
+          <button mat-flat-button class="apply-btn" (click)="applyFilters()">
+            <mat-icon>search</mat-icon>
+            Search
+          </button>
+          <button mat-stroked-button class="clear-btn" (click)="clearFilters()">
+            Clear
+          </button>
+        </div>
+
       </div>
-    </div>
+    </mat-card>
 
     <!-- House Help Cards -->
     <div class="cards-grid">

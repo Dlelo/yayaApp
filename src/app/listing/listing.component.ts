@@ -57,10 +57,21 @@ export class ListingsComponent implements OnInit {
   page: number = 0;
   size: number = 20;
   type: string = 'ALL';
-  searchQuery = '';
 
   get isLoggedIn() { return this.loginService.isLoggedIn(); }
   get isHomeOwner() { return this.loginService.userRoles().includes('ROLE_HOMEOWNER'); }
+
+  filters: any = {
+    active: true,
+    houseHelpType: null,
+    experience: null,
+    minExpectedSalary: null,
+    maxExpectedSalary: null,
+    location: null,
+    languages: null,
+    hiringStatus: null,
+    skill: null,
+  };
 
   ngOnInit() {
     const stored = sessionStorage.getItem(GUEST_CONSENT_KEY);
@@ -70,12 +81,14 @@ export class ListingsComponent implements OnInit {
 
     this.route.paramMap.subscribe(params => {
       this.type = (params.get('type') || 'all').toUpperCase();
+      this.filters.houseHelpType = this.type === 'ALL' ? null : this.type;
+      this.filters.hiringStatus = 'AVAILABLE';
       this.load(this.type);
     });
 
     this.route.queryParamMap.subscribe(qp => {
       const skill = qp.get('skill');
-      if (skill) { this.load(this.type); }
+      if (skill) { this.filters.skill = skill; this.load(this.type); }
     });
 
     if (this.isHomeOwner) {
@@ -149,18 +162,15 @@ export class ListingsComponent implements OnInit {
   }
 
   load(type: string) {
-    const filter: any = {
-      active: true,
-      hiringStatus: 'AVAILABLE',
-      houseHelpType: type === 'ALL' ? null : type,
-    };
-    if (this.searchQuery.trim()) filter.query = this.searchQuery.trim();
-    this.houseHelps$ = this.househelpService.getAll(type, this.page, this.size, filter);
+    this.houseHelps$ = this.househelpService.getAll(type, this.page, this.size, this.filters);
   }
 
-  applySearch() { this.page = 0; this.load(this.type); }
+  applyFilters() { this.page = 0; this.load(this.type); }
 
-  clearSearch() { this.searchQuery = ''; this.page = 0; this.load(this.type); }
+  clearFilters() {
+    this.filters = { active: true, houseHelpType: this.filters.houseHelpType };
+    this.load(this.type);
+  }
 
   onPageChange(event: PageEvent) {
     this.page = event.pageIndex;
