@@ -24,6 +24,17 @@ export class HomeComponent {
   lookupQuery = '';
   recipientPhone = '';
   lookupState = signal<'idle' | 'sending' | 'success' | 'not-found' | 'error'>('idle');
+  lookupStep = signal<'query' | 'phone'>('query');
+
+  proceedToPhone() {
+    if (!this.lookupQuery.trim()) return;
+    this.lookupStep.set('phone');
+  }
+
+  backToQuery() {
+    this.lookupStep.set('query');
+    this.lookupState.set('idle');
+  }
 
   sendLookup() {
     if (!this.lookupQuery.trim() || !this.recipientPhone.trim()) return;
@@ -40,6 +51,7 @@ export class HomeComponent {
     this.lookupQuery = '';
     this.recipientPhone = '';
     this.lookupState.set('idle');
+    this.lookupStep.set('query');
   }
 
   navigate(path: string) {

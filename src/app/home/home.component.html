@@ -64,44 +64,58 @@
       </div>
     } @else {
       <div class="lookup-form">
-        <div class="lookup-field">
-          <mat-icon class="lookup-icon">badge</mat-icon>
-          <input
-            class="lookup-input"
-            [(ngModel)]="lookupQuery"
-            placeholder="House help's phone number or National ID"
-            [disabled]="lookupState() === 'sending'"
-            (keyup.enter)="sendLookup()"
-          />
-        </div>
-        <div class="lookup-field">
-          <mat-icon class="lookup-icon">smartphone</mat-icon>
-          <input
-            class="lookup-input"
-            [(ngModel)]="recipientPhone"
-            placeholder="Your phone number (e.g. 0712 345 678)"
-            type="tel"
-            [disabled]="lookupState() === 'sending'"
-            (keyup.enter)="sendLookup()"
-          />
-        </div>
-        <button
-          mat-flat-button
-          class="lookup-btn"
-          (click)="sendLookup()"
-          [disabled]="!lookupQuery.trim() || !recipientPhone.trim() || lookupState() === 'sending'"
-        >
-          @if (lookupState() === 'sending') {
-            <mat-icon class="spin">progress_activity</mat-icon> Sending…
-          } @else {
-            <mat-icon>send</mat-icon> Send Profile via SMS
+        @if (lookupStep() === 'query') {
+          <div class="lookup-field">
+            <mat-icon class="lookup-icon">badge</mat-icon>
+            <input
+              class="lookup-input"
+              [(ngModel)]="lookupQuery"
+              placeholder="House help's phone number or National ID"
+              (keyup.enter)="proceedToPhone()"
+            />
+          </div>
+          <button
+            mat-flat-button
+            class="lookup-btn"
+            (click)="proceedToPhone()"
+            [disabled]="!lookupQuery.trim()"
+          >
+            <mat-icon>arrow_forward</mat-icon> Next
+          </button>
+        } @else {
+          <p class="lookup-step-hint">
+            <span>Enter your phone number to get the househelp details on SMS</span>
+            <button type="button" class="lookup-change-btn" (click)="backToQuery()">Change</button>
+          </p>
+          <div class="lookup-field">
+            <mat-icon class="lookup-icon">smartphone</mat-icon>
+            <input
+              class="lookup-input"
+              [(ngModel)]="recipientPhone"
+              placeholder="Your phone number (e.g. 0712 345 678)"
+              type="tel"
+              [disabled]="lookupState() === 'sending'"
+              (keyup.enter)="sendLookup()"
+            />
+          </div>
+          <button
+            mat-flat-button
+            class="lookup-btn"
+            (click)="sendLookup()"
+            [disabled]="!recipientPhone.trim() || lookupState() === 'sending'"
+          >
+            @if (lookupState() === 'sending') {
+              <mat-icon class="spin">progress_activity</mat-icon> Sending…
+            } @else {
+              <mat-icon>send</mat-icon> Send Profile via SMS
+            }
+          </button>
+          @if (lookupState() === 'not-found') {
+            <p class="lookup-msg lookup-msg--error">No house help found with that phone number or National ID.</p>
           }
-        </button>
-        @if (lookupState() === 'not-found') {
-          <p class="lookup-msg lookup-msg--error">No house help found with that phone number or National ID.</p>
-        }
-        @if (lookupState() === 'error') {
-          <p class="lookup-msg lookup-msg--error">Something went wrong. Please try again.</p>
+          @if (lookupState() === 'error') {
+            <p class="lookup-msg lookup-msg--error">Something went wrong. Please try again.</p>
+          }
         }
       </div>
     }
