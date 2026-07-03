@@ -96,6 +96,11 @@ export class SearchService {
     return this.http.post(`${environment.apiUrl}/guest/consent`, payload);
   }
 
+  // Backend: POST /househelp/lookup-sms — finds househelp by phone or nationalId, sends SMS to recipientPhone with profile details (excludes phone/ID per DPA)
+  lookupAndSendSms(query: string, recipientPhone: string): Observable<any> {
+    return this.http.post(`${this.base}/lookup-sms`, { query, recipientPhone });
+  }
+
   getSubscriptionStatus(): Observable<SubscriptionStatus> {
     return this.http.get<SubscriptionStatus>(`${this.subBase}/status`);
   }
