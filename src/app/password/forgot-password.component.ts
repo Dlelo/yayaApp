@@ -1,5 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
   FormBuilder,
@@ -27,7 +26,6 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   selector: 'app-forgot-password',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     RouterLink,
     MatCardModule,
@@ -41,73 +39,71 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
 })
 export class ForgotPasswordComponent {
   private readonly fb = inject(FormBuilder);
-  private readonly password = inject(PasswordService);
+  private readonly passwordSvc = inject(PasswordService);
   private readonly snack = inject(MatSnackBar);
   private readonly router = inject(Router);
 
-  step = signal<'identify' | 'verify'>('identify');
+  step = signal<'credentials' | 'otp'>('credentials');
   submitting = signal(false);
   resending = signal(false);
-  channel = signal<'sms' | 'email' | 'logged' | null>(null);
-
-  /** Held in memory only — never put OTP/session tokens in the URL. */
-  private sessionToken: string | null = null;
-  identifier = signal('');
+  phone = signal('');
 
   hideNew = true;
   hideConfirm = true;
 
-  identifyForm = this.fb.group({
-    identifier: ['', [Validators.required, Validators.minLength(4)]],
-  });
+  private sessionToken: string | null = null;
+  private pendingPassword = '';
 
-  verifyForm: FormGroup = this.fb.group(
+  credentialsForm: FormGroup = this.fb.group(
     {
-      code: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
+      phone: ['', [Validators.required, Validators.pattern(/^(\+254|254|0)[17]\d{8}$/)]],
       newPassword: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
     },
     { validators: passwordsMatch }
   );
 
-  submitIdentifier(): void {
-    if (this.identifyForm.invalid) {
-      this.identifyForm.markAllAsTouched();
+  otpForm = this.fb.group({
+    code: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
+  });
+
+  sendOtp(): void {
+    if (this.credentialsForm.invalid) {
+      this.credentialsForm.markAllAsTouched();
       return;
     }
+    const { phone, newPassword } = this.credentialsForm.value;
     this.submitting.set(true);
-    const id = this.identifyForm.value.identifier as string;
-    this.identifier.set(id);
+    this.phone.set(phone);
+    this.pendingPassword = newPassword;
 
-    this.password.forgotPassword(id).subscribe({
+    this.passwordSvc.forgotPassword(phone).subscribe({
       next: (res) => {
         this.submitting.set(false);
         if (res.sessionToken) {
           this.sessionToken = res.sessionToken;
-          this.channel.set(res.channel ?? null);
-          this.step.set('verify');
+          this.step.set('otp');
         } else {
-          // No matching account — show generic ack but don't progress.
-          this.snack.open(res.message, 'OK', { duration: 4000 });
+          this.snack.open(res.message || 'Check your phone for a reset code.', 'OK', { duration: 4000 });
         }
       },
-      error: () => {
+      error: (err) => {
         this.submitting.set(false);
-        this.snack.open('Could not send reset code. Try again.', 'Close', { duration: 4000 });
+        const msg = err?.error?.message || 'Could not send OTP. Please try again.';
+        this.snack.open(msg, 'Close', { duration: 4000 });
       },
     });
   }
 
   resend(): void {
-    if (this.resending() || !this.identifier()) return;
+    if (this.resending() || !this.phone()) return;
     this.resending.set(true);
-    this.password.forgotPassword(this.identifier()).subscribe({
+    this.passwordSvc.forgotPassword(this.phone()).subscribe({
       next: (res) => {
         this.resending.set(false);
         if (res.sessionToken) {
           this.sessionToken = res.sessionToken;
-          this.channel.set(res.channel ?? null);
-          this.snack.open('A new code has been sent.', 'OK', { duration: 3000 });
+          this.snack.open('A new OTP has been sent.', 'OK', { duration: 3000 });
         }
       },
       error: () => {
@@ -118,39 +114,33 @@ export class ForgotPasswordComponent {
   }
 
   submitReset(): void {
-    if (this.verifyForm.invalid) {
-      this.verifyForm.markAllAsTouched();
+    if (this.otpForm.invalid) {
+      this.otpForm.markAllAsTouched();
       return;
     }
     if (!this.sessionToken) {
       this.snack.open('Session expired. Start over.', 'Close', { duration: 4000 });
-      this.step.set('identify');
+      this.step.set('credentials');
       return;
     }
     this.submitting.set(true);
-    const { code, newPassword } = this.verifyForm.value;
-    this.password.resetPassword(this.sessionToken, code as string, newPassword as string).subscribe({
+    const { code } = this.otpForm.value;
+    this.passwordSvc.resetPassword(this.sessionToken, code as string, this.pendingPassword).subscribe({
       next: () => {
         this.submitting.set(false);
-        this.snack.open('Password updated. Please sign in.', 'OK', { duration: 4000 });
+        this.snack.open('Password reset! Please sign in.', 'OK', { duration: 5000 });
         this.router.navigate(['/login']);
       },
       error: (err) => {
         this.submitting.set(false);
-        const msg = err?.error?.message || 'Could not reset your password.';
+        const msg = err?.error?.message || 'Invalid or expired OTP.';
         this.snack.open(msg, 'Close', { duration: 4000 });
       },
     });
   }
 
   goBack(): void {
-    this.step.set('identify');
-  }
-
-  channelLabel(): string {
-    const c = this.channel();
-    if (c === 'sms') return 'sent via SMS';
-    if (c === 'email') return 'sent to your email';
-    return 'sent to your account';
+    this.step.set('credentials');
+    this.otpForm.reset();
   }
 }
