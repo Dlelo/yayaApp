@@ -6,7 +6,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { FormsModule } from '@angular/forms';
 import { MatCard, MatCardActions, MatCardContent } from '@angular/material/card';
 import { AsyncPipe, NgClass, SlicePipe } from '@angular/common';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { LoginService } from '../login/login.service';
@@ -30,6 +30,7 @@ import { GuestConsentDialogComponent, GUEST_CONSENT_KEY, GuestConsent } from '..
     MatCardContent,
     MatCardActions,
     MatButton,
+    MatIconButton,
     MatPaginator,
     MatIcon,
     MatDialogModule,
@@ -71,6 +72,7 @@ export class ListingsComponent implements OnInit {
     languages: null,
     hiringStatus: null,
     skill: null,
+    query: null,
   };
 
   ngOnInit() {
@@ -168,7 +170,7 @@ export class ListingsComponent implements OnInit {
   applyFilters() { this.page = 0; this.load(this.type); }
 
   clearFilters() {
-    this.filters = { active: true, houseHelpType: this.filters.houseHelpType };
+    this.filters = { active: true, houseHelpType: this.filters.houseHelpType, query: null };
     this.load(this.type);
   }
 

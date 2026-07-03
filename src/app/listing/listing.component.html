@@ -199,6 +199,23 @@
   @if(activeTab() === 'browse') {
     <!-- FILTERS -->
     <mat-card class="filter-card">
+      <!-- Quick search by phone / National ID -->
+      <div class="quick-search-bar">
+        <mat-icon class="qs-icon">search</mat-icon>
+        <input
+          type="text"
+          class="qs-input"
+          placeholder="Search by phone number or National ID"
+          [(ngModel)]="filters.query"
+          (keyup.enter)="applyFilters()"
+        />
+        @if (filters.query) {
+          <button mat-icon-button class="qs-clear" (click)="filters.query = null; applyFilters()" aria-label="Clear search">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
+
       <div class="filter-grid">
 
         <div class="filter-field">
