@@ -12,7 +12,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatChipGrid, MatChipRow, MatChipInput } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Observable, take, tap, shareReplay } from 'rxjs';
+import { Observable, of, take, tap, shareReplay } from 'rxjs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { LoginService } from '../login/login.service';
@@ -168,6 +168,13 @@ export class EditAccountDetailsComponent implements OnInit {
   additionalDocUrls: string[] = [];
   additionalDocUploading = false;
 
+  /** Original name/email/phoneNumber — used to detect whether the supporting-document
+   *  requirement applies (only when one of these three actually changes). */
+  private originalIdentity = { name: '', email: '', phoneNumber: '' };
+  supportingDocumentFile: File | null = null;
+  supportingDocumentUrl: string | null = null;
+  supportingDocumentUploading = false;
+
   map!: any;
   marker!: any;
   mapCenter = { lat: -1.286389, lng: 36.817223 }; // Nairobi default
@@ -282,7 +289,16 @@ export class EditAccountDetailsComponent implements OnInit {
 
   private initializeForm(user: any): void {
 
+    this.originalIdentity = {
+      name: user.name || '',
+      email: user.email || '',
+      phoneNumber: user.phoneNumber || '',
+    };
+
     this.form = this.fb?.group({
+      name: [user.name || '', Validators.required],
+      email: [user.email || '', Validators.email],
+      phoneNumber: [user.phoneNumber || '', Validators.required],
       houseHelp: this.isHouseHelp
         ? this.fb.group({
           yearsOfExperience: [user.houseHelp?.yearsOfExperience || 0],
@@ -451,13 +467,83 @@ export class EditAccountDetailsComponent implements OnInit {
     });
   }
 
-  save(id:number): void {
+  /** True when name/email/phoneNumber differ from what the account was loaded with. */
+  identityChanged(): boolean {
+    if (!this.form) return false;
+    return this.form.get('name')?.value !== this.originalIdentity.name
+        || this.form.get('email')?.value !== this.originalIdentity.email
+        || this.form.get('phoneNumber')?.value !== this.originalIdentity.phoneNumber;
+  }
+
+  onSupportingDocumentSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    this.supportingDocumentFile = file;
+    this.supportingDocumentUrl = null;
+    this.supportingDocumentUploading = true;
+
+    this.fileUploadService.uploadDocument(file).subscribe({
+      next: (url) => {
+        this.supportingDocumentUrl = url;
+        this.supportingDocumentUploading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.supportingDocumentFile = null;
+        this.supportingDocumentUploading = false;
+        this.snackBar.open('❌ Failed to upload supporting document', 'Close', { duration: 3000 });
+      },
+    });
+
+    input.value = '';
+  }
+
+  removeSupportingDocument(): void {
+    this.supportingDocumentFile = null;
+    this.supportingDocumentUrl = null;
+  }
+
+  save(id: number): void {
     if (this.form.invalid || !this.userId) return;
+
+    if (this.identityChanged() && !this.supportingDocumentUrl) {
+      this.snackBar.open(
+        '❌ Please attach a supporting document before changing your name, email, or phone number.',
+        'Close',
+        { duration: 4000 }
+      );
+      return;
+    }
 
     // Use getRawValue() so disabled (locked) fields are still sent in the payload
     // — otherwise the backend would receive `undefined` for nationalId/homeLocation/pinLocation.
     const formValue = this.form.getRawValue();
 
+    const identity$ = this.identityChanged()
+      ? this.accountDetails.updateUser(Number(this.userId), {
+          name: formValue.name,
+          email: formValue.email,
+          phoneNumber: formValue.phoneNumber,
+          supportingDocumentUrl: this.supportingDocumentUrl!,
+        })
+      : of(null);
+
+    identity$.subscribe({
+      next: () => this.saveRoleDetails(id, formValue),
+      error: (err) => {
+        console.error(err);
+        this.snackBar.open(
+          '❌ ' + (typeof err?.error === 'string' ? err.error : 'Failed to update account details.'),
+          'Close',
+          { duration: 4000 }
+        );
+      },
+    });
+  }
+
+  private saveRoleDetails(id: number, formValue: any): void {
     if(this.isHouseHelp){
 
        this.househelpService.updateHouseHelpDetails(id, formValue.houseHelp).subscribe({

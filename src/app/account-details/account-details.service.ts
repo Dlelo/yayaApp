@@ -19,6 +19,12 @@ export class AccountDetailsService {
     return this.http.get(`${this.apiUrl}/users/${userId}`);
   }
 
+  /** Update core account fields (name/email/phoneNumber). The backend requires a
+   *  supportingDocumentUrl whenever any of those three actually change. */
+  updateUser(userId: number, payload: { name?: string; email?: string; phoneNumber?: string; supportingDocumentUrl?: string }): Observable<any> {
+    return this.http.put(`${this.apiUrl}/users/${userId}`, payload);
+  }
+
   getHouseHelpDetails(houseHelpId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/househelp/${houseHelpId}`);
   }

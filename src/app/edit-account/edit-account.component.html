@@ -6,37 +6,56 @@
         <h2>Update {{userDetails.name}} account details</h2>
       </div>
 
-      <!-- Locked personal info — set at registration, cannot be changed here -->
-      <div class="locked-section mb-4">
-        <div class="locked-header">
-          <mat-icon>lock</mat-icon>
-          <span>Personal info — locked once set</span>
-        </div>
-        <div class="locked-grid">
-          <div class="locked-field">
-            <label>First name</label>
-            <input type="text" [value]="(userDetails.name || '').split(' ')[0] || '—'" disabled readonly />
-          </div>
-          <div class="locked-field">
-            <label>Last name</label>
-            <input type="text" [value]="(userDetails.name || '').split(' ').slice(1).join(' ') || '—'" disabled readonly />
-          </div>
-          <div class="locked-field">
-            <label>Email</label>
-            <input type="text" [value]="userDetails.email || '—'" disabled readonly />
-          </div>
-          <div class="locked-field">
-            <label>Phone number</label>
-            <input type="text" [value]="userDetails.phoneNumber || '—'" disabled readonly />
-          </div>
-        </div>
-        <p class="locked-hint">
-          To change any of these, contact customer support on <strong>+254-118-266-951</strong>.
-        </p>
-      </div>
-
       @if(form){
         <form [formGroup]="form" class="row g-3">
+
+          <!-- IDENTITY SECTION — editable, but a supporting document is required to save a change -->
+          <div class="section-card mb-4">
+            <h4 class="section-title mb-3">Personal Info</h4>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Full Name</mat-label>
+                  <input matInput formControlName="name" />
+                </mat-form-field>
+              </div>
+              <div class="col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Email</mat-label>
+                  <input matInput type="email" formControlName="email" />
+                </mat-form-field>
+              </div>
+              <div class="col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Phone Number</mat-label>
+                  <input matInput formControlName="phoneNumber" />
+                </mat-form-field>
+              </div>
+            </div>
+
+            @if (identityChanged()) {
+              <div class="locked-hint mb-2">
+                <mat-icon>info</mat-icon>
+                Changing your name, email, or phone number requires a supporting document (e.g. ID or proof of the change).
+              </div>
+              <div class="upload-actions">
+                <label mat-stroked-button class="upload-btn">
+                  <mat-icon>upload</mat-icon>
+                  {{ supportingDocumentFile ? supportingDocumentFile.name : 'Attach Supporting Document' }}
+                  <input type="file" hidden accept=".pdf,image/*" (change)="onSupportingDocumentSelected($event)" />
+                </label>
+                @if (supportingDocumentUrl) {
+                  <mat-icon color="primary">check_circle</mat-icon>
+                  <button mat-icon-button type="button" (click)="removeSupportingDocument()" title="Remove">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                }
+              </div>
+              @if (supportingDocumentUploading) {
+                <mat-progress-bar mode="indeterminate" class="mt-2"></mat-progress-bar>
+              }
+            }
+          </div>
 
           <!-- UPLOAD SECTION -->
           <div class="upload-section mb-4">
