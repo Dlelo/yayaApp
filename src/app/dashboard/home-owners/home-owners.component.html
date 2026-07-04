@@ -73,7 +73,7 @@
                 </td>
                 <td>
                   <div class="action-btns">
-                    <button mat-stroked-button class="btn-action" (click)="editHomeOwner(homeOwner.id)">
+                    <button mat-stroked-button class="btn-action" (click)="editHomeOwner(homeOwner.user?.id ?? null)">
                       <mat-icon>edit</mat-icon> Edit
                     </button>
                     <button mat-stroked-button class="btn-action btn-verify" (click)="securityVerify(homeOwner?.id)">

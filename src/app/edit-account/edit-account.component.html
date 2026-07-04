@@ -9,9 +9,15 @@
       @if(form){
         <form [formGroup]="form" class="row g-3">
 
-          <!-- IDENTITY SECTION — editable, but a supporting document is required to save a change -->
+          <!-- IDENTITY SECTION — admin-only edit; a supporting document is required to save a change -->
           <div class="section-card mb-4">
             <h4 class="section-title mb-3">Personal Info</h4>
+            @if (!isAdmin()) {
+              <p class="locked-hint mb-2">
+                <mat-icon>lock</mat-icon>
+                Only an admin can update name, email, or phone number. Contact support to request a change.
+              </p>
+            }
             <div class="row g-3">
               <div class="col-md-4">
                 <mat-form-field appearance="outline" class="w-100">

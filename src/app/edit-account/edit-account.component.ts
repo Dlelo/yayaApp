@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectorRef, NgZone, PLATFORM_ID } from '@angular/core';
+import { Component, computed, inject, OnInit, ChangeDetectorRef, NgZone, PLATFORM_ID } from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
@@ -64,6 +64,9 @@ export class EditAccountDetailsComponent implements OnInit {
 
     userId = this.activatesRoute.snapshot.paramMap.get('id');
   userDetails$!: Observable<any>;
+
+  /** Only admins may edit name/email/phoneNumber; other roles see them read-only. */
+  readonly isAdmin = computed(() => this.loginService.hasRole('ROLE_ADMIN'));
 
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
@@ -295,10 +298,12 @@ export class EditAccountDetailsComponent implements OnInit {
       phoneNumber: user.phoneNumber || '',
     };
 
+    const identityDisabled = !this.isAdmin();
+
     this.form = this.fb?.group({
-      name: [user.name || '', Validators.required],
-      email: [user.email || '', Validators.email],
-      phoneNumber: [user.phoneNumber || '', Validators.required],
+      name: [{ value: user.name || '', disabled: identityDisabled }, Validators.required],
+      email: [{ value: user.email || '', disabled: identityDisabled }, Validators.email],
+      phoneNumber: [{ value: user.phoneNumber || '', disabled: identityDisabled }, Validators.required],
       houseHelp: this.isHouseHelp
         ? this.fb.group({
           yearsOfExperience: [user.houseHelp?.yearsOfExperience || 0],
@@ -491,7 +496,6 @@ export class EditAccountDetailsComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.supportingDocumentFile = null;
         this.supportingDocumentUploading = false;
         this.snackBar.open('❌ Failed to upload supporting document', 'Close', { duration: 3000 });
       },
