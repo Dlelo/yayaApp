@@ -96,9 +96,22 @@ export class SearchService {
     return this.http.post(`${environment.apiUrl}/guest/consent`, payload);
   }
 
-  // Backend: POST /househelp/lookup-sms — finds househelp by phone or nationalId, sends SMS to recipientPhone with profile details (excludes phone/ID per DPA)
-  lookupAndSendSms(query: string, recipientPhone: string): Observable<any> {
-    return this.http.post(`${this.base}/lookup-sms`, { query, recipientPhone });
+  // Backend: POST /payments/lookup/initiate — starts an M-Pesa STK push (no auth).
+  // Omit houseHelpPhoneNumber for a random available match (KES 100); include it
+  // to name a specific house help by phone/National ID (KES 500 total).
+  initiateHouseHelpLookupPayment(
+    payerPhoneNumber: string,
+    houseHelpPhoneNumber?: string
+  ): Observable<{ checkoutRequestId: string; paymentId: number; amount: number; status: string }> {
+    return this.http.post<any>(`${environment.apiUrl}/payments/lookup/initiate`, {
+      payerPhoneNumber,
+      houseHelpPhoneNumber: houseHelpPhoneNumber || undefined,
+    });
+  }
+
+  // Backend: GET /payments/lookup/status-by-id/{id} — poll target for the payment above (no auth).
+  getHouseHelpLookupStatus(paymentId: number): Observable<{ status: string }> {
+    return this.http.get<{ status: string }>(`${environment.apiUrl}/payments/lookup/status-by-id/${paymentId}`);
   }
 
   getSubscriptionStatus(): Observable<SubscriptionStatus> {

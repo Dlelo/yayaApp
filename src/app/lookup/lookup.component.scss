@@ -1,0 +1,32 @@
+mat-card {
+  max-width: 480px;
+  margin: 2rem auto;
+}
+
+.icon-lg {
+  font-size: 44px;
+  width: 44px;
+  height: 44px;
+}
+
+.instructions-card {
+  background-color: #f8f9fa;
+
+  ol.payment-steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #e9ecef;
+
+      &:last-child { border-bottom: none; }
+
+      .step-icon { color: #4caf50; flex-shrink: 0; }
+    }
+  }
+}

@@ -71,6 +71,11 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'contact-lookup',
+    loadComponent: () => import('./lookup/lookup.component').then(m => m.HouseHelpLookupComponent),
+    // No AuthGuard — this is the anonymous "pay via M-Pesa to get contact details via SMS" flow.
+  },
+  {
     path: 'account/:id',
     component: AccountDetailsComponent,
     canActivate: [AuthGuard]
@@ -119,6 +124,12 @@ export const routes: Routes = [
        canActivate: [RoleGuard],
        data: { roles: ['ROLE_ADMIN'] },
        loadComponent: () => import('./dashboard/payments/payments.component').then(m => m.PaymentsComponent),
+     },
+     {
+       path: 'search-requests',
+       canActivate: [RoleGuard],
+       data: { roles: ['ROLE_ADMIN'] },
+       loadComponent: () => import('./dashboard/search-requests/search-requests.component').then(m => m.SearchRequestsComponent),
      },
       {
         path: 'reports',

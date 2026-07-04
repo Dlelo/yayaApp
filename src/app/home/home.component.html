@@ -52,19 +52,35 @@
 <!-- Search Section -->
 <section class="search-section">
   <div class="search-container">
-    <h2 class="search-title">Find a Specific House Help</h2>
-    <p class="search-subtitle">Enter their phone number or National ID — we'll SMS you their verified profile.</p>
+    <h2 class="search-title">Find a House Help</h2>
+    <p class="search-subtitle">Pay via M-Pesa and we'll SMS you verified contact details.</p>
 
     @if (lookupState() === 'success') {
       <div class="lookup-success">
         <mat-icon>check_circle</mat-icon>
         <h3>SMS Sent!</h3>
-        <p>Check your phone — the house help's profile details are on their way.</p>
+        <p>Check your phone — the house help's contact details are on their way.</p>
         <button mat-stroked-button class="lookup-reset-btn" (click)="resetLookup()">Search Another</button>
       </div>
     } @else {
       <div class="lookup-form">
-        @if (lookupStep() === 'query') {
+
+        @if (mode() === 'choose') {
+          <div class="mode-choice">
+            <button type="button" class="mode-btn" (click)="chooseMode('random')">
+              <mat-icon>shuffle</mat-icon>
+              <span class="mode-btn-title">Match me with someone available</span>
+              <span class="mode-btn-price">KES 100</span>
+            </button>
+            <button type="button" class="mode-btn" (click)="chooseMode('specific')">
+              <mat-icon>person_search</mat-icon>
+              <span class="mode-btn-title">I know who I want</span>
+              <span class="mode-btn-price">KES 500</span>
+            </button>
+          </div>
+        }
+
+        @if (mode() === 'specific' && lookupStep() === 'query') {
           <div class="lookup-field">
             <mat-icon class="lookup-icon">badge</mat-icon>
             <input
@@ -74,18 +90,23 @@
               (keyup.enter)="proceedToPhone()"
             />
           </div>
-          <button
-            mat-flat-button
-            class="lookup-btn"
-            (click)="proceedToPhone()"
-            [disabled]="!lookupQuery.trim()"
-          >
-            <mat-icon>arrow_forward</mat-icon> Next
-          </button>
-        } @else {
+          <div class="lookup-actions-row">
+            <button type="button" class="lookup-change-btn" (click)="backToChoose()">Back</button>
+            <button
+              mat-flat-button
+              class="lookup-btn"
+              (click)="proceedToPhone()"
+              [disabled]="!lookupQuery.trim()"
+            >
+              <mat-icon>arrow_forward</mat-icon> Next
+            </button>
+          </div>
+        }
+
+        @if (mode() === 'random' || (mode() === 'specific' && lookupStep() === 'phone')) {
           <p class="lookup-step-hint">
             <span>Enter your phone number to get the househelp details on SMS</span>
-            <button type="button" class="lookup-change-btn" (click)="backToQuery()">Change</button>
+            <button type="button" class="lookup-change-btn" (click)="mode() === 'specific' ? backToQuery() : backToChoose()">Change</button>
           </p>
           <div class="lookup-field">
             <mat-icon class="lookup-icon">smartphone</mat-icon>
@@ -94,27 +115,35 @@
               [(ngModel)]="recipientPhone"
               placeholder="Your phone number (e.g. 0712 345 678)"
               type="tel"
-              [disabled]="lookupState() === 'sending'"
-              (keyup.enter)="sendLookup()"
+              [disabled]="lookupState() === 'sending' || lookupState() === 'awaiting-payment'"
+              (keyup.enter)="pay()"
             />
           </div>
           <button
             mat-flat-button
             class="lookup-btn"
-            (click)="sendLookup()"
-            [disabled]="!recipientPhone.trim() || lookupState() === 'sending'"
+            (click)="pay()"
+            [disabled]="!recipientPhone.trim() || lookupState() === 'sending' || lookupState() === 'awaiting-payment'"
           >
-            @if (lookupState() === 'sending') {
-              <mat-icon class="spin">progress_activity</mat-icon> Sending…
+            @if (lookupState() === 'sending' || lookupState() === 'awaiting-payment') {
+              <mat-icon class="spin">progress_activity</mat-icon>
+              {{ lookupState() === 'sending' ? 'Sending prompt…' : 'Confirming payment…' }}
             } @else {
-              <mat-icon>send</mat-icon> Send Profile via SMS
+              <mat-icon>send</mat-icon> Pay KES {{ mode() === 'specific' ? 500 : 100 }} via M-Pesa
             }
           </button>
-          @if (lookupState() === 'not-found') {
-            <p class="lookup-msg lookup-msg--error">No house help found with that phone number or National ID.</p>
+
+          @if (lookupState() === 'awaiting-payment') {
+            <p class="lookup-msg">Complete the M-Pesa prompt on your phone to finish.</p>
+          }
+          @if (lookupState() === 'timeout') {
+            <p class="lookup-msg">Still confirming your payment — you'll get an SMS as soon as it goes through.</p>
+          }
+          @if (lookupState() === 'failed') {
+            <p class="lookup-msg lookup-msg--error">Payment was not completed. Please try again.</p>
           }
           @if (lookupState() === 'error') {
-            <p class="lookup-msg lookup-msg--error">Something went wrong. Please try again.</p>
+            <p class="lookup-msg lookup-msg--error">{{ errorMessage || 'Something went wrong. Please try again.' }}</p>
           }
         }
       </div>

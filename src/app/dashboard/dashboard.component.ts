@@ -38,6 +38,7 @@ export class DashboardComponent implements OnInit {
     { path: 'homeOwners', label: 'Home Owners', icon: 'person', roles: ['ROLE_ADMIN','ROLE_SECURITY', 'ROLE_SALES'] },
     { path: 'requests', label: 'Requests', icon: 'assignment', roles: ['ROLE_ADMIN'] },
     { path: 'payments', label: 'Payments', icon: 'payment', roles: ['ROLE_ADMIN'] },
+    { path: 'search-requests', label: 'Search Requests', icon: 'manage_search', roles: ['ROLE_ADMIN'] },
     { path: 'reports', label: 'Reports', icon: 'bar_chart', roles: ['ROLE_ADMIN'] },
     { path: 'users', label: 'Users', icon: 'people', roles: ['ROLE_ADMIN','ROLE_SECURITY', 'ROLE_SALES'] },
   ];

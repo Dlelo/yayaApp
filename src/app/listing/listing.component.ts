@@ -121,15 +121,16 @@ export class ListingsComponent implements OnInit {
       this.openGuestConsentDialog(houseHelp);
       return;
     }
-    this.dialog.open(UnlockDialogComponent, {
-      data: {
-        houseHelpId: houseHelp.id,
-        previewName: houseHelp.user?.name?.split(' ')[0] || 'House Help',
-        type: 'guest-profile',
-        guestPhone: this.guestConsent()!.phoneNumber,
+    // Anonymous "pay via M-Pesa, then get contact details via SMS" flow —
+    // routes to the public /contact-lookup page rather than opening a dialog,
+    // since revealing a phone number happens only after a successful STK
+    // push, which needs its own processing/polling UI.
+    this.router.navigate(['/contact-lookup'], {
+      queryParams: {
+        id: houseHelp.id,
+        name: houseHelp.user?.name?.split(' ')[0] || 'House Help',
+        phone: this.guestConsent()!.phoneNumber,
       },
-      width: '580px',
-      maxWidth: '95vw',
     });
   }
 

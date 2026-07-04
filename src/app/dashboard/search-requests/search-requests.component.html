@@ -1,0 +1,105 @@
+<div class="dash-page">
+  <div class="dash-page-header">
+    <div>
+      <h1 class="dash-title">Search Requests</h1>
+      <p class="dash-subtitle">Audit trail of anonymous "pay to reveal contact details via SMS" requests</p>
+    </div>
+  </div>
+
+  <div class="dash-card">
+
+    @if (loading) {
+      <div class="table-meta">
+        <span class="shimmer shimmer-text" style="width:120px;display:inline-block"></span>
+      </div>
+      <div class="table-wrap">
+        <table class="dash-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Payer Phone</th><th>House Help</th><th>Amount</th><th>Status</th><th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of [1,2,3,4,5]; track s) {
+              <tr>
+                @for (c of [1,2,3,4,5,6]; track c) {
+                  <td><span class="shimmer shimmer-text"></span></td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else if (error) {
+      <div class="empty-state">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ error }}</p>
+        <button mat-stroked-button (click)="loadRequests()">
+          <mat-icon>refresh</mat-icon> Retry
+        </button>
+      </div>
+    } @else if (requests.length === 0) {
+      <div class="empty-state">
+        <mat-icon>manage_search</mat-icon>
+        <p>No search requests found</p>
+      </div>
+    } @else {
+      <div class="table-meta">
+        <span class="table-count">{{ totalElements }} total search requests</span>
+      </div>
+
+      <div class="table-wrap">
+        <table class="dash-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Payer Phone</th>
+              <th>House Help</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (request of requests; track request.id; let i = $index) {
+              <tr>
+                <td class="row-num">{{ i + 1 + (currentPage * pageSize) }}</td>
+                <td class="mono">{{ request.payerPhoneNumber || '—' }}</td>
+                <td>
+                  @if (request.houseHelpName) {
+                    {{ request.houseHelpName }} <span class="text-muted">(#{{ request.houseHelpId }})</span>
+                  } @else {
+                    <span class="text-muted">—</span>
+                  }
+                </td>
+                <td style="font-weight:700;color:#111827">
+                  KES {{ request.amount | number:'1.0-0' }}
+                </td>
+                <td>
+                  <span class="status-badge"
+                    [class.status-badge--active]="request.status === LookupPaymentStatus.SUCCESS"
+                    [class.status-badge--inactive]="request.status === LookupPaymentStatus.FAILED"
+                    [class.status-badge--pending]="request.status === LookupPaymentStatus.PENDING">
+                    <mat-icon style="font-size:13px;width:13px;height:13px;margin-right:3px;vertical-align:middle">
+                      {{ getStatusIcon(request.status) }}
+                    </mat-icon>
+                    {{ request.status }}
+                  </span>
+                </td>
+                <td class="text-muted">{{ request.createdAt | date:'medium' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <mat-paginator
+        [length]="totalElements"
+        [pageSize]="pageSize"
+        [pageIndex]="currentPage"
+        [pageSizeOptions]="[10, 20, 50]"
+        (page)="onPageChange($event)">
+      </mat-paginator>
+    }
+  </div>
+</div>
