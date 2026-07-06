@@ -65,86 +65,45 @@
     } @else {
       <div class="lookup-form">
 
-        @if (mode() === 'choose') {
-          <div class="mode-choice">
-            <button type="button" class="mode-btn" (click)="chooseMode('random')">
-              <mat-icon>shuffle</mat-icon>
-              <span class="mode-btn-title">Match me with someone available</span>
-              <span class="mode-btn-price">KES 100</span>
-            </button>
-            <button type="button" class="mode-btn" (click)="chooseMode('specific')">
-              <mat-icon>person_search</mat-icon>
-              <span class="mode-btn-title">I know who I want</span>
-              <span class="mode-btn-price">KES 500</span>
-            </button>
-          </div>
+        <p class="lookup-step-hint">
+          <span>Enter your phone number to get the househelp details on SMS</span>
+        </p>
+        <div class="lookup-field">
+          <mat-icon class="lookup-icon">smartphone</mat-icon>
+          <input
+            class="lookup-input"
+            [(ngModel)]="recipientPhone"
+            placeholder="Your phone number (e.g. 0712 345 678)"
+            type="tel"
+            [disabled]="lookupState() === 'sending' || lookupState() === 'awaiting-payment'"
+            (keyup.enter)="pay()"
+          />
+        </div>
+        <button
+          mat-flat-button
+          class="lookup-btn"
+          (click)="pay()"
+          [disabled]="!recipientPhone.trim() || lookupState() === 'sending' || lookupState() === 'awaiting-payment'"
+        >
+          @if (lookupState() === 'sending' || lookupState() === 'awaiting-payment') {
+            <mat-icon class="spin">progress_activity</mat-icon>
+            {{ lookupState() === 'sending' ? 'Sending prompt…' : 'Confirming payment…' }}
+          } @else {
+            <mat-icon>send</mat-icon> Pay KES 100 via M-Pesa
+          }
+        </button>
+
+        @if (lookupState() === 'awaiting-payment') {
+          <p class="lookup-msg">Complete the M-Pesa prompt on your phone to finish.</p>
         }
-
-        @if (mode() === 'specific' && lookupStep() === 'query') {
-          <div class="lookup-field">
-            <mat-icon class="lookup-icon">badge</mat-icon>
-            <input
-              class="lookup-input"
-              [(ngModel)]="lookupQuery"
-              placeholder="House help's phone number or National ID"
-              (keyup.enter)="proceedToPhone()"
-            />
-          </div>
-          <div class="lookup-actions-row">
-            <button type="button" class="lookup-change-btn" (click)="backToChoose()">Back</button>
-            <button
-              mat-flat-button
-              class="lookup-btn"
-              (click)="proceedToPhone()"
-              [disabled]="!lookupQuery.trim()"
-            >
-              <mat-icon>arrow_forward</mat-icon> Next
-            </button>
-          </div>
+        @if (lookupState() === 'timeout') {
+          <p class="lookup-msg">Still confirming your payment — you'll get an SMS as soon as it goes through.</p>
         }
-
-        @if (mode() === 'random' || (mode() === 'specific' && lookupStep() === 'phone')) {
-          <p class="lookup-step-hint">
-            <span>Enter your phone number to get the househelp details on SMS</span>
-            <button type="button" class="lookup-change-btn" (click)="mode() === 'specific' ? backToQuery() : backToChoose()">Change</button>
-          </p>
-          <div class="lookup-field">
-            <mat-icon class="lookup-icon">smartphone</mat-icon>
-            <input
-              class="lookup-input"
-              [(ngModel)]="recipientPhone"
-              placeholder="Your phone number (e.g. 0712 345 678)"
-              type="tel"
-              [disabled]="lookupState() === 'sending' || lookupState() === 'awaiting-payment'"
-              (keyup.enter)="pay()"
-            />
-          </div>
-          <button
-            mat-flat-button
-            class="lookup-btn"
-            (click)="pay()"
-            [disabled]="!recipientPhone.trim() || lookupState() === 'sending' || lookupState() === 'awaiting-payment'"
-          >
-            @if (lookupState() === 'sending' || lookupState() === 'awaiting-payment') {
-              <mat-icon class="spin">progress_activity</mat-icon>
-              {{ lookupState() === 'sending' ? 'Sending prompt…' : 'Confirming payment…' }}
-            } @else {
-              <mat-icon>send</mat-icon> Pay KES {{ mode() === 'specific' ? 500 : 100 }} via M-Pesa
-            }
-          </button>
-
-          @if (lookupState() === 'awaiting-payment') {
-            <p class="lookup-msg">Complete the M-Pesa prompt on your phone to finish.</p>
-          }
-          @if (lookupState() === 'timeout') {
-            <p class="lookup-msg">Still confirming your payment — you'll get an SMS as soon as it goes through.</p>
-          }
-          @if (lookupState() === 'failed') {
-            <p class="lookup-msg lookup-msg--error">Payment was not completed. Please try again.</p>
-          }
-          @if (lookupState() === 'error') {
-            <p class="lookup-msg lookup-msg--error">{{ errorMessage || 'Something went wrong. Please try again.' }}</p>
-          }
+        @if (lookupState() === 'failed') {
+          <p class="lookup-msg lookup-msg--error">Payment was not completed. Please try again.</p>
+        }
+        @if (lookupState() === 'error') {
+          <p class="lookup-msg lookup-msg--error">{{ errorMessage || 'Something went wrong. Please try again.' }}</p>
         }
       </div>
     }

@@ -96,17 +96,12 @@ export class SearchService {
     return this.http.post(`${environment.apiUrl}/guest/consent`, payload);
   }
 
-  // Backend: POST /househelp/lookup-sms — starts an M-Pesa STK push (no auth).
-  // Omit houseHelpPhoneNumber for a random available match (KES 100); include it
-  // to name a specific house help by phone/National ID (KES 500 total).
+  // Backend: POST /househelp/lookup-sms — starts an M-Pesa STK push for a
+  // random available match (KES 100, no auth).
   initiateHouseHelpLookupPayment(
-    payerPhoneNumber: string,
-    houseHelpPhoneNumber?: string
+    payerPhoneNumber: string
   ): Observable<{ message: string; checkoutRequestId: string; status: string }> {
-    return this.http.post<any>(`${this.base}/lookup-sms`, {
-      payerPhoneNumber,
-      houseHelpPhoneNumber: houseHelpPhoneNumber || undefined,
-    });
+    return this.http.post<any>(`${this.base}/lookup-sms`, { payerPhoneNumber });
   }
 
   // Backend: GET /payments/lookup/status/{checkoutRequestId} — poll target for the payment above (no auth).

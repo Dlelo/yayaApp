@@ -24,55 +24,21 @@ export class HomeComponent implements OnDestroy {
   private readonly router: Router = inject(Router);
   private readonly searchService = inject(SearchService);
 
-  /** 'choose' = pick a path; 'random' = pay to be matched; 'specific' = pay to look up a named house help. */
-  mode = signal<'choose' | 'random' | 'specific'>('choose');
-  /** Only relevant in 'specific' mode — whether we're still asking for the house help's phone/ID. */
-  lookupStep = signal<'query' | 'phone'>('query');
   lookupState = signal<'idle' | 'sending' | 'awaiting-payment' | 'success' | 'timeout' | 'failed' | 'error'>('idle');
   errorMessage = '';
 
-  lookupQuery = '';
   recipientPhone = '';
 
   private pollHandle: ReturnType<typeof setInterval> | null = null;
 
-  chooseMode(mode: 'random' | 'specific'): void {
-    this.mode.set(mode);
-    this.lookupStep.set('query');
-  }
-
-  backToChoose(): void {
-    this.stopPolling();
-    this.mode.set('choose');
-    this.lookupStep.set('query');
-    this.lookupState.set('idle');
-    this.lookupQuery = '';
-    this.recipientPhone = '';
-    this.errorMessage = '';
-  }
-
-  proceedToPhone(): void {
-    if (!this.lookupQuery.trim()) return;
-    this.lookupStep.set('phone');
-  }
-
-  backToQuery(): void {
-    this.lookupStep.set('query');
-    this.lookupState.set('idle');
-  }
-
   pay(): void {
     if (!this.recipientPhone.trim()) return;
-    if (this.mode() === 'specific' && !this.lookupQuery.trim()) return;
 
     this.lookupState.set('sending');
     this.errorMessage = '';
 
     this.searchService
-      .initiateHouseHelpLookupPayment(
-        this.recipientPhone.trim(),
-        this.mode() === 'specific' ? this.lookupQuery.trim() : undefined
-      )
+      .initiateHouseHelpLookupPayment(this.recipientPhone.trim())
       .subscribe({
         next: (res) => {
           this.lookupState.set('awaiting-payment');
@@ -121,10 +87,7 @@ export class HomeComponent implements OnDestroy {
 
   resetLookup(): void {
     this.stopPolling();
-    this.mode.set('choose');
-    this.lookupStep.set('query');
     this.lookupState.set('idle');
-    this.lookupQuery = '';
     this.recipientPhone = '';
     this.errorMessage = '';
   }
