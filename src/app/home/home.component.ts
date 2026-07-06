@@ -76,7 +76,7 @@ export class HomeComponent implements OnDestroy {
       .subscribe({
         next: (res) => {
           this.lookupState.set('awaiting-payment');
-          this.startPolling(res.paymentId);
+          this.startPolling(res.checkoutRequestId);
         },
         error: (err) => {
           this.errorMessage = err?.error?.message || 'Something went wrong. Please try again.';
@@ -85,11 +85,11 @@ export class HomeComponent implements OnDestroy {
       });
   }
 
-  private startPolling(paymentId: number): void {
+  private startPolling(checkoutRequestId: string): void {
     let attempts = 0;
     this.pollHandle = setInterval(() => {
       attempts++;
-      this.searchService.getHouseHelpLookupStatus(paymentId).subscribe({
+      this.searchService.getHouseHelpLookupStatus(checkoutRequestId).subscribe({
         next: ({ status }) => {
           if (status === 'SUCCESS') {
             this.stopPolling();

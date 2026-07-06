@@ -29,11 +29,12 @@ export interface LookupStatusResponse {
 })
 export class HouseHelpLookupService {
   private apiUrl = `${environment.apiUrl}/payments`;
+  private houseHelpUrl = `${environment.apiUrl}/househelp`;
 
   constructor(private http: HttpClient) {}
 
   initiateLookupPayment(request: HouseHelpLookupPaymentRequest): Observable<StkPushResponse> {
-    return this.http.post<StkPushResponse>(`${this.apiUrl}/lookup/initiate`, request);
+    return this.http.post<StkPushResponse>(`${this.houseHelpUrl}/lookup-sms`, request);
   }
 
   checkLookupStatus(checkoutRequestId: string): Observable<LookupStatusResponse> {

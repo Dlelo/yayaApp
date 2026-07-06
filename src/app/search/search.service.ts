@@ -96,22 +96,22 @@ export class SearchService {
     return this.http.post(`${environment.apiUrl}/guest/consent`, payload);
   }
 
-  // Backend: POST /payments/lookup/initiate — starts an M-Pesa STK push (no auth).
+  // Backend: POST /househelp/lookup-sms — starts an M-Pesa STK push (no auth).
   // Omit houseHelpPhoneNumber for a random available match (KES 100); include it
   // to name a specific house help by phone/National ID (KES 500 total).
   initiateHouseHelpLookupPayment(
     payerPhoneNumber: string,
     houseHelpPhoneNumber?: string
-  ): Observable<{ checkoutRequestId: string; paymentId: number; amount: number; status: string }> {
-    return this.http.post<any>(`${environment.apiUrl}/payments/lookup/initiate`, {
+  ): Observable<{ message: string; checkoutRequestId: string; status: string }> {
+    return this.http.post<any>(`${this.base}/lookup-sms`, {
       payerPhoneNumber,
       houseHelpPhoneNumber: houseHelpPhoneNumber || undefined,
     });
   }
 
-  // Backend: GET /payments/lookup/status-by-id/{id} — poll target for the payment above (no auth).
-  getHouseHelpLookupStatus(paymentId: number): Observable<{ status: string }> {
-    return this.http.get<{ status: string }>(`${environment.apiUrl}/payments/lookup/status-by-id/${paymentId}`);
+  // Backend: GET /payments/lookup/status/{checkoutRequestId} — poll target for the payment above (no auth).
+  getHouseHelpLookupStatus(checkoutRequestId: string): Observable<{ status: string }> {
+    return this.http.get<{ status: string }>(`${environment.apiUrl}/payments/lookup/status/${checkoutRequestId}`);
   }
 
   getSubscriptionStatus(): Observable<SubscriptionStatus> {
