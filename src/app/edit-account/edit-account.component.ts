@@ -491,12 +491,18 @@ export class EditAccountDetailsComponent implements OnInit {
 
     this.fileUploadService.uploadDocument(file).subscribe({
       next: (url) => {
-        this.supportingDocumentUrl = url;
-        this.supportingDocumentUploading = false;
+        this.ngZone.run(() => {
+          this.supportingDocumentUrl = url;
+          this.supportingDocumentUploading = false;
+          this.cdr.markForCheck();
+        });
       },
       error: (err) => {
         console.error(err);
-        this.supportingDocumentUploading = false;
+        this.ngZone.run(() => {
+          this.supportingDocumentUploading = false;
+          this.cdr.markForCheck();
+        });
         this.snackBar.open('❌ Failed to upload supporting document', 'Close', { duration: 3000 });
       },
     });
